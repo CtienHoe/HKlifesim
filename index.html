@@ -23,7 +23,7 @@
         
         <header class="text-center mb-6 border-b border-amber-500/20 pb-4">
             <h1 class="text-2xl md:text-4xl font-black gold-text tracking-widest uppercase">🇭🇰 Hong Kong Life Simulator</h1>
-            <p class="text-slate-400 text-xs md:text-sm mt-2">5點 AP 自由分配 ‧ 壓力與住院機制 ‧ 政府/大公司/中小企真實職位</p>
+            <p class="text-slate-400 text-xs md:text-sm mt-2">5點 AP 自由分配 ‧ 壓力與住院機制 ‧ 全年齡段選項修復完成</p>
         </header>
 
         <!-- 畫面 1：開局自訂角色 -->
@@ -154,7 +154,6 @@
         let npcs = [];
         let apAllocations = {};
 
-        // 香港真實公司/政府職位數據庫
         const jobTemplates = {
             govHigh: [
                 { title: "政務司 高級政務主任 (Senior AO)", baseInc: 135000, status: "權貴精英", dept: "政府政務司" },
@@ -203,7 +202,7 @@
         }
 
         function capStats() {
-            player.intel = Math.max(70, Math.round(player.intel)); // IQ 無 100 上限
+            player.intel = Math.max(70, Math.round(player.intel));
             player.eq = Math.max(10, Math.min(100, Math.round(player.eq)));
             player.beauty = Math.max(10, Math.min(100, Math.round(player.beauty)));
             player.phys = Math.max(0, Math.min(100, Math.round(player.phys)));
@@ -334,7 +333,6 @@
             return events.join(" ");
         }
 
-        // AP 點數分配控制邏輯
         function changeAp(optId, delta) {
             let current = apAllocations[optId] || 0;
             if (delta > 0 && player.apLeft <= 0) return;
@@ -388,8 +386,9 @@
             document.getElementById('ap-max').innerText = player.maxAp;
             let title = document.getElementById('stage-title-text');
 
-            if (player.age === 0) {
-                title.innerText = "【0-6歲：幼兒啟蒙 (自由分配 5 AP)】";
+            // 0 - 5 歲：幼兒全覆蓋
+            if (player.age >= 0 && player.age <= 5) {
+                title.innerText = `【${player.age}歲：幼兒期與發育啟蒙 (自由分配 5 AP)】`;
                 renderApModules([
                     { category: "📚 早期智力啟蒙", items: [
                         { id: "A1", title: "狂讀雙語繪本", desc: "+1 AP ➔ IQ +2, 壓力 +10, 體力 -10", effect: (ap) => { player.intel += ap * 2; player.stress += ap * 10; player.phys -= ap * 10; } },
@@ -404,6 +403,7 @@
                     ]}
                 ]);
             }
+            // 6 歲：小一升學
             else if (player.age === 6) {
                 title.innerText = "【6歲：小一升學大抽獎 / 名校面試】";
                 renderApModules([
@@ -421,6 +421,7 @@
                     ]}
                 ]);
             }
+            // 7 - 16 歲：中小學生涯全覆蓋
             else if (player.age >= 7 && player.age <= 16) {
                 title.innerText = `【${player.age}歲：中／小學生涯 (自由分配 5 AP)】`;
                 renderApModules([
@@ -434,13 +435,14 @@
                     ]},
                     { category: "💬 社交與兼職", items: [
                         { id: "C1", title: "經營 IG / 崇拜 LeBron James", desc: "+1 AP ➔ EQ +3, 壓力 -15", effect: (ap) => { player.eq += ap * 3; player.stress -= ap * 15; } },
-                        { id: "C2", title: "做兼職私補賺錢", desc: "+1 AP ➔ 存款 +$4,000, 壓力 +10, 體力 -10", effect: () => { player.money += 4000; player.stress += 10; player.phys -= 10; } }
+                        { id: "C2", title: "做兼職私補賺錢", desc: "+1 AP ➔ 存款 +$4,000, 壓力 +10, 體力 -10", effect: (ap) => { player.money += ap * 4000; player.stress += ap * 10; player.phys -= ap * 10; } }
                     ]},
                     { category: "😴 休息養生", items: [
                         { id: "D1", title: "睡到自然醒 / 聽音樂", desc: "+1 AP ➔ 壓力 -30, 體力 +25", effect: (ap) => { player.stress -= ap * 30; player.phys += ap * 25; } }
                     ]}
                 ]);
             }
+            // 17 歲：DSE 考驗
             else if (player.age === 17) {
                 title.innerText = "【17歲：DSE 終極大考】";
                 const container = document.getElementById('ap-modules-container');
@@ -465,6 +467,7 @@
                         </div>
                     </div>`;
             }
+            // 18 歲以上：成年與職場全覆蓋
             else {
                 title.innerText = `【${player.age}歲：成年職場與資本積累 (5 AP)】`;
                 renderApModules([
@@ -474,7 +477,7 @@
                     ]},
                     { category: "📈 理財與投資", items: [
                         { id: "B1", title: "量化炒美股 (高風險)", desc: "+1 AP ➔ 資金 x1.05, 壓力 +15", effect: (ap) => { player.money = Math.round(player.money * (1 + ap*0.05)); player.stress += ap * 15; } },
-                        { id: "B2", text: "儲首期買私樓上車", desc: "+1 AP ➔ 資產穩步增值 x1.03", effect: (ap) => { player.money = Math.round(player.money * (1 + ap*0.03)); } }
+                        { id: "B2", title: "儲首期買私樓上車", desc: "+1 AP ➔ 資產穩步增值 x1.03", effect: (ap) => { player.money = Math.round(player.money * (1 + ap*0.03)); } }
                     ]},
                     { category: "😴 養生與社交", items: [
                         { id: "C1", title: "健身 Gym / 養生SPA", desc: "+1 AP ➔ 壓力 -25, 體力 +20", effect: (ap) => { player.stress -= ap * 25; player.phys += ap * 20; } },
@@ -527,14 +530,13 @@
                 }
             });
 
-            // 壓力與體力崩潰住院檢測
             let healthMsg = "";
             if (player.stress >= 100 || player.phys <= 0) {
                 player.intel = Math.max(70, player.intel - 3);
                 player.eq = Math.max(10, player.eq - 5);
                 player.money = Math.max(0, player.money - 30000);
                 player.isHospitalized = true;
-                player.maxAp = 2; // 下一年只有 2 AP
+                player.maxAp = 2;
                 healthMsg = "⚠️【嚴重警告：過勞中風/抑鬱住院！】你的壓力爆表 (≥100) 或體力耗盡！你被緊急送院，支付 HK$30,000 醫療費，屬性永久受損！下一年被強制停賽休養，AP 扣至 2 點！";
             }
 
