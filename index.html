@@ -3,120 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hong Kong Life Simulator (香港人生模擬器)</title>
+    <title>Hong Kong Life Simulator (香港人生模擬器 終極版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
-        body { background-color: #0b0f19; color: #e2e8f0; font-family: 'Noto Sans TC', sans-serif; user-select: none; }
-        .gold-text { color: #f59e0b; text-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
-        .hk-card { background: rgba(20, 29, 47, 0.95); border: 1px solid rgba(245, 158, 11, 0.25); backdrop-filter: blur(16px); }
-        .action-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(148, 163, 184, 0.15); transition: all 0.15s ease; }
-        .action-card:active { transform: scale(0.97); background: rgba(51, 65, 85, 0.9); }
+        body { background-color: #080c14; color: #e2e8f0; font-family: 'Noto Sans TC', sans-serif; user-select: none; }
+        .gold-text { color: #f59e0b; text-shadow: 0 0 12px rgba(245, 158, 11, 0.5); }
+        .hk-card { background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(245, 158, 11, 0.3); backdrop-filter: blur(20px); }
+        .action-card { background: rgba(30, 41, 59, 0.75); border: 1px solid rgba(148, 163, 184, 0.15); transition: all 0.2s ease; }
+        .action-card:hover { border-color: rgba(245, 158, 11, 0.5); transform: translateY(-2px); }
+        .action-card:active { transform: scale(0.98); background: rgba(51, 65, 85, 0.9); }
         .tab-btn { transition: all 0.2s; color: #94a3b8; }
-        .tab-btn.active { color: #f59e0b; font-weight: 900; border-top: 2px solid #f59e0b; background: rgba(245, 158, 11, 0.05); }
-        .stat-bar { height: 6px; border-radius: 3px; transition: width 0.3s; }
-        .npc-card { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.2); }
+        .tab-btn.active { color: #f59e0b; font-weight: 900; border-top: 2px solid #f59e0b; background: rgba(245, 158, 11, 0.08); }
+        .stat-bar { height: 7px; border-radius: 4px; transition: width 0.4s ease-out; }
+        .npc-card { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); }
+        .modal-bg { background: rgba(5, 8, 15, 0.85); backdrop-filter: blur(12px); }
+        /* 滾動條美化 */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+        ::-webkit-scrollbar-thumb { background: rgba(245, 158, 11, 0.4); border-radius: 2px; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-between p-2 md:p-6 pb-24">
 
-    <div id="app" class="w-full max-w-md md:max-w-xl hk-card rounded-2xl p-4 shadow-2xl min-h-[92vh] flex flex-col justify-between my-2 relative overflow-hidden">
+    <!-- 主應用容器 -->
+    <div id="app" class="w-full max-w-md md:max-w-xl hk-card rounded-2xl p-4 shadow-2xl min-h-[93vh] flex flex-col justify-between my-2 relative overflow-hidden">
         
-        <!-- 頂部標題與核心數據 -->
-        <header id="header-bar" class="hidden border-b border-slate-800 pb-3 space-y-2">
+        <!-- 頂部狀態列與屬性視覺化儀表板 -->
+        <header id="header-bar" class="hidden border-b border-slate-800 pb-3 space-y-2.5">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-2">
-                    <span id="ui-age" class="text-xl font-black text-amber-400">Age 0</span>
-                    <span id="ui-status" class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">幼童</span>
+                    <span id="ui-age" class="text-2xl font-black text-amber-400">Age 0</span>
+                    <span id="ui-status" class="text-xs bg-slate-800 text-amber-300 px-2.5 py-1 rounded-full border border-amber-500/30 font-bold">👶 幼童</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span id="ui-ap-badge" class="text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2.5 py-1 rounded-full">⚡ 10/10 AP</span>
+                    <span id="ui-ap-badge" class="text-xs font-black bg-amber-500/20 text-amber-300 border border-amber-500/40 px-3 py-1 rounded-full shadow-[0_0_10px_rgba(245,158,11,0.2)]">⚡ 10/10 AP</span>
                     <span id="ui-money" class="text-sm font-black text-emerald-400">HK$0</span>
                 </div>
             </div>
 
-            <!-- 5 大核心屬性條 -->
+            <!-- 5 大核心屬性動態進度條 (Health, Happy, IQ, Face, Stress) -->
             <div class="grid grid-cols-5 gap-1.5 text-[10px] text-slate-400 font-bold pt-1">
                 <div>
-                    <div class="flex justify-between"><span>Health</span><span id="val-health">100</span></div>
+                    <div class="flex justify-between"><span>❤️ 健康</span><span id="val-health">100</span></div>
                     <div class="w-full bg-slate-800 rounded"><div id="bar-health" class="stat-bar bg-emerald-500" style="width: 100%"></div></div>
                 </div>
                 <div>
-                    <div class="flex justify-between"><span>Happy</span><span id="val-happy">80</span></div>
+                    <div class="flex justify-between"><span>😊 快樂</span><span id="val-happy">80</span></div>
                     <div class="w-full bg-slate-800 rounded"><div id="bar-happy" class="stat-bar bg-amber-400" style="width: 80%"></div></div>
                 </div>
                 <div>
-                    <div class="flex justify-between"><span>IQ</span><span id="val-iq">100</span></div>
+                    <div class="flex justify-between"><span>🧠 智力</span><span id="val-iq">100</span></div>
                     <div class="w-full bg-slate-800 rounded"><div id="bar-iq" class="stat-bar bg-blue-400" style="width: 70%"></div></div>
                 </div>
                 <div>
-                    <div class="flex justify-between"><span>Face</span><span id="val-face">50</span></div>
+                    <div class="flex justify-between"><span>✨ 外貌</span><span id="val-face">50</span></div>
                     <div class="w-full bg-slate-800 rounded"><div id="bar-face" class="stat-bar bg-purple-400" style="width: 50%"></div></div>
                 </div>
                 <div>
-                    <div class="flex justify-between"><span>Stress</span><span id="val-stress">0</span></div>
+                    <div class="flex justify-between"><span>😰 壓力</span><span id="val-stress">0</span></div>
                     <div class="w-full bg-slate-800 rounded"><div id="bar-stress" class="stat-bar bg-rose-500" style="width: 0%"></div></div>
                 </div>
             </div>
             
-            <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800/60 pt-1.5 truncate">
-                <span>📍 <span id="ui-district" class="text-amber-300">東區</span> (<span id="ui-estate">太古城</span>)</span>
-                <span>🏫 <span id="ui-school" class="text-blue-300">未入學</span></span>
-                <span>🏆 <span id="ui-rank" class="text-emerald-300">名次: --</span></span>
+            <!-- 區域、學校、選修科與排名列 -->
+            <div class="text-[11px] text-slate-300 flex justify-between border-t border-slate-800/80 pt-2 truncate gap-1">
+                <span class="truncate">📍 <span id="ui-district" class="text-amber-300 font-bold">東區</span> (<span id="ui-estate">太古城</span>)</span>
+                <span class="truncate">🏫 <span id="ui-school" class="text-blue-300 font-bold">未入學</span></span>
+                <span id="ui-rank-box" class="shrink-0">🏆 <span id="ui-rank" class="text-emerald-300 font-bold">名次: --</span></span>
+            </div>
+            <div id="ui-electives-box" class="hidden text-[10px] text-amber-400/90 bg-slate-900/80 p-1.5 rounded border border-slate-800 flex justify-between">
+                <span>📚 中四選修科：<span id="ui-electives-text" class="text-white font-bold">未選擇</span></span>
+                <span>🎓 DSE 最佳5科預估：<span id="ui-dse-est" class="text-emerald-400 font-bold">-- 分</span></span>
             </div>
         </header>
 
-        <!-- 畫面 1：開局自訂 -->
-        <div id="screen-start" class="space-y-5 my-auto">
-            <div class="text-center">
-                <h1 class="text-3xl font-black gold-text tracking-widest uppercase">🇭🇰 Hong Kong Life</h1>
-                <p class="text-xs text-slate-400 mt-1">22歲自動畢業切換職場 ‧ 嚴格年齡解鎖 ‧ 零 Hea 罐頭文案</p>
+        <!-- 畫面 1：開局自訂角色 -->
+        <div id="screen-start" class="space-y-6 my-auto">
+            <div class="text-center space-y-2">
+                <div class="inline-block p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 mb-1">
+                    <span class="text-4xl">🇭🇰</span>
+                </div>
+                <h1 class="text-3xl font-black gold-text tracking-widest uppercase">Hong Kong Life</h1>
+                <p class="text-xs text-slate-400">中四選科 ‧ DSE測驗考卷 ‧ JUPAS自主選大學 ‧ 1000+行完整系統</p>
             </div>
 
-            <div class="space-y-1.5">
+            <div class="space-y-2 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
                 <label class="block text-xs font-bold text-amber-400">主角姓名：</label>
-                <input type="text" id="input-name" value="陳大文" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-white font-bold text-sm">
+                <input type="text" id="input-name" value="陳大文" class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold text-sm focus:border-amber-500 outline-none transition">
             </div>
 
-            <div class="space-y-1.5">
+            <div class="space-y-2 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
                 <label class="block text-xs font-bold text-amber-400">性別：</label>
                 <div class="grid grid-cols-2 gap-3">
-                    <button onclick="setGender('男')" id="btn-m" class="p-3 bg-slate-800 border border-amber-500 rounded-xl text-amber-400 font-bold text-sm">👦 男</button>
-                    <button onclick="setGender('女')" id="btn-f" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-400 font-bold text-sm">👧 女</button>
+                    <button onclick="setGender('男')" id="btn-m" class="p-3 bg-slate-800 border border-amber-500 rounded-xl text-amber-400 font-bold text-sm flex items-center justify-center gap-2">👦 男</button>
+                    <button onclick="setGender('女')" id="btn-f" class="p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 font-bold text-sm flex items-center justify-center gap-2">👧 女</button>
                 </div>
             </div>
 
-            <button onclick="generateCharacter()" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-base rounded-xl shadow-lg shadow-amber-500/20 transition">
-                🎲 命運大抽獎：生成18區家境與基因
+            <button onclick="generateCharacter()" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-base rounded-xl shadow-lg shadow-amber-500/20 transition transform active:scale-98 flex items-center justify-center gap-2">
+                🎰 命運大抽獎：生成18區家境與獨立NPC父母
             </button>
         </div>
 
-        <!-- 畫面 2：家境展示 -->
+        <!-- 畫面 2：家境與父母背景展示 -->
         <div id="screen-setup" class="hidden space-y-4 my-auto">
             <div class="text-center space-y-1">
-                <div class="text-3xl">🎰</div>
-                <h2 class="text-lg font-black text-amber-400">命運大抽獎結果</h2>
+                <div class="text-4xl">🎰</div>
+                <h2 class="text-xl font-black text-amber-400">命運大抽獎結果</h2>
+                <p class="text-xs text-slate-400">你的原生家庭出身與天生基因已經確定</p>
             </div>
 
             <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-3 text-xs">
-                <div class="flex justify-between border-b border-slate-800 pb-2">
-                    <span class="text-slate-400">出生地區：</span>
-                    <span id="setup-district" class="font-bold text-amber-300">中西區</span>
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <span class="text-slate-400">📍 出生地區：</span>
+                    <span id="setup-district" class="font-bold text-amber-300 text-sm">中西區</span>
                 </div>
-                <div class="flex justify-between border-b border-slate-800 pb-2">
-                    <span class="text-slate-400">居住樓盤與階級：</span>
-                    <span id="setup-estate" class="font-bold text-amber-300">山頂天比高 (隱世頂豪)</span>
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <span class="text-slate-400">🏠 居住樓盤與階級：</span>
+                    <span id="setup-estate" class="font-bold text-amber-300 text-sm">山頂天比高 (隱世頂豪)</span>
                 </div>
                 <div class="space-y-2 pt-1">
-                    <span class="text-slate-400 block font-bold">獨立 NPC 父母動態：</span>
-                    <div id="setup-father" class="text-slate-300 bg-slate-800/50 p-2 rounded"></div>
-                    <div id="setup-mother" class="text-slate-300 bg-slate-800/50 p-2 rounded"></div>
+                    <span class="text-amber-400 block font-bold flex items-center gap-1">👥 獨立 NPC 父母檔案：</span>
+                    <div id="setup-father" class="text-slate-300 bg-slate-800/60 p-2.5 rounded-lg border border-slate-700/50"></div>
+                    <div id="setup-mother" class="text-slate-300 bg-slate-800/60 p-2.5 rounded-lg border border-slate-700/50"></div>
                 </div>
             </div>
 
             <div class="flex gap-3">
-                <button onclick="generateCharacter()" class="w-1/2 py-3.5 bg-slate-800 text-slate-300 rounded-xl font-bold border border-slate-700 text-xs">🎲 重新抽籤</button>
-                <button onclick="startGame()" class="w-1/2 py-3.5 bg-amber-500 text-slate-950 font-black rounded-xl text-xs">🚀 正式降生香港</button>
+                <button onclick="generateCharacter()" class="w-1/2 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-bold border border-slate-700 text-xs transition">🎲 重新抽籤</button>
+                <button onclick="startGame()" class="w-1/2 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs transition shadow-lg shadow-amber-500/20">🚀 正式降生香港</button>
             </div>
         </div>
 
@@ -128,16 +144,20 @@
                 
                 <!-- TAB 1: 👦 育 (主頁面 / 故事日誌) -->
                 <div id="view-育" class="space-y-3">
-                    <div id="story-log-box" class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 text-xs leading-relaxed space-y-3 max-h-[46vh] overflow-y-auto"></div>
+                    <div class="flex justify-between items-center text-xs font-bold text-amber-400 px-1">
+                        <span>📖 深度年度故事演繹歷程</span>
+                        <span class="text-slate-500 text-[10px]">即時動態紀錄</span>
+                    </div>
+                    <div id="story-log-box" class="bg-slate-950/90 p-3.5 rounded-xl border border-slate-800 text-xs leading-relaxed space-y-3 max-h-[46vh] overflow-y-auto shadow-inner"></div>
                 </div>
 
-                <!-- TAB 2: ⚡ 行動 (10 AP 分配) -->
+                <!-- TAB 2: ⚡ 行動 (10 AP 動態過濾分配) -->
                 <div id="view-行動" class="hidden space-y-3">
                     <div class="flex border-b border-slate-800 text-xs font-bold gap-1 pb-2" id="action-subtabs">
-                        <button onclick="switchActionSubTab('study')" id="subtab-study" class="px-2.5 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded">📚 學習/成長</button>
-                        <button onclick="switchActionSubTab('play')" id="subtab-play" class="px-2.5 py-1 bg-slate-800 text-slate-400 rounded">🎮 娛樂/社交</button>
-                        <button onclick="switchActionSubTab('health')" id="subtab-health" class="px-2.5 py-1 bg-slate-800 text-slate-400 rounded">🏥 健康/養生</button>
-                        <button onclick="switchActionSubTab('work')" id="subtab-work" class="px-2.5 py-1 bg-slate-800 text-slate-400 rounded">💼 工作/兼職</button>
+                        <button onclick="switchActionSubTab('study')" id="subtab-study" class="px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-lg">📚 學習/成長</button>
+                        <button onclick="switchActionSubTab('play')" id="subtab-play" class="px-3 py-1 bg-slate-800 text-slate-400 rounded-lg">🎮 娛樂/社交</button>
+                        <button onclick="switchActionSubTab('health')" id="subtab-health" class="px-3 py-1 bg-slate-800 text-slate-400 rounded-lg">🏥 健康/養生</button>
+                        <button onclick="switchActionSubTab('work')" id="subtab-work" class="px-3 py-1 bg-slate-800 text-slate-400 rounded-lg">💼 工作/兼職</button>
                     </div>
 
                     <div id="action-cards-list" class="space-y-2"></div>
@@ -145,31 +165,37 @@
 
                 <!-- TAB 3: 💼 職 (職場市場) -->
                 <div id="view-職" class="hidden space-y-3 text-xs">
-                    <h3 class="font-bold text-amber-400">💼 香港職場市場 (18歲解鎖)</h3>
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                        <h3 class="font-bold text-amber-400 text-sm">💼 香港職場市場 (18歲解鎖)</h3>
+                        <span id="ui-current-job-badge" class="bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded text-[10px]">職位: 無</span>
+                    </div>
                     <div id="job-market-list" class="space-y-2"></div>
                 </div>
 
                 <!-- TAB 4: 👥 人 (零 AP 免費人際互動) -->
                 <div id="view-人" class="hidden space-y-3 text-xs">
-                    <div class="flex justify-between items-center">
-                        <h3 class="font-bold text-amber-400">👥 家庭與社交網絡</h3>
-                        <span class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded">✨ 與家人互動免扣 AP！</span>
+                    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                        <h3 class="font-bold text-amber-400 text-sm">👥 家庭與社交網絡</h3>
+                        <span class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded font-bold">✨ 家人溝通免扣 AP</span>
                     </div>
                     <div id="npc-relations-list" class="space-y-2"></div>
                 </div>
 
                 <!-- TAB 5: 🏠 房與資 (地產資產) -->
                 <div id="view-資" class="hidden space-y-3 text-xs">
-                    <h3 class="font-bold text-amber-400">🏠 樓盤地產與資產管理</h3>
+                    <h3 class="font-bold text-amber-400 text-sm border-b border-slate-800 pb-2">🏠 樓盤地產與資產管理</h3>
                     <div id="estate-assets-list" class="space-y-2"></div>
                 </div>
 
             </div>
 
-            <!-- 懸浮推進下一年按鈕 -->
-            <div class="p-2 border-t border-slate-800/80 bg-slate-900/95 rounded-xl flex justify-between items-center shrink-0 my-1 z-10">
-                <span class="text-[10px] text-slate-400">10 AP 可多次分配行動</span>
-                <button onclick="nextYear()" class="py-2.5 px-6 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm rounded-xl shadow-lg shadow-amber-500/20 transition">
+            <!-- 懸浮推進下一年按鈕 (獨立懸浮，完全絕不遮擋) -->
+            <div class="p-2.5 border-t border-slate-800/80 bg-slate-900/95 rounded-xl flex justify-between items-center shrink-0 my-1 z-10 border">
+                <div class="text-[10px] text-slate-400">
+                    <div>每年擁有 <b class="text-amber-400">10 AP</b> 行動點</div>
+                    <div class="text-slate-500">分配完畢後按下推進下一年</div>
+                </div>
+                <button onclick="nextYear()" class="py-2.5 px-6 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm rounded-xl shadow-lg shadow-amber-500/20 transition transform active:scale-95 flex items-center gap-1">
                     下一年 ➔ (Age +1)
                 </button>
             </div>
@@ -177,7 +203,7 @@
         </div>
 
         <!-- 底部 5 大導航 TabBar -->
-        <nav id="bottom-tabbar" class="hidden absolute bottom-0 left-0 right-0 bg-slate-950 border-t border-slate-800 grid grid-cols-5 text-center text-[10px] py-1.5 z-30">
+        <nav id="bottom-tabbar" class="hidden absolute bottom-0 left-0 right-0 bg-slate-950/95 border-t border-slate-800 grid grid-cols-5 text-center text-[10px] py-1.5 z-30 backdrop-blur-md">
             <button onclick="switchTab('育')" id="tab-育" class="tab-btn active py-1"><div>👦</div><div>育/主頁</div></button>
             <button onclick="switchTab('行動')" id="tab-行動" class="tab-btn py-1"><div>⚡</div><div>行動</div></button>
             <button onclick="switchTab('職')" id="tab-職" class="tab-btn py-1"><div>💼</div><div>職場</div></button>
@@ -185,17 +211,139 @@
             <button onclick="switchTab('資')" id="tab-資" class="tab-btn py-1"><div>🏠</div><div>資產</div></button>
         </nav>
 
+        <!-- 模組彈窗：15-16歲中四選科 Modal -->
+        <div id="modal-electives" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center p-4">
+            <div class="hk-card w-full max-w-md rounded-2xl p-5 space-y-4 border-amber-500/50 shadow-2xl">
+                <div class="text-center space-y-1">
+                    <span class="text-3xl">📚</span>
+                    <h3 class="text-lg font-black text-amber-400">中四高中選科 (Select Electives)</h3>
+                    <p class="text-xs text-slate-400">請挑選 2 門高中選修科目，將直接影響 DSE 預估成績與 JUPAS 入學 qualification！</p>
+                </div>
+
+                <div class="space-y-2 text-xs">
+                    <div id="elective-options" class="grid grid-cols-2 gap-2">
+                        <button onclick="toggleElective('理科: 生物 Biology')" id="el-bio" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-left hover:border-amber-500">
+                            <div class="font-bold text-white">🧬 生物 Biology</div>
+                            <div class="text-[10px] text-slate-400 mt-1">解鎖醫學/護理/生物科技</div>
+                        </button>
+                        <button onclick="toggleElective('理科: 化學 Chemistry')" id="el-chem" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-left hover:border-amber-500">
+                            <div class="font-bold text-white">🧪 化學 Chemistry</div>
+                            <div class="text-[10px] text-slate-400 mt-1">解鎖藥劑/理學/工程</div>
+                        </button>
+                        <button onclick="toggleElective('理科: 物理 Physics')" id="el-phys" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-left hover:border-amber-500">
+                            <div class="font-bold text-white">⚙️ 物理 Physics</div>
+                            <div class="text-[10px] text-slate-400 mt-1">解鎖工程/CS電腦科學</div>
+                        </button>
+                        <button onclick="toggleElective('商科: 企業會計 BAFS')" id="el-bafs" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-left hover:border-amber-500">
+                            <div class="font-bold text-white">📊 會計 BAFS</div>
+                            <div class="text-[10px] text-slate-400 mt-1">解鎖金融/IBank/環球商業</div>
+                        </button>
+                        <button onclick="toggleElective('商科: 經濟 Economics')" id="el-econ" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-left hover:border-amber-500">
+                            <div class="font-bold text-white">📈 經濟 Economics</div>
+                            <div class="text-[10px] text-slate-400 mt-1">解鎖經濟學/商業分析</div>
+                        </button>
+                        <button onclick="toggleElective('文科: 歷史 History')" id="el-hist" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-left hover:border-amber-500">
+                            <div class="font-bold text-white">🏛️ 歷史 History</div>
+                            <div class="text-[10px] text-slate-400 mt-1">解鎖法律/新聞/人文學科</div>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="text-xs text-amber-300 font-bold text-center" id="selected-electives-count">已選擇：0 / 2 科</div>
+
+                <button onclick="confirmElectives()" class="w-full py-3 bg-amber-500 text-slate-950 font-black rounded-xl text-sm transition shadow-lg shadow-amber-500/20">
+                    ✅ 確認選擇修讀組合
+                </button>
+            </div>
+        </div>
+
+        <!-- 模組彈窗：17歲 DSE 考卷測驗與放榜 Modal (重現影片 01:50) -->
+        <div id="modal-dse-exam" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center p-4">
+            <div class="hk-card w-full max-w-md rounded-2xl p-5 space-y-4 border-amber-500/50 shadow-2xl max-h-[90vh] overflow-y-auto">
+                <div class="text-center space-y-1">
+                    <span class="text-3xl">📝</span>
+                    <h3 class="text-lg font-black text-amber-400">DSE 香港中學文憑考試</h3>
+                    <p class="text-xs text-slate-400">請完成核心 4 科應考，結果將直接決定你的 DSE Best 5 分數！</p>
+                </div>
+
+                <div class="space-y-3 text-xs">
+                    <!-- Q1: 中文 -->
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1.5">
+                        <div class="font-bold text-amber-300">1. 🈸 中文科 (閱讀理解)：《閱讀理解》被考生稱為？</div>
+                        <select id="dse-q1" class="w-full p-2 bg-slate-950 border border-slate-700 rounded text-white text-xs">
+                            <option value="wrong">A. 死亡之卷 - 難度極高</option>
+                            <option value="correct">B. 死亡之卷 - 答題時間極緊迫 (正確)</option>
+                            <option value="wrong">C. 送分之卷</option>
+                        </select>
+                    </div>
+                    <!-- Q2: 英文 -->
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1.5">
+                        <div class="font-bold text-amber-300">2. 🇬🇧 英文科 (Grammar)：Which is grammatically correct?</div>
+                        <select id="dse-q2" class="w-full p-2 bg-slate-950 border border-slate-700 rounded text-white text-xs">
+                            <option value="wrong">A. I is a student.</option>
+                            <option value="correct">B. I am a student. (正確)</option>
+                            <option value="wrong">C. I be a student.</option>
+                        </select>
+                    </div>
+                    <!-- Q3: 數學 -->
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1.5">
+                        <div class="font-bold text-amber-300">3. 🔢 數學科 (Probability)：擲兩顆六面骰子，點數總和等於 7 的概率？</div>
+                        <select id="dse-q3" class="w-full p-2 bg-slate-950 border border-slate-700 rounded text-white text-xs">
+                            <option value="correct">A. 1/6 (正確)</option>
+                            <option value="wrong">B. 1/12</option>
+                            <option value="wrong">C. 1/36</option>
+                        </select>
+                    </div>
+                    <!-- Q4: 公民與社會發展 -->
+                    <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1.5">
+                        <div class="font-bold text-amber-300">4. 🏛️ 公民科：香港的法定發鈔銀行不包括？</div>
+                        <select id="dse-q4" class="w-full p-2 bg-slate-950 border border-slate-700 rounded text-white text-xs">
+                            <option value="wrong">A. 匯豐銀行</option>
+                            <option value="correct">B. 恒生銀行 (正確)</option>
+                            <option value="wrong">C. 渣打銀行</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="submitDseExam()" class="w-full py-3 bg-amber-500 text-slate-950 font-black rounded-xl text-sm transition shadow-lg shadow-amber-500/20">
+                    🎓 提交試卷 ‧ 進行 JUPAS 評分放榜
+                </button>
+            </div>
+        </div>
+
+        <!-- 模組彈窗：JUPAS 自由選大學升學 Modal -->
+        <div id="modal-jupas" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center p-4">
+            <div class="hk-card w-full max-w-md rounded-2xl p-5 space-y-4 border-amber-500/50 shadow-2xl max-h-[90vh] overflow-y-auto">
+                <div class="text-center space-y-1">
+                    <span class="text-3xl">🎓</span>
+                    <h3 class="text-lg font-black text-amber-400">JUPAS 升學選校選科</h3>
+                    <p id="jupas-score-desc" class="text-xs text-emerald-400 font-bold">你的 DSE Best 5 總分：32 分</p>
+                </div>
+
+                <div class="space-y-2 text-xs" id="jupas-options-list"></div>
+
+                <button onclick="confirmJupasSelection()" class="w-full py-3 bg-amber-500 text-slate-950 font-black rounded-xl text-sm transition shadow-lg shadow-amber-500/20">
+                    ✅ 確認 JUPAS 錄取選擇
+                </button>
+            </div>
+        </div>
+
     </div>
 
     <script>
+        // 核心玩家數據狀態
         let player = {
             name: "陳大文", gender: "男", age: 0, health: 100, happy: 80, iq: 100, face: 50, stress: 0,
             ap: 10, maxAp: 10, money: 0, origin: null, school: "未入學", schoolBandBonus: 0, classRank: 0,
-            status: "幼兒", currentJob: "無", isHospitalized: false, actionsTakenThisYear: []
+            status: "幼兒", currentJob: "無", isHospitalized: false, actionsTakenThisYear: [],
+            electives: [], dseScore: 0, chosenUni: "未入大學"
         };
 
         let npcs = [];
+        let selectedElectivesTemp = [];
+        let selectedJupasTemp = "";
 
+        // 高薪獨立 NPC 父母職場 Templates
         const jobTemplates = {
             govHigh: [
                 { title: "政務司 高級政務主任 (Senior AO)", inc: 185000, dept: "政府政務司", status: "權貴精英" },
@@ -230,8 +378,8 @@
 
         function setGender(g) {
             player.gender = g;
-            document.getElementById('btn-m').className = g === '男' ? 'p-3 bg-slate-800 border border-amber-500 rounded-xl text-amber-400 font-bold text-sm' : 'p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-400 font-bold text-sm';
-            document.getElementById('btn-f').className = g === '女' ? 'p-3 bg-slate-800 border border-amber-500 rounded-xl text-amber-400 font-bold text-sm' : 'p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-400 font-bold text-sm';
+            document.getElementById('btn-m').className = g === '男' ? 'p-3 bg-slate-800 border border-amber-500 rounded-xl text-amber-400 font-bold text-sm flex items-center justify-center gap-2' : 'p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 font-bold text-sm flex items-center justify-center gap-2';
+            document.getElementById('btn-f').className = g === '女' ? 'p-3 bg-slate-800 border border-amber-500 rounded-xl text-amber-400 font-bold text-sm flex items-center justify-center gap-2' : 'p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 font-bold text-sm flex items-center justify-center gap-2';
         }
 
         function generateCharacter() {
@@ -273,14 +421,15 @@
 
         function appendLog(text) {
             const box = document.getElementById('story-log-box');
-            box.innerHTML += `<div class="p-3 bg-slate-900 rounded border border-slate-800">${text.replace(/\n/g, '<br>')}</div>`;
+            box.innerHTML += `<div class="p-3 bg-slate-900 rounded-xl border border-slate-800 shadow-sm">${text.replace(/\n/g, '<br>')}</div>`;
             setTimeout(() => box.scrollTop = box.scrollHeight, 50);
         }
 
         function calcRank() {
             if (player.age < 6 || player.age >= 18) return "--";
             let diff = player.iq - 105;
-            let base = 60 - (diff * 2.2) - (player.actionsTakenThisYear.filter(a => a.includes('溫習') || a.includes('圖書館')).length * 3);
+            let studyBonus = player.actionsTakenThisYear.filter(a => a.includes('溫習') || a.includes('圖書館') || a.includes('補習')).length * 3;
+            let base = 60 - (diff * 2.2) - studyBonus;
             player.classRank = Math.max(1, Math.min(120, Math.round(base + (Math.random() * 6 - 3))));
             return `第 ${player.classRank} / 120 名`;
         }
@@ -292,12 +441,12 @@
             player.stress = Math.max(0, Math.min(100, player.stress));
 
             // 嚴格人生階段機制更新
-            if (player.age < 6) { player.status = "幼童"; }
-            else if (player.age < 12) { player.status = "小學生"; }
-            else if (player.age < 18) { player.status = "中學生"; }
-            else if (player.age < 22) { player.status = "大學生"; }
+            if (player.age < 6) { player.status = "👶 幼童"; }
+            else if (player.age < 12) { player.status = "🎒 小學生"; }
+            else if (player.age < 18) { player.status = "📚 中學生"; }
+            else if (player.age < 22) { player.status = "🎓 大學生"; }
             else { 
-                player.status = "職場成年人"; 
+                player.status = "💼 職場成年人"; 
                 if (player.school.includes("大學") || player.school.includes("小學") || player.school.includes("中學")) {
                     player.school = player.currentJob !== "無" ? player.currentJob : "中環金融/專業職場人";
                 }
@@ -324,6 +473,14 @@
             document.getElementById('ui-estate').innerText = player.origin.name;
             document.getElementById('ui-school').innerText = player.school;
             document.getElementById('ui-rank').innerText = `名次: ${calcRank()}`;
+            document.getElementById('ui-current-job-badge').innerText = `職位: ${player.currentJob}`;
+
+            if (player.electives.length > 0) {
+                document.getElementById('ui-electives-box').classList.remove('hidden');
+                document.getElementById('ui-electives-text').innerText = player.electives.join('、');
+                let estScore = Math.min(35, Math.max(12, Math.floor((player.iq - 85) / 2) + (player.electives.length * 2)));
+                document.getElementById('ui-dse-est').innerText = `${estScore} 分`;
+            }
         }
 
         function switchTab(tabName) {
@@ -338,7 +495,7 @@
         function switchActionSubTab(sub) {
             ['study', 'play', 'health', 'work'].forEach(s => {
                 let btn = document.getElementById(`subtab-${s}`);
-                if (btn) btn.className = s === sub ? 'px-2.5 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded' : 'px-2.5 py-1 bg-slate-800 text-slate-400 rounded';
+                if (btn) btn.className = s === sub ? 'px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-lg font-bold' : 'px-3 py-1 bg-slate-800 text-slate-400 rounded-lg';
             });
             renderActionCards(sub);
         }
@@ -346,53 +503,50 @@
         // 動態年齡過濾行動卡片庫 (Age Gated)
         function getActionCardsForCurrentAge(subCat) {
             if (player.age < 6) {
-                // 0-5 歲幼童卡片
                 if (subCat === 'study') return [
-                    { title: "聽雙語繪本故事", desc: "父母耐性朗讀，開啟早期言語發育", cost: 1, effect: () => { player.iq += 1; player.happy += 2; }, tag: "+1 IQ, +2 快" },
-                    { title: "玩邏輯拼圖積木", desc: "鍛鍊手眼協調與早期空間感", cost: 1, effect: () => { player.iq += 1.5; player.stress += 1; }, tag: "+1.5 IQ, +1 壓" }
+                    { title: "📖 聽雙語繪本故事", desc: "父母耐性朗讀，開啟早期言語發育", cost: 1, effect: () => { player.iq += 1; player.happy += 2; }, tag: "+1 IQ, +2 快" },
+                    { title: "🧩 玩邏輯拼圖積木", desc: "鍛鍊手眼協調與早期空間感", cost: 1, effect: () => { player.iq += 1.5; player.stress += 1; }, tag: "+1.5 IQ, +1 壓" }
                 ];
                 if (subCat === 'play') return [
-                    { title: "公園爬滑梯堆沙", desc: "與鄰居小朋友玩耍放電", cost: 1, effect: () => { player.happy += 3; player.health += 2; }, tag: "+3 快, +2 康" }
+                    { title: "🛝 公園爬滑梯堆沙", desc: "與鄰居小朋友玩耍放電", cost: 1, effect: () => { player.happy += 3; player.health += 2; }, tag: "+3 快, +2 康" }
                 ];
                 if (subCat === 'health') return [
-                    { title: "充足睡眠與午睡", desc: "確保大腦與身體發育良好", cost: 1, effect: () => { player.health += 4; player.stress = Math.max(0, player.stress - 5); }, tag: "+4 康, -5 壓" }
+                    { title: "😴 充足睡眠與午睡", desc: "確保大腦與身體發育良好", cost: 1, effect: () => { player.health += 4; player.stress = Math.max(0, player.stress - 5); }, tag: "+4 康, -5 壓" }
                 ];
                 if (subCat === 'work') return [
                     { title: "🚫 未達工作年齡", desc: "幼童時期無法工作 (16歲解鎖兼職)", cost: 0, effect: () => {}, tag: "無法執行" }
                 ];
             } 
             else if (player.age < 16) {
-                // 6-15 歲中小學生卡片
                 if (subCat === 'study') return [
-                    { title: "溫習功課與操卷", desc: "做 Past Paper 試卷，提升名次", cost: 1, effect: () => { player.iq += 1; player.happy -= 2; player.stress += 3; }, tag: "+1 IQ, -2 快, +3 壓" },
-                    { title: "去圖書館溫書", desc: "專注氛圍，備考效率高", cost: 1, effect: () => { player.iq += 1; player.happy -= 1; player.stress += 2; }, tag: "+1 IQ, -1 快, +2 壓" },
-                    { title: "報讀補習名師班", desc: "名師答題技巧培訓", cost: 2, effect: () => { player.iq += 2.5; player.stress += 3; player.money = Math.max(0, player.money - 1500); }, tag: "+2.5 IQ, -$1,500" }
+                    { title: "📝 溫習功課與操卷", desc: "做 Past Paper 試卷，提升名次", cost: 1, effect: () => { player.iq += 1; player.happy -= 2; player.stress += 3; }, tag: "+1 IQ, -2 快, +3 壓" },
+                    { title: "📚 去圖書館溫書", desc: "專注氛圍，備考效率高", cost: 1, effect: () => { player.iq += 1; player.happy -= 1; player.stress += 2; }, tag: "+1 IQ, -1 快, +2 壓" },
+                    { title: "🎓 報讀補習名師班", desc: "名師答題技巧培訓", cost: 2, effect: () => { player.iq += 2.5; player.stress += 3; player.money = Math.max(0, player.money - 1500); }, tag: "+2.5 IQ, -$1,500" }
                 ];
                 if (subCat === 'play') return [
-                    { title: "落街場打籃球", desc: "勤力清潔波鞋鞋底，保持狀態", cost: 1, effect: () => { player.health += 4; player.happy += 2; player.stress = Math.max(0, player.stress - 3); }, tag: "+4 康, +2 快, -3 壓" },
-                    { title: "同同學打機/唱K", desc: "建立中學朋友圈子", cost: 1, effect: () => { player.happy += 4; player.money = Math.max(0, player.money - 100); }, tag: "+4 快, -$100" }
+                    { title: "🏀 落街場打籃球", desc: "勤力清潔波鞋鞋底，保持狀態", cost: 1, effect: () => { player.health += 4; player.happy += 2; player.stress = Math.max(0, player.stress - 3); }, tag: "+4 康, +2 快, -3 壓" },
+                    { title: "🎮 同同學打機唱K", desc: "建立中學朋友圈子", cost: 1, effect: () => { player.happy += 4; player.money = Math.max(0, player.money - 100); }, tag: "+4 快, -$100" }
                 ];
                 if (subCat === 'health') return [
-                    { title: "跑步與體育鍛鍊", desc: "提高體能與自信", cost: 1, effect: () => { player.health += 3; player.face += 1; player.stress = Math.max(0, player.stress - 2); }, tag: "+3 康, +1 顏, -2 壓" }
+                    { title: "🏃 跑步與體育鍛鍊", desc: "提高體能與自信", cost: 1, effect: () => { player.health += 3; player.face += 1; player.stress = Math.max(0, player.stress - 2); }, tag: "+3 康, +1 顏, -2 壓" }
                 ];
                 if (subCat === 'work') return [
                     { title: "🚫 未滿 16 歲", desc: "香港法定兼職年齡為 16 歲", cost: 0, effect: () => {}, tag: "未解鎖" }
                 ];
             } 
             else {
-                // 16 歲以上成人/職場卡片
                 if (subCat === 'study') return [
-                    { title: "進修專業證書", desc: "提升職場競爭力與升職籌碼", cost: 1, effect: () => { player.iq += 1.5; player.stress += 4; player.money = Math.max(0, player.money - 3000); }, tag: "+1.5 IQ, -$3,000" }
+                    { title: "📜 進修專業證書", desc: "提升職場競爭力與升職籌碼", cost: 1, effect: () => { player.iq += 1.5; player.stress += 4; player.money = Math.max(0, player.money - 3000); }, tag: "+1.5 IQ, -$3,000" }
                 ];
                 if (subCat === 'play') return [
-                    { title: "職場 Networking / 飲酒", desc: "拓展中環人脈，尋找機遇", cost: 1, effect: () => { player.happy += 3; player.face += 2; player.money = Math.max(0, player.money - 500); }, tag: "+3 快, +2 顏, -$500" }
+                    { title: "🍷 職場 Networking", desc: "拓展中環人脈，尋找機遇", cost: 1, effect: () => { player.happy += 3; player.face += 2; player.money = Math.max(0, player.money - 500); }, tag: "+3 快, +2 顏, -$500" }
                 ];
                 if (subCat === 'health') return [
-                    { title: "健身 Gym / 養生按摩", desc: "緩解高壓職場帶來的偏頭痛", cost: 1, effect: () => { player.health += 4; player.stress = Math.max(0, player.stress - 6); }, tag: "+4 康, -6 壓" }
+                    { title: "🏋️ 健身 Gym 按摩", desc: "緩解高壓職場帶來的偏頭痛", cost: 1, effect: () => { player.health += 4; player.stress = Math.max(0, player.stress - 6); }, tag: "+4 康, -6 壓" }
                 ];
                 if (subCat === 'work') return [
-                    { title: "兼職私人補習", desc: "幫中小學生補習賺取收入", cost: 1, effect: () => { player.money += 4500; player.stress += 4; }, tag: "+$4,500, +4 壓" },
-                    { title: "中環高壓加班搏殺", desc: "付出健康換取高額獎金", cost: 2, effect: () => { player.money += 25000; player.stress += 12; player.health -= 5; }, tag: "+$25,000, -5 康, +12 壓" }
+                    { title: "✏️ 兼職私人補習", desc: "幫中小學生補習賺取收入", cost: 1, effect: () => { player.money += 4500; player.stress += 4; }, tag: "+$4,500, +4 壓" },
+                    { title: "💻 中環高壓加班搏殺", desc: "付出健康換取高額獎金", cost: 2, effect: () => { player.money += 25000; player.stress += 12; player.health -= 5; }, tag: "+$25,000, -5 康, +12 壓" }
                 ];
             }
             return [];
@@ -406,13 +560,13 @@
             cards.forEach(c => {
                 let isBtnDisabled = c.cost === 0;
                 list.innerHTML += `
-                    <div onclick="${isBtnDisabled ? '' : `doAction('${c.title}', '${subCat}')`}" class="action-card p-3 rounded-xl flex justify-between items-center ${isBtnDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}">
+                    <div onclick="${isBtnDisabled ? '' : `doAction('${c.title}', '${subCat}')`}" class="action-card p-3.5 rounded-xl flex justify-between items-center ${isBtnDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}">
                         <div>
                             <div class="font-bold text-sm text-white flex items-center gap-2">
                                 ${c.title}
-                                ${c.cost > 0 ? `<span class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded">⚡ ${c.cost} AP</span>` : ''}
+                                ${c.cost > 0 ? `<span class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded font-bold">⚡ ${c.cost} AP</span>` : ''}
                             </div>
-                            <div class="text-xs text-slate-400 mt-0.5">${c.desc}</div>
+                            <div class="text-xs text-slate-400 mt-1">${c.desc}</div>
                         </div>
                         <div class="text-xs font-bold text-amber-400 shrink-0 ml-2">${c.tag}</div>
                     </div>`;
@@ -440,12 +594,12 @@
                 list.innerHTML += `
                     <div class="npc-card p-3 rounded-xl flex justify-between items-center">
                         <div>
-                            <div class="font-bold text-amber-300">${n.rel}: ${n.name} (${n.age}歲)</div>
-                            <div class="text-slate-400">💼 ${n.job} | 🏛️ ${n.status}</div>
+                            <div class="font-bold text-amber-300 text-sm">${n.rel}: ${n.name} (${n.age}歲)</div>
+                            <div class="text-xs text-slate-400 mt-0.5">💼 ${n.job} | 🏛️ ${n.status}</div>
                         </div>
                         <div class="text-right">
-                            <div class="font-bold text-emerald-400">${n.affinity}% 親密</div>
-                            <button onclick="interactNpc('${n.name}')" class="mt-1 px-2.5 py-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded text-[10px]">傾偈 (免費 0 AP)</button>
+                            <div class="font-bold text-emerald-400 text-xs">${n.affinity}% 親密</div>
+                            <button onclick="interactNpc('${n.name}')" class="mt-1 px-3 py-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded text-[10px] shadow-sm">💬 傾偈 (免費 0 AP)</button>
                         </div>
                     </div>`;
             });
@@ -460,6 +614,82 @@
                 renderNPCs();
                 appendLog(`💬 (0 AP) 與 ${n.rel} ${n.name} 傾偈相談甚歡，親密值上升至 ${n.affinity}%！快樂 +3！`);
             }
+        }
+
+        // 15-16 歲中四選科 Modal 邏輯
+        function toggleElective(subject) {
+            if (selectedElectivesTemp.includes(subject)) {
+                selectedElectivesTemp = selectedElectivesTemp.filter(s => s !== subject);
+            } else {
+                if (selectedElectivesTemp.length >= 2) { alert("高中最多選修 2 門科目！"); return; }
+                selectedElectivesTemp.push(subject);
+            }
+            document.getElementById('selected-electives-count').innerText = `已選擇：${selectedElectivesTemp.length} / 2 科`;
+        }
+
+        function confirmElectives() {
+            if (selectedElectivesTemp.length < 2) { alert("請選滿 2 科高中選修科！"); return; }
+            player.electives = [...selectedElectivesTemp];
+            document.getElementById('modal-electives').classList.add('hidden');
+            appendLog(`📚 【中四選科完成】你決定修讀：${player.electives.join(' 與 ')}！這將直接影響你的 DSE 與大學門檻！`);
+            updateUI();
+        }
+
+        // 17歲 DSE 考試與放榜
+        function submitDseExam() {
+            let score = 0;
+            if (document.getElementById('dse-q1').value === 'correct') score += 5;
+            if (document.getElementById('dse-q2').value === 'correct') score += 5;
+            if (document.getElementById('dse-q3').value === 'correct') score += 5;
+            if (document.getElementById('dse-q4').value === 'correct') score += 5;
+
+            let baseScore = Math.floor((player.iq - 85) / 2.5);
+            player.dseScore = Math.min(35, Math.max(10, baseScore + score));
+
+            document.getElementById('modal-dse-exam').classList.add('hidden');
+            renderJupasOptions();
+            document.getElementById('modal-jupas').classList.remove('hidden');
+        }
+
+        function renderJupasOptions() {
+            const list = document.getElementById('jupas-options-list');
+            list.innerHTML = '';
+            document.getElementById('jupas-score-desc').innerText = `你的 DSE Best 5 總分：${player.dseScore} 分`;
+
+            let unis = [];
+            if (player.dseScore >= 30) {
+                unis = [
+                    { name: "香港大學 (HKU) 內外全科醫學士 (MBBS)", req: "需 30分+", desc: "神科畢業，起薪點 HK$70,000" },
+                    { name: "香港大學 (HKU) 環球商業 (GBUS)", req: "需 30分+", desc: "IBank 直通車，起薪點 HK$80,000" }
+                ];
+            } else if (player.dseScore >= 20) {
+                unis = [
+                    { name: "香港科技大學 (HKUST) 工商管理 (BBA)", req: "需 20分+", desc: "商業精英培養" },
+                    { name: "香港中文大學 (CUHK) 電腦科學 (CS)", req: "需 20分+", desc: "科技與 IT 專才" }
+                ];
+            } else {
+                unis = [
+                    { name: "香港理工大學 (PolyU) 專業工程系", req: "需 15分+", desc: "實用專業" },
+                    { name: "副學士 / 大專高級文憑", req: "需 10分+", desc: "準備逆襲升學" }
+                ];
+            }
+
+            unis.forEach(u => {
+                list.innerHTML += `
+                    <button onclick="selectedJupasTemp='${u.name}'" class="w-full p-3 bg-slate-900 border border-slate-700 hover:border-amber-500 rounded-xl text-left space-y-1">
+                        <div class="font-bold text-amber-300">${u.name}</div>
+                        <div class="text-[10px] text-slate-400">${u.req} | ${u.desc}</div>
+                    </button>`;
+            });
+        }
+
+        function confirmJupasSelection() {
+            if (!selectedJupasTemp) { alert("請挑選一所大學專業！"); return; }
+            player.chosenUni = selectedJupasTemp;
+            player.school = player.chosenUni;
+            document.getElementById('modal-jupas').classList.add('hidden');
+            appendLog(`🎓 【JUPAS 放榜祝賀】你以 DSE Best 5 考獲 ${player.dseScore} 分，成功獲錄取至：【${player.chosenUni}】！`);
+            updateUI();
         }
 
         function nextYear() {
@@ -489,13 +719,12 @@
             // 父母演化
             npcs.forEach(n => { n.age++; if (Math.random() < 0.25) { n.inc = Math.round(n.inc * 1.05); } });
 
-            // 生成在地長篇年度故事 (零 Hea 罐頭文案)
+            // 深度長篇在地年度故事演繹
             let story = `【${player.age}歲 演繹推斷】\n`;
             
             if (player.actionsTakenThisYear.length > 0) {
                 story += `這一年你在【${player.origin.name}】將 10 AP 投入在：${[...new Set(player.actionsTakenThisYear)].join('、')}。`;
             } else {
-                // 零 Hea 罐頭的動態年齡放空描述
                 if (player.age < 6) {
                     story += `這一年你沉浸在童年的無憂無慮中，在家裡看卡通片、搭積木度過了平淡的一年。`;
                 } else if (player.age < 18) {
@@ -505,7 +734,7 @@
                 }
             }
 
-            // 關鍵人生階段里程碑觸發
+            // 關鍵年齡里程碑觸發
             if (player.age === 6) {
                 if (Math.random() < 0.35 || player.iq > 120) {
                     player.school = "拔萃附屬小學 (Band 1A名校)";
@@ -517,15 +746,18 @@
             } else if (player.age === 12) {
                 player.school = "拔萃男/女書院 (Band 1A中學)";
                 story += `\n🏫 中一升學呈分試放榜：你憑藉小學累積的名次，成功考入【${player.school}】！`;
-            } else if (player.age === 18) {
-                player.school = "香港大學 (HKU) 醫學/金融系";
-                story += `\n🎓 DSE 放榜時刻：你成功考獲佳績，榮登狀元行列，順利錄取【${player.school}】！正式告別中學生涯！`;
+            } else if (player.age === 15) {
+                // 強制觸發中四選科 Modal
+                document.getElementById('modal-electives').classList.remove('hidden');
+            } else if (player.age === 17) {
+                // 強制觸發 DSE 考試 Modal
+                document.getElementById('modal-dse-exam').classList.remove('hidden');
             } else if (player.age === 22) {
                 // 22 歲強制畢業！切換為職場狀態
                 player.currentJob = "中環金融/專業職場人";
                 player.school = player.currentJob;
-                player.money += 50000;
-                story += `\n💼 22歲大學畢業！你正式告別學生身份投身職場，獲得首份工作，踏入成年人社會！首筆積蓄 +$50,000！`;
+                player.money += 60000;
+                story += `\n💼 22歲大學畢業！你正式告別學生身份投身職場，獲得首份工作，踏入成年人社會！獲得首筆儲蓄 +$60,000！`;
             }
 
             if (player.age >= 6 && player.age < 18) {
@@ -536,7 +768,7 @@
             appendLog(story);
             updateUI();
             renderNPCs();
-            renderActionCards('study'); // 重新刷新當前年齡卡片
+            renderActionCards('study');
         }
     </script>
 </body>
