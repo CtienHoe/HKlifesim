@@ -1,313 +1,436 @@
 <!DOCTYPE html>
 <html lang="zh-HK">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>香港人生模擬器 HK Life Sim Demo</title>
-<style>
-  :root {
-    --bg-color: #121212;
-    --card-bg: #1e1e1e;
-    --accent: #ff9800;
-    --text: #ffffff;
-    --subtext: #aaaaaa;
-  }
-  body {
-    background-color: var(--bg-color);
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    margin: 0;
-    padding: 15px;
-    display: flex;
-    justify-content: center;
-  }
-  .container {
-    width: 100%;
-    max-width: 450px;
-    background-color: var(--card-bg);
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-  }
-  h1, h2, h3 { text-align: center; color: var(--accent); margin-top: 0; }
-  .btn {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border: none;
-    border-radius: 8px;
-    background-color: var(--accent);
-    color: #000;
-    font-weight: bold;
-    font-size: 16px;
-    cursor: pointer;
-    transition: opacity 0.2s;
-  }
-  .btn:hover { opacity: 0.9; }
-  .btn:disabled { background-color: #555; color: #888; cursor: not-allowed; }
-  .card {
-    background: #2a2a2a;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 12px;
-  }
-  .stat-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 6px 0;
-  }
-  .bar-bg {
-    width: 60%;
-    background: #444;
-    height: 10px;
-    border-radius: 5px;
-    overflow: hidden;
-  }
-  .bar-fill { height: 100%; background: var(--accent); width: 50%; }
-  .tab-group { display: flex; gap: 5px; margin-bottom: 15px; }
-  .tab-btn { flex: 1; padding: 8px; background: #333; color: white; border: none; border-radius: 5px; cursor: pointer; }
-  .tab-btn.active { background: var(--accent); color: black; font-weight: bold; }
-  .log-box {
-    background: #111;
-    border: 1px solid #333;
-    padding: 10px;
-    border-radius: 6px;
-    height: 100px;
-    overflow-y: auto;
-    font-size: 13px;
-    color: #ddd;
-    margin-bottom: 12px;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hong Kong Life Simulator (香港人生模擬器)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
+        body { background-color: #0b0f19; color: #e2e8f0; font-family: 'Noto Sans TC', sans-serif; user-select: none; }
+        .gold-text { color: #f59e0b; text-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
+        .hk-card { background: rgba(20, 29, 47, 0.95); border: 1px solid rgba(245, 158, 11, 0.25); backdrop-filter: blur(16px); }
+        .action-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(148, 163, 184, 0.15); transition: all 0.15s ease; }
+        .action-card:active { transform: scale(0.97); background: rgba(51, 65, 85, 0.9); }
+        .tab-btn { transition: all 0.2s; color: #94a3b8; }
+        .tab-btn.active { color: #f59e0b; font-weight: 900; border-top: 2px solid #f59e0b; background: rgba(245, 158, 11, 0.05); }
+        .stat-bar { height: 6px; border-radius: 3px; transition: width 0.3s; }
+        .npc-card { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148, 163, 184, 0.2); }
+    </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col items-center justify-between p-2 md:p-6 pb-20">
 
-<div class="container">
-  <!-- 頁面 1: 時代選擇 -->
-  <div id="screen-era">
-    <h1>香港人生模擬器</h1>
-    <p style="text-align:center; color: var(--subtext);">請選擇一個年代開始：</p>
-    <div class="card" onclick="selectEra('千禧年代')">
-      <h3>千禧年代 (2004-2030)</h3>
-      <p style="font-size:12px; color:var(--subtext);">港鐵成型、MSN時代、DSE改革。</p>
+    <!-- 主容器 -->
+    <div id="app" class="w-full max-w-md md:max-w-xl hk-card rounded-2xl p-4 shadow-2xl min-h-[90vh] flex flex-col justify-between my-2 relative overflow-hidden">
+        
+        <!-- 頂部標題與核心數據（比照影片介面） -->
+        <header id="header-bar" class="hidden border-b border-slate-800 pb-3 space-y-2">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <span id="ui-age" class="text-xl font-black text-amber-400">Age 0</span>
+                    <span id="ui-status" class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">幼童</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span id="ui-ap-badge" class="text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2.5 py-1 rounded-full">⚡ 5/5 AP</span>
+                    <span id="ui-money" class="text-sm font-black text-emerald-400">HK$0</span>
+                </div>
+            </div>
+
+            <!-- 5 大核心屬性條 (Health, Happiness, Smarts, Face, Stress) -->
+            <div class="grid grid-cols-5 gap-1.5 text-[10px] text-slate-400 font-bold pt-1">
+                <div>
+                    <div class="flex justify-between"><span>Health</span><span id="val-health">100</span></div>
+                    <div class="w-full bg-slate-800 rounded"><div id="bar-health" class="stat-bar bg-emerald-500" style="width: 100%"></div></div>
+                </div>
+                <div>
+                    <div class="flex justify-between"><span>Happy</span><span id="val-happy">80</span></div>
+                    <div class="w-full bg-slate-800 rounded"><div id="bar-happy" class="stat-bar bg-amber-400" style="width: 80%"></div></div>
+                </div>
+                <div>
+                    <div class="flex justify-between"><span>IQ</span><span id="val-iq">100</span></div>
+                    <div class="w-full bg-slate-800 rounded"><div id="bar-iq" class="stat-bar bg-blue-400" style="width: 70%"></div></div>
+                </div>
+                <div>
+                    <div class="flex justify-between"><span>Face</span><span id="val-face">50</span></div>
+                    <div class="w-full bg-slate-800 rounded"><div id="bar-face" class="stat-bar bg-purple-400" style="width: 50%"></div></div>
+                </div>
+                <div>
+                    <div class="flex justify-between"><span>Stress</span><span id="val-stress">0</span></div>
+                    <div class="w-full bg-slate-800 rounded"><div id="bar-stress" class="stat-bar bg-rose-500" style="width: 0%"></div></div>
+                </div>
+            </div>
+            
+            <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800/60 pt-1.5 truncate">
+                <span>📍 <span id="ui-district" class="text-amber-300">中西區</span> (網: <span id="ui-estate">山頂天比高</span>)</span>
+                <span>🏫 <span id="ui-school" class="text-blue-300">未入學</span></span>
+            </div>
+        </header>
+
+        <!-- 畫面 1：開局自訂 -->
+        <div id="screen-start" class="space-y-5 my-auto">
+            <div class="text-center">
+                <h1 class="text-3xl font-black gold-text tracking-widest uppercase">🇭🇰 Hong Kong Life</h1>
+                <p class="text-xs text-slate-400 mt-1">18區真實校網 ‧ 5 AP 點擊行動 ‧ 壓力與過勞住院 ‧ 人際關係系統</p>
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-amber-400">主角姓名：</label>
+                <input type="text" id="input-name" value="陳大文" class="w-full p-3 bg-slate-900 border border-slate-700 rounded-xl text-white font-bold text-sm">
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="block text-xs font-bold text-amber-400">性別：</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="setGender('男')" id="btn-m" class="p-3 bg-slate-800 border border-amber-500 rounded-xl text-amber-400 font-bold text-sm">👦 男</button>
+                    <button onclick="setGender('女')" id="btn-f" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-400 font-bold text-sm">👧 女</button>
+                </div>
+            </div>
+
+            <button onclick="generateCharacter()" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-base rounded-xl shadow-lg shadow-amber-500/20 transition">
+                🎲 抽籤生成 18區家境與基因
+            </button>
+        </div>
+
+        <!-- 畫面 2：家境展示 (比照影片命運大抽獎) -->
+        <div id="screen-setup" class="hidden space-y-5 my-auto">
+            <div class="text-center space-y-1">
+                <div class="text-3xl">🎰</div>
+                <h2 class="text-lg font-black text-amber-400">命運大抽獎結果</h2>
+            </div>
+
+            <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-3 text-xs">
+                <div class="flex justify-between border-b border-slate-800 pb-2">
+                    <span class="text-slate-400">出生地區：</span>
+                    <span id="setup-district" class="font-bold text-amber-300">中西區</span>
+                </div>
+                <div class="flex justify-between border-b border-slate-800 pb-2">
+                    <span class="text-slate-400">居住樓盤與階級：</span>
+                    <span id="setup-estate" class="font-bold text-amber-300">山頂天比高 (隱世頂豪)</span>
+                </div>
+                <div class="space-y-1 pt-1">
+                    <span class="text-slate-400 block font-bold">獨立 NPC 父母動態：</span>
+                    <div id="setup-father" class="text-slate-300 pl-2"></div>
+                    <div id="setup-mother" class="text-slate-300 pl-2"></div>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="generateCharacter()" class="w-1/2 py-3.5 bg-slate-800 text-slate-300 rounded-xl font-bold border border-slate-700 text-xs">🎲 重新抽籤</button>
+                <button onclick="startGame()" class="w-1/2 py-3.5 bg-amber-500 text-slate-950 font-black rounded-xl text-xs">🚀 開始你的人生</button>
+            </div>
+        </div>
+
+        <!-- 畫面 3：遊戲主區域 -->
+        <div id="screen-main" class="hidden flex-grow flex flex-col justify-between overflow-hidden">
+            
+            <!-- 分頁內容容器 -->
+            <div class="flex-grow overflow-y-auto pr-1 space-y-3 py-2" id="tab-content-area">
+                
+                <!-- TAB 1: 👦 育 (主頁面 / 故事日誌) -->
+                <div id="view-育" class="space-y-3">
+                    <div id="story-log-box" class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 text-xs leading-relaxed space-y-3 max-h-[50vh] overflow-y-auto"></div>
+                </div>
+
+                <!-- TAB 2: ⚡ 行動 (AP 分配，比照影片 00:19-00:25) -->
+                <div id="view-行動" class="hidden space-y-3">
+                    <div class="flex border-b border-slate-800 text-xs font-bold gap-2 pb-2" id="action-subtabs">
+                        <button onclick="switchActionSubTab('study')" id="subtab-study" class="px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded">📚 學習</button>
+                        <button onclick="switchActionSubTab('play')" id="subtab-play" class="px-3 py-1 bg-slate-800 text-slate-400 rounded">🎮 娛樂</button>
+                        <button onclick="switchActionSubTab('health')" id="subtab-health" class="px-3 py-1 bg-slate-800 text-slate-400 rounded">🏥 健康</button>
+                        <button onclick="switchActionSubTab('work')" id="subtab-work" class="px-3 py-1 bg-slate-800 text-slate-400 rounded">兼職/工作</button>
+                    </div>
+
+                    <div id="action-cards-list" class="space-y-2"></div>
+                </div>
+
+                <!-- TAB 3: 💼 職 (職場市場) -->
+                <div id="view-職" class="hidden space-y-3 text-xs">
+                    <h3 class="font-bold text-amber-400">💼 香港職場市場 (18歲後解鎖)</h3>
+                    <div id="job-market-list" class="space-y-2"></div>
+                </div>
+
+                <!-- TAB 4: 👥 人 (人際關係，比照影片 00:26-00:34) -->
+                <div id="view-人" class="hidden space-y-3 text-xs">
+                    <h3 class="font-bold text-amber-400">👥 人際關係網絡</h3>
+                    <div id="npc-relations-list" class="space-y-2"></div>
+                </div>
+
+                <!-- TAB 5: 🏠 房與資 (地產與資產) -->
+                <div id="view-資" class="hidden space-y-3 text-xs">
+                    <h3 class="font-bold text-amber-400">🏠 樓盤地產與資產管理</h3>
+                    <div id="estate-assets-list" class="space-y-2"></div>
+                </div>
+
+            </div>
+
+            <!-- 右下角推進下一年按鈕 (比照影片 Age +1 按鈕) -->
+            <div class="pt-2 border-t border-slate-800 flex justify-between items-center">
+                <span class="text-[11px] text-slate-500">提示: 每點擊一次行動消耗 1-2 AP</span>
+                <button onclick="nextYear()" class="py-3 px-6 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm rounded-xl shadow-lg shadow-amber-500/20 transition">
+                    下一年 ➔ (Age +1)
+                </button>
+            </div>
+
+        </div>
+
+        <!-- 底部五大導航分頁 TabBar (比照影片 00:15) -->
+        <nav id="bottom-tabbar" class="hidden absolute bottom-0 left-0 right-0 bg-slate-950 border-t border-slate-800 grid grid-cols-5 text-center text-[10px] py-1.5 z-20">
+            <button onclick="switchTab('育')" id="tab-育" class="tab-btn active py-1"><div>👦</div><div>育/主頁</div></button>
+            <button onclick="switchTab('行動')" id="tab-行動" class="tab-btn py-1"><div>⚡</div><div>行動</div></button>
+            <button onclick="switchTab('職')" id="tab-職" class="tab-btn py-1"><div>💼</div><div>職場</div></button>
+            <button onclick="switchTab('人')" id="tab-人" class="tab-btn py-1"><div>👥</div><div>人際</div></button>
+            <button onclick="switchTab('資')" id="tab-資" class="tab-btn py-1"><div>🏠</div><div>資產</div></button>
+        </nav>
+
     </div>
-    <div class="card" onclick="selectEra('黃金歲月')">
-      <h3>黃金歲月 (1980年代)</h3>
-      <p style="font-size:12px; color:var(--subtext);">股市狂熱、四大天王、經濟起飛。</p>
-    </div>
-  </div>
 
-  <!-- 頁面 2: 命運抽獎 -->
-  <div id="screen-lottery" style="display:none;">
-    <h2>🎰 命運大抽獎</h2>
-    <div class="card" id="lottery-result">
-      <p>點擊下方按鈕抽取出身背景...</p>
-    </div>
-    <button class="btn" onclick="drawFate()">開始抽籤</button>
-    <button class="btn" id="btn-start-game" onclick="startGame()" style="display:none;">進入人生</button>
-  </div>
+    <script>
+        let player = {
+            name: "陳大文", gender: "男", age: 0, health: 100, happy: 80, iq: 100, face: 50, stress: 0,
+            ap: 5, maxAp: 5, money: 0, origin: null, school: "未入學", schoolBandBonus: 0, classRank: 0,
+            status: "幼兒", currentJob: "無", isHospitalized: false
+        };
 
-  <!-- 頁面 3: 主遊戲畫面 -->
-  <div id="screen-game" style="display:none;">
-    <div style="display:flex; justify-shadow:space-between; align-items:center;">
-      <h3 id="player-age" style="margin:0;">Age 6 (小學一級)</h3>
-      <span style="background:var(--accent); color:black; padding:2px 8px; border-radius:10px; font-weight:bold; font-size:12px;" id="ap-display">AP: 5/5</span>
-    </div>
-    <p style="font-size:12px; color:var(--subtext); margin: 4px 0 12px 0;" id="player-school">學校：深水埗官立小學</p>
+        let npcs = [];
 
-    <!-- 屬性顯示 -->
-    <div class="card">
-      <div class="stat-bar"><span>❤️ 健康</span> <div class="bar-bg"><div id="bar-health" class="bar-fill"></div></div> <span id="val-health">50</span></div>
-      <div class="stat-bar"><span>😊 快樂</span> <div class="bar-bg"><div id="bar-happy" class="bar-fill"></div></div> <span id="val-happy">50</span></div>
-      <div class="stat-bar"><span>🧠 智力</span> <div class="bar-bg"><div id="bar-smarts" class="bar-fill"></div></div> <span id="val-smarts">50</span></div>
-      <div class="stat-bar"><span>💰 儲蓄</span> <span id="val-money" style="color:#4caf50; font-weight:bold;">$100</span></div>
-    </div>
+        // 真實職位與公司規模 Templates
+        const jobTemplates = {
+            govHigh: [
+                { title: "政務司 高級政務主任 (Senior AO)", inc: 135000, dept: "政務司" },
+                { title: "廉政公署 (ICAC) 高級調查主任", inc: 110000, dept: "ICAC" }
+            ],
+            mncHigh: [
+                { title: "跨國 IBank 亞太區首席技術官 (CTO)", inc: 320000, dept: "IT 部" },
+                { title: "美資外企 人力資源總監 (HR Director)", inc: 160000, dept: "HR 部" }
+            ],
+            smeLow: [
+                { title: "中小企 HR 助理 (HR Officer)", inc: 22000, dept: "HR 部" },
+                { title: "茶餐廳待應 / 廚師", inc: 20000, dept: "餐飲" },
+                { title: "地盤建造工人", inc: 32000, dept: "工程部" }
+            ]
+        };
 
-    <!-- 事件 Console -->
-    <div class="log-box" id="game-log">
-      你出生了！準備展開你嘅香港人生。
-    </div>
+        const estates = [
+            { name: "深水埗 劏房", district: "深水埗區", class: "基層貧民", prob: 0.20, fPool: jobTemplates.smeLow, mPool: jobTemplates.smeLow },
+            { name: "黃大仙 下邨", district: "黃大仙區", class: "基層公屋", prob: 0.30, fPool: jobTemplates.smeLow, mPool: jobTemplates.smeLow },
+            { name: "荔枝角 美孚新邨", district: "深水埗區", class: "普通中產", prob: 0.25, fPool: jobTemplates.govHigh, mPool: jobTemplates.smeLow },
+            { name: "鰂魚涌 太古城", district: "東區", class: "核心中產", prob: 0.15, fPool: jobTemplates.mncHigh, mPool: jobTemplates.govHigh },
+            { name: "山頂 天比高", district: "中西區", class: "隱世頂豪", prob: 0.10, fPool: jobTemplates.mncHigh, mPool: jobTemplates.mncHigh }
+        ];
 
-    <!-- 功能 Tab -->
-    <div class="tab-group">
-      <button class="tab-btn active" onclick="switchTab('action')">⚡ 行動</button>
-      <button class="tab-btn" onclick="switchTab('rel')">👥 人際</button>
-    </div>
+        function setGender(g) {
+            player.gender = g;
+            document.getElementById('btn-m').className = g === '男' ? 'p-3 bg-slate-800 border border-amber-500 rounded-xl text-amber-400 font-bold text-sm' : 'p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-400 font-bold text-sm';
+            document.getElementById('btn-f').className = g === '女' ? 'p-3 bg-slate-800 border border-amber-500 rounded-xl text-amber-400 font-bold text-sm' : 'p-3 bg-slate-900 border border-slate-700 rounded-xl text-slate-400 font-bold text-sm';
+        }
 
-    <!-- Tab 內容: 行動 -->
-    <div id="tab-action">
-      <div class="card">
-        <b>📚 溫習功課 (1 AP)</b>
-        <p style="font-size:11px; color:var(--subtext);">智力 +3 | 快樂 -1</p>
-        <button class="btn" style="padding:5px;" onclick="doAction('study')">執行</button>
-      </div>
-      <div class="card">
-        <b>🎮 打機放鬆 (1 AP)</b>
-        <p style="font-size:11px; color:var(--subtext);">快樂 +3 | 智力 -1</p>
-        <button class="btn" style="padding:5px;" onclick="doAction('play')">執行</button>
-      </div>
-    </div>
+        function generateCharacter() {
+            player.name = document.getElementById('input-name').value.trim() || "陳大文";
+            let rand = Math.random(), cum = 0;
+            for (let e of estates) { cum += e.prob; if (rand <= cum) { player.origin = e; break; } }
+            if (!player.origin) player.origin = estates[1];
 
-    <!-- Tab 內容: 人際關係 -->
-    <div id="tab-rel" style="display:none;">
-      <div class="card">
-        <b>👩 媽媽 (張秀英) - 親密度: <span id="rel-mom">80</span>%</b>
-        <p style="font-size:11px; color:var(--subtext);">職業：茶餐廳侍應</p>
-        <button class="btn" style="padding:5px;" onclick="interactMom()">同媽媽傾偈 (1 AP)</button>
-      </div>
-    </div>
+            let fJob = player.origin.fPool[Math.floor(Math.random() * player.origin.fPool.length)];
+            let mJob = player.origin.mPool[Math.floor(Math.random() * player.origin.mPool.length)];
 
-    <button class="btn" style="background:#4caf50; color:white; margin-top:15px;" onclick="nextYear()">下一年 (Age +1) ➡️</button>
-  </div>
-</div>
+            npcs = [
+                { id: 'father', rel: '父親', name: "陳黃全", age: 36, job: fJob.title, inc: fJob.inc, iq: Math.round(fJob.inc > 100000 ? 120 : 95), face: 40, affinity: 80 },
+                { id: 'mother', rel: '母親', name: "張秀英", age: 34, job: mJob.title, inc: mJob.inc, iq: Math.round(mJob.inc > 100000 ? 120 : 95), face: 75, affinity: 85 }
+            ];
 
-<script>
-  // 遊戲狀態 (State)
-  let player = {
-    era: '',
-    age: 6,
-    ap: 5,
-    maxAp: 5,
-    health: 55,
-    happy: 50,
-    smarts: 45,
-    money: 80,
-    school: '深水埗官立小學',
-    momRel: 70,
-    district: '九龍',
-    status: '基層家庭'
-  };
+            player.iq = Math.round(((npcs[0].iq + npcs[1].iq) / 2) * 0.85 + (Math.random() * 20 - 5));
 
-  function selectEra(era) {
-    player.era = era;
-    document.getElementById('screen-era').style.display = 'none';
-    document.getElementById('screen-lottery').style.display = 'block';
-  }
+            document.getElementById('setup-district').innerText = player.origin.district;
+            document.getElementById('setup-estate').innerText = `${player.origin.name} (${player.origin.class})`;
+            document.getElementById('setup-father').innerText = `父親 ${npcs[0].name} (${npcs[0].age}歲)：💼 ${npcs[0].job} | 💵 月薪 $${npcs[0].inc.toLocaleString()}`;
+            document.getElementById('setup-mother').innerText = `母親 ${npcs[1].name} (${npcs[1].age}歲)：💼 ${npcs[1].job} | 💵 月薪 $${npcs[1].inc.toLocaleString()}`;
 
-  function drawFate() {
-    const districts = ['九龍 (深水埗)', '新界 (屯門)', '港島 (灣仔)'];
-    const statuses = ['基層家庭 (公屋)', '中產家庭 (私樓)', '富裕家庭 (豪宅)'];
-    
-    player.district = districts[Math.floor(Math.random() * districts.length)];
-    player.status = statuses[Math.floor(Math.random() * statuses.length)];
-    
-    if(player.status.includes('富裕')) player.money = 5000;
-    if(player.status.includes('中產')) player.money = 1000;
+            document.getElementById('screen-start').classList.add('hidden');
+            document.getElementById('screen-setup').classList.remove('hidden');
+        }
 
-    document.getElementById('lottery-result').innerHTML = `
-      <p><b>出生地區：</b>${player.district}</p>
-      <p><b>家庭背景：</b>${player.status}</p>
-      <p><b>初始資金：</b>HK$ ${player.money}</p>
-    `;
-    document.getElementById('btn-start-game').style.display = 'block';
-  }
+        function startGame() {
+            document.getElementById('screen-setup').classList.add('hidden');
+            document.getElementById('screen-main').classList.remove('hidden');
+            document.getElementById('header-bar').classList.remove('hidden');
+            document.getElementById('bottom-tabbar').classList.remove('hidden');
 
-  function startGame() {
-    document.getElementById('screen-lottery').style.display = 'none';
-    document.getElementById('screen-game').style.display = 'block';
-    updateUI();
-  }
+            appendLog(`【0歲 降生記】\n產房內傳來啼哭聲，你正式降生在香港${player.origin.district}！家庭階級為【${player.origin.class}】。父親擔任【${npcs[0].job}】，母親擔任【${npcs[1].job}】。天生 IQ 指數為 ${player.iq}。一個屬於你的香港人生故事在此展開！`);
+            updateUI();
+            renderActionCards('study');
+            renderNPCs();
+        }
 
-  function updateUI() {
-    document.getElementById('player-age').innerText = `Age ${player.age} (${getGrade(player.age)})`;
-    document.getElementById('ap-display').innerText = `AP: ${player.ap}/${player.maxAp}`;
-    document.getElementById('player-school').innerText = `學校：${player.school}`;
-    
-    // UI 數值
-    document.getElementById('val-health').innerText = player.health;
-    document.getElementById('val-happy').innerText = player.happy;
-    document.getElementById('val-smarts').innerText = player.smarts;
-    document.getElementById('val-money').innerText = `$${player.money}`;
-    document.getElementById('rel-mom').innerText = player.momRel;
+        function appendLog(text) {
+            const box = document.getElementById('story-log-box');
+            box.innerHTML += `<div class="p-2.5 bg-slate-900 rounded border border-slate-800">${text.replace(/\n/g, '<br>')}</div>`;
+            setTimeout(() => box.scrollTop = box.scrollHeight, 50);
+        }
 
-    // Progress bar
-    document.getElementById('bar-health').style.width = player.health + '%';
-    document.getElementById('bar-happy').style.width = player.happy + '%';
-    document.getElementById('bar-smarts').style.width = Math.min(player.smarts, 100) + '%';
-  }
+        function updateUI() {
+            player.health = Math.max(0, Math.min(100, player.health));
+            player.happy = Math.max(0, Math.min(100, player.happy));
+            player.face = Math.max(0, Math.min(100, player.face));
+            player.stress = Math.max(0, Math.min(100, player.stress));
 
-  function getGrade(age) {
-    if (age <= 11) return `小學 ${age - 5} 年級`;
-    if (age <= 17) return `中學 ${age - 11} 年級`;
-    return '已畢業 / 社會人士';
-  }
+            document.getElementById('ui-age').innerText = `Age ${player.age}`;
+            document.getElementById('ui-status').innerText = player.age < 6 ? "幼童" : (player.age < 18 ? "學生" : "成年人");
+            document.getElementById('ui-ap-badge').innerText = `⚡ ${player.ap}/${player.maxAp} AP`;
+            document.getElementById('ui-money').innerText = `HK$${player.money.toLocaleString()}`;
 
-  function log(msg) {
-    const logBox = document.getElementById('game-log');
-    logBox.innerHTML = `> ${msg}<br>` + logBox.innerHTML;
-  }
+            document.getElementById('val-health').innerText = player.health;
+            document.getElementById('val-happy').innerText = player.happy;
+            document.getElementById('val-iq').innerText = player.iq;
+            document.getElementById('val-face').innerText = player.face;
+            document.getElementById('val-stress').innerText = player.stress;
 
-  function switchTab(tab) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    if(tab === 'action') {
-      document.getElementById('tab-action').style.display = 'block';
-      document.getElementById('tab-rel').style.display = 'none';
-      event.target.classList.add('active');
-    } else {
-      document.getElementById('tab-action').style.display = 'none';
-      document.getElementById('tab-rel').style.display = 'block';
-      event.target.classList.add('active');
-    }
-  }
+            document.getElementById('bar-health').style.width = player.health + '%';
+            document.getElementById('bar-happy').style.width = player.happy + '%';
+            document.getElementById('bar-iq').style.width = Math.min(100, (player.iq / 150) * 100) + '%';
+            document.getElementById('bar-face').style.width = player.face + '%';
+            document.getElementById('bar-stress').style.width = player.stress + '%';
 
-  function doAction(type) {
-    if (player.ap <= 0) { log('⚠️ 今日 AP 已經用完，請進入下一年！'); return; }
-    
-    player.ap -= 1;
-    if (type === 'study') {
-      player.smarts += 4;
-      player.happy -= 1;
-      log('📚 你認真溫習，智力 +4，快樂 -1');
-    } else if (type === 'play') {
-      player.happy += 4;
-      player.smarts -= 1;
-      log('🎮 你打咗一整晚機，快樂 +4，智力 -1');
-    }
-    updateUI();
-  }
+            document.getElementById('ui-district').innerText = player.origin.district;
+            document.getElementById('ui-estate').innerText = player.origin.name;
+            document.getElementById('ui-school').innerText = player.school;
+        }
 
-  function interactMom() {
-    if (player.ap <= 0) { log('⚠️ 今日 AP 已經用完！'); return; }
-    player.ap -= 1;
-    player.momRel = Math.min(100, player.momRel + 5);
-    player.happy += 2;
-    log('👩 你同媽媽傾偈，媽媽俾咗你些少零用錢。親密度 +5，快樂 +2');
-    updateUI();
-  }
+        function switchTab(tabName) {
+            ['育', '行動', '職', '人', '資'].forEach(t => {
+                document.getElementById(`view-${t}`).classList.add('hidden');
+                document.getElementById(`tab-${t}`).classList.remove('active');
+            });
+            document.getElementById(`view-${tabName}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
 
-  // 升中學呈分試機制 (小六 12歲 TRIGGER)
-  function checkExam() {
-    if (player.age === 12) {
-      log('📝 <b>【重點事件：升中呈分試】</b>');
-      let chance = 0;
-      if (player.smarts >= 80) chance = 99;
-      else if (player.smarts >= 60) chance = 55;
-      else chance = 15;
+        function switchActionSubTab(sub) {
+            ['study', 'play', 'health', 'work'].forEach(s => {
+                let btn = document.getElementById(`subtab-${s}`);
+                if (btn) btn.className = s === sub ? 'px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded' : 'px-3 py-1 bg-slate-800 text-slate-400 rounded';
+            });
+            renderActionCards(sub);
+        }
 
-      let roll = Math.random() * 100;
-      if (roll <= chance) {
-        player.school = '拔萃男/女書院 (Band 1 名校)';
-        log(`🎉 恭喜！憑住智力 (${player.smarts})，你成功考入 Band 1 名校：<b>${player.school}</b>！`);
-      } else {
-        player.school = '區內普通中學 (Band 2)';
-        log(`🏫 呈分試結果出爐，你升讀：<b>${player.school}</b>。`);
-      }
-    }
-  }
+        // 核心【行動 AP 卡片庫】（比照影片 00:19 - 00:25）
+        const actionCardsData = {
+            study: [
+                { title: "溫習功課", desc: "做練習卷，鞏固各科基礎", cost: 1, effect: () => { player.iq += 1; player.happy -= 2; player.stress += 3; }, tag: "+1 IQ, -2 快, +3 壓" },
+                { title: "去圖書館溫書", desc: "圖書館氛圍安靜專注，備考效率高", cost: 1, effect: () => { player.iq += 1; player.happy -= 1; player.stress += 2; }, tag: "+1 IQ, -1 快, +2 壓" },
+                { title: "閱讀科普書本", desc: "頗為有趣，純粹享受閱讀樂趣", cost: 1, effect: () => { player.iq += 1; player.happy += 2; }, tag: "+1 IQ, +2 快" }
+            ],
+            play: [
+                { title: "同朋友出去玩", desc: "鬆一鬆，心情輕鬆起來", cost: 1, effect: () => { player.happy += 3; player.health -= 2; player.money = Math.max(0, player.money - 40); }, tag: "+3 快, -2 康, -$40" },
+                { title: "去飲茶", desc: "一家人食餐飯，家人感情變好", cost: 1, effect: () => { player.happy += 4; player.health -= 2; player.money = Math.max(0, player.money - 200); }, tag: "+4 快, -2 康, -$200" }
+            ],
+            health: [
+                { title: "休息一陣", desc: "坐在一旁休息，減壓抒懷", cost: 1, effect: () => { player.stress = Math.max(0, player.stress - 4); player.health += 2; }, tag: "-4 壓, +2 康" },
+                { title: "出去跑步散步", desc: "出汗鍛鍊身體", cost: 1, effect: () => { player.health += 3; player.stress = Math.max(0, player.stress - 2); }, tag: "+3 康, -2 壓" }
+            ],
+            work: [
+                { title: "做私人補習兼職", desc: "幫小學生補習賺取零用錢", cost: 1, effect: () => { player.money += 3000; player.stress += 5; }, tag: "+$3,000, +5 壓" }
+            ]
+        };
 
-  function nextYear() {
-    player.age += 1;
-    player.ap = player.maxAp; // 重置 AP
-    
-    // 每年隨機事件
-    log(`🗓️ 你升上了 ${player.age} 歲 (${getGrade(player.age)})`);
-    
-    // 檢查特徵事件 (例如 12 歲升中)
-    checkExam();
+        function renderActionCards(subCat) {
+            const list = document.getElementById('action-cards-list');
+            list.innerHTML = '';
+            let cards = actionCardsData[subCat] || [];
 
-    updateUI();
-  }
-</script>
+            cards.forEach(c => {
+                list.innerHTML += `
+                    <div onclick="doAction('${c.title}')" class="action-card p-3 rounded-xl flex justify-between items-center cursor-pointer">
+                        <div>
+                            <div class="font-bold text-sm text-white flex items-center gap-2">
+                                ${c.title}
+                                <span class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded">⚡ ${c.cost} AP</span>
+                            </div>
+                            <div class="text-xs text-slate-400 mt-0.5">${c.desc}</div>
+                        </div>
+                        <div class="text-xs font-bold text-amber-400 shrink-0 ml-2">${c.tag}</div>
+                    </div>`;
+            });
+        }
+
+        function doAction(title) {
+            if (player.ap <= 0) { alert("本年度行動力 (AP) 已用完！請點擊『下一年』推進！"); return; }
+            let all = [...actionCardsData.study, ...actionCardsData.play, ...actionCardsData.health, ...actionCardsData.work];
+            let card = all.find(c => c.title === title);
+            if (card) {
+                player.ap -= card.cost;
+                card.effect();
+                updateUI();
+                appendLog(`⚡ 執行行動【${card.title}】：${card.tag}`);
+            }
+        }
+
+        // 人際關係列表（比照影片 00:26 - 00:34）
+        function renderNPCs() {
+            const list = document.getElementById('npc-relations-list');
+            list.innerHTML = '';
+            npcs.forEach(n => {
+                list.innerHTML += `
+                    <div class="npc-card p-3 rounded-xl flex justify-between items-center">
+                        <div>
+                            <div class="font-bold text-amber-300">${n.rel}: ${n.name} (${n.age}歲)</div>
+                            <div class="text-slate-400">💼 ${n.job}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-bold text-emerald-400">${n.affinity}% 親密</div>
+                            <button onclick="interactNpc('${n.name}')" class="mt-1 px-2.5 py-1 bg-amber-500 text-slate-950 font-bold rounded text-[10px]">傾偈 ⚡1AP</button>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function interactNpc(name) {
+            if (player.ap <= 0) { alert("AP 已用完！"); return; }
+            let n = npcs.find(x => x.name === name);
+            if (n) {
+                player.ap -= 1;
+                n.affinity = Math.min(100, n.affinity + 5);
+                player.happy += 3;
+                updateUI();
+                renderNPCs();
+                appendLog(`💬 與 ${n.rel} ${n.name} 傾偈相談甚歡，親密值上升至 ${n.affinity}%！`);
+            }
+        }
+
+        function nextYear() {
+            if (player.isHospitalized) {
+                player.isHospitalized = false;
+                player.health = 60;
+                player.stress = 20;
+                player.ap = 5;
+                appendStory(`🏥 【康復出院】休養一年後身體康復，AP 恢復至 5。請保重身體！`);
+                player.age++;
+                updateUI();
+                return;
+            }
+
+            // 過勞住院檢測
+            if (player.stress >= 100 || player.health <= 0) {
+                player.isHospitalized = true;
+                player.money = Math.max(0, player.money - 30000);
+                appendLog(`⚠️【過勞住院！】你的壓力爆表 (≥100) 或健康歸零！你被緊急送院，扣減 $30,000 醫療費！下一年強制休養！`);
+                player.age++;
+                updateUI();
+                return;
+            }
+
+            player.age++;
+            player.ap = player.maxAp; // 恢復 AP
+
+            // NPC 演化
+            npcs.forEach(n => { n.age++; if (Math.random() < 0.2) n.inc = Math.round(n.inc * 1.05); });
+
+            let msg = `【${player.age}歲 年度推斷】你在【${player.origin.name} (${player.origin.district})】平穩度過了這一年。`;
+            if (player.age === 6) { player.school = `${player.origin.district}地區小學`; msg += ` 🏫 你到了入學年齡，正式入讀【${player.school}】！`; }
+            
+            appendLog(msg);
+            updateUI();
+            renderNPCs();
+        }
+    </script>
 </body>
 </html>
