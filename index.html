@@ -3,51 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>香港豪門與逆襲模擬器 HK Life Empire Simulator</title>
+    <title>香港豪門與逆襲模擬器 HK Imperial Life</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
         body { background-color: #0b0f19; color: #e2e8f0; font-family: 'Noto Sans TC', sans-serif; }
         .gold-text { color: #f59e0b; text-shadow: 0 0 10px rgba(245, 158, 11, 0.3); }
-        .hk-card { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(245, 158, 11, 0.25); backdrop-filter: blur(12px); }
+        .hk-card { background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(245, 158, 11, 0.25); backdrop-filter: blur(12px); }
         .btn-module { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(245, 158, 11, 0.2); transition: all 0.2s; }
         .btn-module:hover { border-color: rgba(245, 158, 11, 0.6); background: rgba(51, 65, 85, 0.9); }
-        .btn-selected { border-color: #f59e0b !important; background: rgba(245, 158, 11, 0.15) !important; box-shadow: 0 0 12px rgba(245, 158, 11, 0.2); }
+        .btn-selected { border-color: #f59e0b !important; background: rgba(245, 158, 11, 0.2) !important; box-shadow: 0 0 12px rgba(245, 158, 11, 0.25); }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-3 md:p-6">
 
     <div id="app" class="w-full max-w-3xl hk-card rounded-2xl p-5 md:p-8 shadow-2xl">
         
-        <!-- 標題區域 -->
         <header class="text-center mb-6 border-b border-amber-500/20 pb-4">
             <h1 class="text-2xl md:text-4xl font-black gold-text tracking-widest">🇭🇰 香港豪門與逆襲重開模擬器</h1>
-            <p class="text-slate-400 text-xs md:text-sm mt-1">自訂角色 ‧ 正態屬性 ‧ 年齡階段 ABCD 決策 ‧ 地道香港人生</p>
+            <p class="text-slate-400 text-xs md:text-sm mt-1">十八區真實樓盤 ‧ 多輪面試 ‧ DSE 答題加分 ‧ 年齡嚴謹回合</p>
         </header>
 
-        <!-- 畫面 1：輸入名字與開局 -->
+        <!-- 畫面 1：開局自訂 -->
         <div id="screen-start" class="space-y-6">
             <div class="space-y-2">
                 <label class="block text-sm font-bold text-amber-400">請輸入角色姓名：</label>
-                <input type="text" id="player-name-input" value="陳大文" placeholder="輸入你嘅名字" 
-                       class="w-full p-3.5 bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-amber-500 font-bold text-base">
+                <input type="text" id="player-name-input" value="陳大文" placeholder="輸入名字" 
+                       class="w-full p-3.5 bg-slate-900 border border-slate-700 rounded-xl text-white font-bold">
             </div>
 
-            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 text-xs text-slate-400 leading-relaxed space-y-1.5">
-                <p>⚖️ <b class="text-amber-400">正態分佈天生屬性：</b> 智/情/貌/體 0-100 隨機（常態分佈，大多數人介乎 40-60，90+ 天才極稀有）。</p>
-                <p>🏠 <b class="text-amber-400">真實出身機率：</b> 劏房 (5%)、公屋 (50%)、居屋 (30%)、私樓 (12%)、豪門世家 (3%)。</p>
-                <p>💵 <b class="text-amber-400">真實零用錢機制：</b> 未成年只有零用錢或家庭資源；成年後方有個人儲蓄與投資資產！</p>
+            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-800 text-xs text-slate-400 leading-relaxed space-y-2">
+                <p>🏙️ <b class="text-amber-400">十八區真實樓盤：</b> 由深水埗劏房、天水圍天晴邨，到美孚新邨、九龍站凱旋門、山頂天比高。</p>
+                <p>📈 <b class="text-amber-400">0-6 歲黃金期：</b> 第一回合屬性大幅飆升，塑造天生性格！</p>
+                <p>🏫 <b class="text-amber-400">多輪名校面試：</b> 嚴格屬性門檻，面試唔過關無法入讀！</p>
+                <p>📝 <b class="text-amber-400">DSE 答題系統：</b> 答對問題可獲額外分數，屬性低亦能靠智慧逆襲狀元！</p>
             </div>
 
-            <button onclick="generateCharacter()" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-lg rounded-xl transition shadow-lg shadow-amber-500/20">
-                🎲 抽籤天命出身與屬性
+            <button onclick="generateCharacter()" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-lg rounded-xl shadow-lg shadow-amber-500/20">
+                🎲 抽籤十八區出身與屬性
             </button>
         </div>
 
-        <!-- 畫面 2：屬性展示與確定投胎 -->
+        <!-- 畫面 2：屬性與出身展示 -->
         <div id="screen-setup" class="hidden space-y-6">
             <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800">
-                <h2 class="text-sm font-bold text-amber-400 mb-3 border-b border-slate-800 pb-2">📊 天生屬性（正態分佈抽籤，可後天培養）</h2>
+                <h2 class="text-sm font-bold text-amber-400 mb-3 border-b border-slate-800 pb-2">📊 天生屬性 (正態分佈抽籤)</h2>
                 <div class="grid grid-cols-2 gap-3 text-sm">
                     <div class="bg-slate-800/60 p-2.5 rounded-lg">🧠 智力：<span id="attr-intel" class="font-bold text-white">0</span></div>
                     <div class="bg-slate-800/60 p-2.5 rounded-lg">💖 情商：<span id="attr-eq" class="font-bold text-white">0</span></div>
@@ -57,33 +57,32 @@
             </div>
 
             <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800">
-                <h2 class="text-sm font-bold text-amber-400 mb-2">🏠 抽中出生背景</h2>
+                <h2 class="text-sm font-bold text-amber-400 mb-2">🏡 抽中十八區居住樓盤</h2>
                 <div id="origin-title" class="text-lg font-bold text-white mb-1">?</div>
                 <p id="origin-desc" class="text-slate-400 text-xs mb-2">?</p>
-                <p id="origin-allowance" class="text-amber-300/80 text-xs font-mono">?</p>
+                <p id="origin-class" class="text-amber-300/80 text-xs font-mono">?</p>
             </div>
 
             <div class="flex gap-3">
-                <button onclick="generateCharacter()" class="w-1/2 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-bold border border-slate-700 transition">🎲 重新抽籤</button>
-                <button onclick="startGame()" class="w-1/2 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl transition">🚀 正式投胎出生</button>
+                <button onclick="generateCharacter()" class="w-1/2 py-3.5 bg-slate-800 text-slate-300 rounded-xl font-bold border border-slate-700">🎲 重新抽籤</button>
+                <button onclick="startGame()" class="w-1/2 py-3.5 bg-amber-500 text-slate-950 font-black rounded-xl">🚀 正式投胎出生</button>
             </div>
         </div>
 
         <!-- 畫面 3：遊戲主界面 -->
         <div id="screen-game" class="hidden space-y-5">
-            <!-- 角色狀態儀表板 -->
             <div class="bg-slate-900/90 p-4 rounded-xl border border-amber-500/30">
                 <div class="flex justify-between items-center mb-2.5 border-b border-slate-800 pb-2">
                     <div>
                         <span id="game-player-name" class="font-black text-amber-400 text-base mr-2">陳大文</span>
-                        <span id="game-stage" class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded">幼兒期</span>
+                        <span id="game-personality" class="text-xs bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded">性格：未塑造</span>
                     </div>
-                    <span id="game-status" class="text-xs bg-amber-500/10 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded">基層市民</span>
+                    <span id="game-status" class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded">學童</span>
                 </div>
                 <div class="grid grid-cols-3 gap-2 text-xs">
                     <div>📅 年齡：<span id="game-age" class="text-white font-bold">0</span> 歲</div>
-                    <div>💰 個人資產：<span id="game-money" class="text-emerald-400 font-bold">HK$0</span></div>
-                    <div>💵 每月津貼：<span id="game-allowance" class="text-amber-300 font-bold">HK$0</span></div>
+                    <div>🏠 樓盤：<span id="game-estate" class="text-amber-300 font-bold">美孚新邨</span></div>
+                    <div>💰 資產：<span id="game-money" class="text-emerald-400 font-bold">HK$0</span></div>
                     <div>🧠 智力：<span id="game-intel" class="text-slate-200 font-bold">0</span></div>
                     <div>💖 情商：<span id="game-eq" class="text-slate-200 font-bold">0</span></div>
                     <div>✨ 外貌：<span id="game-beauty" class="text-slate-200 font-bold">0</span></div>
@@ -91,20 +90,14 @@
             </div>
 
             <!-- 動態事件紀錄 -->
-            <div id="event-log" class="bg-slate-950 p-4 rounded-xl h-44 overflow-y-auto space-y-2 border border-slate-800 text-xs md:text-sm leading-relaxed">
+            <div id="event-log" class="bg-slate-950 p-4 rounded-xl h-40 overflow-y-auto space-y-2 border border-slate-800 text-xs md:text-sm leading-relaxed">
             </div>
 
             <!-- ABCD 模組選擇區域 -->
             <div id="abcd-container" class="space-y-4">
-                <h3 class="text-xs font-bold text-amber-400 tracking-wider uppercase">請挑選本階段行動組合（A / B / C / D 各選一項）：</h3>
-                
-                <div id="modules-list" class="space-y-3">
-                    <!-- 動態渲染 A B C D -->
-                </div>
-
-                <button id="btn-submit-turn" onclick="processTurn()" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-base rounded-xl transition shadow-lg shadow-amber-500/20">
-                    ✅ 確認選擇並推進階段
-                </button>
+                <h3 id="stage-title-text" class="text-xs font-bold text-amber-400 uppercase tracking-wider">請完成本階段決策：</h3>
+                <div id="modules-list" class="space-y-3"></div>
+                <button id="btn-submit-turn" onclick="processTurn()" class="w-full py-4 bg-amber-500 text-slate-950 font-black rounded-xl">✅ 確認選擇並推進</button>
             </div>
         </div>
 
@@ -120,39 +113,45 @@
             phys: 0,
             money: 0,
             origin: null,
-            status: '基層市民'
+            personality: '未塑造',
+            status: '幼童',
+            school: '未入學',
+            dseScore: 0
         };
 
         let selectedChoices = { A: null, B: null, C: null, D: null };
+        let currentStep = 0; // 用於多輪面試與問答控制
 
-        // 香港出身分佈（常態逼真比率）
-        const origins = [
-            { name: "深水埗劏房 / 借債家庭", prob: 0.05, allowance: 0, desc: "環境狹窄，家人常因債務嘈交，童年基本上冇額外零用錢。", status: "劏房居民" },
-            { name: "黃大仙公共屋邨", prob: 0.50, allowance: 100, desc: "標準香港基層，住公屋，父母做藍領辛苦維生，每日得微薄零用錢。", status: "公屋居民" },
-            { name: "沙田居屋 / 夾屋家庭", prob: 0.30, allowance: 1000, desc: "小康家庭，父母係公務員或中企主管，生活穩定。", status: "中產子弟" },
-            { name: "太古城 / 港島私樓家庭", prob: 0.12, allowance: 5000, desc: "優越中產，從小上興趣班、學琴兼補習，生活無憂。", status: "港島精英" },
-            { name: "山頂上市財閥 / 豪門世家", prob: 0.03, allowance: 100000, desc: "極稀有！家族掌控上市企業或醫療集團，從小有司機同保姆。", status: "豪門少主" }
+        // 香港十八區真實樓盤機率庫
+        const estates = [
+            { name: "深水埗 劏房", class: "基層貧民", prob: 0.05, desc: "環境極狹窄，隔音差，生活極度困苦。" },
+            { name: "天水圍 天晴邨", class: "基層公屋", prob: 0.25, desc: "標準公共屋邨，父母為基層藍領工人。" },
+            { name: "黃大仙 黃大仙下邨", class: "基層公屋", prob: 0.25, desc: "老牌公屋區，生活配套成熟但家庭收入微薄。" },
+            { name: "荔枝角 美孚新邨", class: "普通中產", prob: 0.20, desc: "經典老牌中產屋苑，父母為公司中層主管。" },
+            { name: "鰂魚涌 太古城", class: "核心中產", prob: 0.12, desc: "港島知名中產屋苑，家庭環境優越。" },
+            { name: "九龍站 凱旋門", class: "高端豪宅", prob: 0.08, desc: "九龍站頂級豪宅，享有維港海景，家庭資金雄厚。" },
+            { name: "中環半山 帝景園", class: "豪門財閥", prob: 0.04, desc: "半山傳統豪宅，家族掌管上市企業或醫療集團。" },
+            { name: "山頂 天比高", class: "隱世頂豪", prob: 0.01, desc: "極稀有！山頂獨立屋，家族擁有數百億身家。" }
         ];
 
-        // 高斯/正態分佈演算法 (產生 0-100 天生屬性，中間機率最高，極端值極稀有)
         function randomGaussian() {
             let u = 0, v = 0;
             while(u === 0) u = Math.random();
             while(v === 0) v = Math.random();
             let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
-            num = num / 10.0 + 0.5; // 移至 0.5 為中心
+            num = num / 10.0 + 0.5;
             if (num < 0 || num > 1) return randomGaussian();
             return Math.floor(num * 100);
         }
 
-        function getRandomOrigin() {
+        function getRandomEstate() {
             let rand = Math.random();
             let cumulative = 0;
-            for (let origin of origins) {
-                cumulative += origin.prob;
-                if (rand <= cumulative) return origin;
+            for (let est of estates) {
+                cumulative += est.prob;
+                if (rand <= cumulative) return est;
             }
-            return origins[1];
+            return estates[1];
         }
 
         function generateCharacter() {
@@ -164,9 +163,8 @@
             player.beauty = randomGaussian();
             player.phys = randomGaussian();
 
-            player.origin = getRandomOrigin();
-            player.money = 0; // 0歲無個人存款
-            player.status = player.origin.status;
+            player.origin = getRandomEstate();
+            player.money = 0;
 
             document.getElementById('attr-intel').innerText = player.intel;
             document.getElementById('attr-eq').innerText = player.eq;
@@ -175,7 +173,7 @@
 
             document.getElementById('origin-title').innerText = player.origin.name;
             document.getElementById('origin-desc').innerText = player.origin.desc;
-            document.getElementById('origin-allowance').innerText = `每月零用錢預算：HK$${player.origin.allowance.toLocaleString()}`;
+            document.getElementById('origin-class').innerText = `階級：${player.origin.class}`;
 
             document.getElementById('screen-start').classList.add('hidden');
             document.getElementById('screen-setup').classList.remove('hidden');
@@ -186,158 +184,200 @@
             document.getElementById('screen-game').classList.remove('hidden');
 
             document.getElementById('game-player-name').innerText = player.name;
-            logEvent(`👶 你喺香港出生，名字為【${player.name}】！出身於【${player.origin.name}】。故事正式展開！`);
+            logEvent(`👶 你喺【${player.origin.name}】出生，名字為【${player.name}】！`);
             
-            renderAgeStage();
+            renderTurn();
         }
 
         function logEvent(text) {
             const log = document.getElementById('event-log');
-            log.innerHTML += `<p class="border-b border-slate-900 pb-1.5">${text}</p>`;
+            log.innerHTML += `<p class="border-b border-slate-900 pb-1">${text}</p>`;
             log.scrollTop = log.scrollHeight;
         }
 
         function updateUI() {
             document.getElementById('game-age').innerText = player.age;
+            document.getElementById('game-estate').innerText = player.origin.name;
             document.getElementById('game-money').innerText = 'HK$' + player.money.toLocaleString();
-            document.getElementById('game-allowance').innerText = 'HK$' + player.origin.allowance.toLocaleString();
             document.getElementById('game-status').innerText = player.status;
             document.getElementById('game-intel').innerText = player.intel;
             document.getElementById('game-eq').innerText = player.eq;
             document.getElementById('game-beauty').innerText = player.beauty;
+            document.getElementById('game-personality').innerText = `性格：${player.personality}`;
         }
 
-        // 年齡階段數據與地道 ABCD 模組選項
-        function getStageData() {
-            if (player.age < 6) {
-                return {
-                    stageName: "幼兒期 (0-5歲)",
-                    modules: {
-                        A: { title: "🅰️ 模組 A：學前啟蒙與面試", options: [
-                            { id: "A1", text: "A1 【參加學前面試培訓班】 (增強表達與智力)", effect: () => { player.intel += 3; player.eq += 2; } },
-                            { id: "A2", text: "A2 【在家自主睇繪本識字】 (穩步提升智力)", effect: () => { player.intel += 2; } }
-                        ]},
-                        B: { title: "🅱️ 模組 B：體能與興趣", options: [
-                            { id: "B1", text: "B1 【參加幼兒體操與游泳班】", effect: () => { player.phys += 4; } },
-                            { id: "B2", text: "B2 【去公園滑梯公園放電】", effect: () => { player.phys += 2; } }
-                        ]},
-                        C: { title: "🅲 模組 C：社交與家庭關係", options: [
-                            { id: "C1", text: "C1 【多同鄰居屋邨小朋友玩】 (提升情商)", effect: () => { player.eq += 3; } },
-                            { id: "C2", text: "C2 【乖乖聽父母說話】 (家庭關係融洽)", effect: () => { player.eq += 1; } }
-                        ]},
-                        D: { title: "🅳 模組 D：幼稚園選校決策", options: [
-                            { id: "D1", text: "D1 【報考名校私立幼稚園】", effect: () => { if(player.intel>55) { player.intel+=4; logEvent("成功考入名校幼稚園！"); } else { logEvent("面試失敗，入讀普通幼稚園。"); } } },
-                            { id: "D2", text: "D2 【入讀地區免費幼稚園】", effect: () => { player.eq += 2; } }
-                        ]}
-                    }
-                };
-            } else if (player.age < 12) {
-                return {
-                    stageName: "小學期 (6-11歲)",
-                    modules: {
-                        A: { title: "🅰️ 模組 A：小學學業與呈分試", options: [
-                            { id: "A1", text: "A1 【報讀補習社，衝刺呈分試 Top 1%】", effect: () => { player.intel += 6; } },
-                            { id: "A2", text: "A2 【保持正常做功課，適度學習】", effect: () => { player.intel += 2; } }
-                        ]},
-                        B: { title: "🅱️ 模組 B：興趣班與技能培育", options: [
-                            { id: "B1", text: "B1 【學習鋼琴/小提琴等樂器】", effect: () => { player.beauty += 3; player.intel += 2; } },
-                            { id: "B2", text: "B2 【參加學校田徑隊/足球隊】", effect: () => { player.phys += 5; } }
-                        ]},
-                        C: { title: "🅲 模組 C：零用錢與童年社交", options: [
-                            { id: "C1", text: "C1 【儲起小部分零用錢，學習理財】", effect: () => { player.money += player.origin.allowance * 12; } },
-                            { id: "C2", text: "C2 【買流行玩具/卡牌同同學打好關係】", effect: () => { player.eq += 4; } }
-                        ]},
-                        D: { title: "🅳 模組 D：升中派位選校", options: [
-                            { id: "D1", text: "D1 【目標 Band 1 傳統名校 (喇沙/拔萃/聖保羅/女拔)】", effect: () => { if(player.intel>65) { player.intel+=8; player.status="名校生"; logEvent("成功考入 Band 1 傳統名校！"); } else { logEvent("呈分試分數不足，派入 Band 2 中學。"); } } },
-                            { id: "D2", text: "D2 【選擇直升地區 Band 2 中學】", effect: () => { player.eq += 3; } }
-                        ]}
-                    }
-                };
-            } else if (player.age < 18) {
-                return {
-                    stageName: "中學與 DSE 階段 (12-17歲)",
-                    modules: {
-                        A: { title: "🅰️ 模組 A：DSE 文憑試與選科", options: [
-                            { id: "A1", text: "A1 【日夜狂補習衝刺 DSE 狀元 (目標 HKU 醫學/金融神科)】", effect: () => { player.intel += 10; if(player.intel>75) { player.status="DSE狀元/神科生"; logEvent("DSE 考獲 7 科 5** 狀元！考入港大醫學系/金融神科！"); } } },
-                            { id: "A2", text: "A2 【專注自學 Coding / AI 與網絡新興科技】", effect: () => { player.intel += 8; player.money += 30000; logEvent("接 Freelance 寫程式賺到了第一桶金！"); } }
-                        ]},
-                        B: { title: "🅱️ 模組 B：個人影響力與社交", options: [
-                            { id: "B1", text: "B1 【經營 Instagram / YouTube，成為學界KOL】", effect: () => { player.eq += 8; player.beauty += 4; } },
-                            { id: "B2", text: "B2 【擔任學生會幹事/辯論隊隊長】", effect: () => { player.eq += 10; } }
-                        ]},
-                        C: { title: "🅲 模組 C：兼職與積蓄", options: [
-                            { id: "C1", text: "C1 【做私人補習賺取兼職收入】", effect: () => { player.money += 50000; } },
-                            { id: "C2", text: "C2 【專注學業，不分散精力做兼職】", effect: () => { player.intel += 3; } }
-                        ]},
-                        D: { title: "🅳 模組 D：未來發展方向", options: [
-                            { id: "D1", text: "D1 【準備大學畢業後進入中環 IBank / 4大會計師樓】", effect: () => { player.status = "預備中環精英"; } },
-                            { id: "D2", text: "D2 【籌劃創辦科技 Start-up / 商業項目】", effect: () => { player.status = "預備創業家"; } }
-                        ]}
-                    }
-                };
-            } else if (player.age < 30) {
-                return {
-                    stageName: "青年職場與創業爆發期 (18-29歲)",
-                    modules: {
-                        A: { title: "🅰️ 模組 A：事業與資本積累", options: [
-                            { id: "A1", text: "A1 【進入中環投行 (IBank) / 頂級律師樓】 (高薪積累資產)", effect: () => { player.money += 2000000; player.status = "中環精英"; } },
-                            { id: "A2", text: "A2 【創辦 AI / 科技 Start-up 並申請數碼港/科學園基金】", effect: () => { if(player.intel>75) { player.money += 10000000; player.status="創科獨角獸CEO"; logEvent("Start-up 大獲成功，獲 VC 融資！"); } else { player.money += 500000; } } }
-                        ]},
-                        B: { title: "🅱️ 模組 B：資本市場與投資", options: [
-                            { id: "B1", text: "B1 【炒港股/美股，集中做量化交易】", effect: () => { player.money = Math.floor(player.money * 2.5); } },
-                            { id: "B2", text: "B2 【買入首套香港私樓物業 (炒樓升值)】", effect: () => { player.money = Math.floor(player.money * 1.8); } }
-                        ]},
-                        C: { title: "🅲 模組 C：高端社交與享樂", options: [
-                            { id: "C1", text: "C1 【加入馬會 / 中環私人會所，結交頂級政商名流】", effect: () => { player.eq += 10; } },
-                            { id: "C2", text: "C2 【購入第一台豪車，享受奢華生活】", effect: () => { player.beauty += 3; player.money -= 500000; } }
-                        ]},
-                        D: { title: "🅳 模組 D：豪門聯姻與家族", options: [
-                            { id: "D1", text: "D1 【尋求與上市地產/醫療財閥千金/少爺聯姻】", effect: () => { if(player.eq>70 || player.beauty>70) { player.money += 50000000; logEvent("成功與豪門千金/少爺聯姻！獲家族注資！"); } else { logEvent("聯姻失敗，繼續獨立發展。"); } } },
-                            { id: "D2", text: "D2 【保持單身，全力專注商業帝國開拓】", effect: () => { player.intel += 5; } }
-                        ]}
-                    }
-                };
-            } else {
-                return {
-                    stageName: "帝國壯大與新香港霸權 (30歲+)",
-                    modules: {
-                        A: { title: "🅰️ 模組 A：商業大吞併與一家獨大", options: [
-                            { id: "A1", text: "A1 【發動資本閃電戰，100% 收購吞併市面上所有競品公司】", effect: () => { player.money *= 5; player.status = "商業帝國獨霸者"; logEvent("成功吞併所有同類型競品！實現 100% 獨大！"); } },
-                            { id: "A2", text: "A2 【收購 NBA 球隊並投資 Apex 基因延壽醫療】", effect: () => { player.money *= 3; logEvent("球隊奪冠！延壽醫療引爆全球關注！"); } }
-                        ]},
-                        B: { title: "🅱️ 模組 B：新香港 (New HK) 世紀工程", options: [
-                            { id: "B1", text: "B1 【在美國買地建造『新香港 (New HK)』科技特區】", effect: () => { player.money *= 8; player.status = "「新香港」Supreme Governor"; logEvent("新香港落成！登頂最高特區領袖！"); } },
-                            { id: "B2", text: "B2 【興建『太空天梯』與小行星採礦基地】", effect: () => { player.money *= 10; player.status = "星際領主"; logEvent("太空天梯落成！資產突破萬億美金！"); } }
-                        ]},
-                        C: { title: "🅲 模組 C：頂級享樂與奢華生活", options: [
-                            { id: "C1", text: "C1 【打造 200 米核動力私人遊艇，舉辦私人島嶼慶功】", effect: () => { player.eq += 5; } },
-                            { id: "C2", text: "C2 【建立私人全息藝術博物館，收藏全球珍寶】", effect: () => { player.beauty += 5; } }
-                        ]},
-                        D: { title: "🅳 模組 D：家族傳承與立嫡", options: [
-                            { id: "D1", text: "D1 【設立 $1000 億美元『世代創業與從政信託』，培養第二代】", effect: () => { logEvent("世代信託成立！第二代後代獲得頂級資源支持！"); } },
-                            { id: "D2", text: "D2 【發行金本位『Apex Coin』，掌控全球貨幣主權】", effect: () => { player.money *= 2; player.status = "全球終極教父"; logEvent("登頂福布斯歷史第一首富！"); } }
-                        ]}
-                    }
-                };
-            }
-        }
-
-        function renderAgeStage() {
-            player.age += (player.age < 18 ? 6 : 6); // 階段式推進
+        // 回合邏輯控制器
+        function renderTurn() {
             updateUI();
-
-            const stageData = getStageData();
-            document.getElementById('game-stage').innerText = stageData.stageName;
-
-            logEvent(`🗓️ 進入【${stageData.stageName}】（當前 ${player.age} 歲）`);
-
             selectedChoices = { A: null, B: null, C: null, D: null };
             const container = document.getElementById('modules-list');
             container.innerHTML = '';
 
+            // 0-6歲 第一回合 (屬性大幅暴升 & 塑造性格)
+            if (player.age === 0) {
+                document.getElementById('stage-title-text').innerText = "【0-6歲 第一回合：啟蒙與性格塑造】 (屬性爆發加成！)";
+                renderABCDModules({
+                    A: { title: "🅰️ 模組 A：智力與早教啟蒙", options: [
+                        { id: "A1", text: "A1 【狂睇繪本與益智積木】 (智力 +15)", effect: () => { player.intel += 15; } },
+                        { id: "A2", text: "A2 【聽古典音樂與語言早教】 (智力 +10, 外貌 +5)", effect: () => { player.intel += 10; player.beauty += 5; } }
+                    ]},
+                    B: { title: "🅱️ 模組 B：體能與運動發育", options: [
+                        { id: "B1", text: "B1 【參加幼兒游泳與體操】 (體力 +15)", effect: () => { player.phys += 15; } },
+                        { id: "B2", text: "B2 【在屋邨/屋苑公園放電】 (體力 +10)", effect: () => { player.phys += 10; } }
+                    ]},
+                    C: { title: "🅲 模組 C：社交與性格傾向", options: [
+                        { id: "C1", text: "C1 【主動同鄰居小朋友玩】 (塑造性格：開朗圓滑, 情商 +15)", effect: () => { player.eq += 15; player.personality = "開朗圓滑"; } },
+                        { id: "C2", text: "C2 【喜愛沉思獨處做手工】 (塑造性格：冷靜沉穩, 智力 +10)", effect: () => { player.intel += 10; player.personality = "冷靜沉穩"; } }
+                    ]},
+                    D: { title: "🅳 模組 D：幼稚園面試準備", options: [
+                        { id: "D1", text: "D1 【報讀名校私幼稚園面試班】 (情商 +5)", effect: () => { player.eq += 5; } },
+                        { id: "D2", text: "D2 【順其自然發展】 (體力 +5)", effect: () => { player.phys += 5; } }
+                    ]}
+                });
+            }
+            // 6歲 單獨回合：小一升學與大抽獎
+            else if (player.age === 6) {
+                document.getElementById('stage-title-text').innerText = "【6歲 單獨回合：小一升學大抽獎與名校面試】";
+                renderABCDModules({
+                    A: { title: "🅰️ 模組 A：面試與大抽獎策略", options: [
+                        { id: "A1", text: "A1 【衝刺拔萃/喇沙/聖保羅傳統名校面試】", effect: () => {
+                            if(player.intel >= 70 && player.eq >= 65) {
+                                player.school = "名門小學"; logEvent("🎉 表現優異！成功獲傳統名校錄取！"); player.intel += 10;
+                            } else {
+                                logEvent("❌ 面試表現一般，未能入讀名校，轉入官立小學。"); player.school = "官立小學";
+                            }
+                        }},
+                        { id: "A2", text: "A2 【參加統一派位大抽獎】", effect: () => {
+                            if(Math.random() < 0.3) { player.school = "地區名校"; logEvent("🎲 大抽獎好運！抽中地區名校！"); }
+                            else { player.school = "普通小學"; logEvent("🎲 抽中普通津貼小学。"); }
+                        }}
+                    ]},
+                    B: { title: "🅱️ 模組 B：課外興趣選定", options: [
+                        { id: "B1", text: "B1 【學習鋼琴/小提琴】", effect: () => { player.beauty += 5; } },
+                        { id: "B2", text: "B2 【加入學校奧數隊】", effect: () => { player.intel += 5; } }
+                    ]},
+                    C: { title: "🅲 模組 C：零用錢管理", options: [
+                        { id: "C1", text: "C1 【開始儲蓄零用錢】", effect: () => { player.money += 1000; } },
+                        { id: "C2", text: "C2 【買零食分享結交朋友】", effect: () => { player.eq += 5; } }
+                    ]},
+                    D: { title: "🅳 模組 D：家庭教育方向", options: [
+                        { id: "D1", text: "D1 【嚴格精英式教育】", effect: () => { player.intel += 5; } },
+                        { id: "D2", text: "D2 【快樂童年陪伴】", effect: () => { player.eq += 5; } }
+                    ]}
+                });
+            }
+            // 7-11歲 小學期 (3年一回合)
+            else if (player.age === 7 || player.age === 10) {
+                document.getElementById('stage-title-text').innerText = `【${player.age}-${player.age+2}歲 小學期】`;
+                renderABCDModules({
+                    A: { title: "🅰️ 模組 A：呈分試準備", options: [
+                        { id: "A1", text: "A1 【瘋狂補習呈分試，目標 Band 1 頂級名校】", effect: () => { player.intel += 8; } },
+                        { id: "A2", text: "A2 【平衡學習與運動】", effect: () => { player.intel += 4; player.phys += 4; } }
+                    ]},
+                    B: { title: "🅱️ 模組 B：技能專長", options: [
+                        { id: "B1", text: "B1 【參加游泳/田徑校隊】", effect: () => { player.phys += 8; } },
+                        { id: "B2", text: "B2 【學習 Coding 程式設計】", effect: () => { player.intel += 6; } }
+                    ]},
+                    C: { title: "🅲 模組 C：社交與影響力", options: [
+                        { id: "C1", text: "C1 【競選風紀/班長】", effect: () => { player.eq += 6; } },
+                        { id: "C2", text: "C2 【專注個人興趣】", effect: () => { player.intel += 3; } }
+                    ]},
+                    D: { title: "🅳 模組 D：升中選校意向", options: [
+                        { id: "D1", text: "D1 【目標英華/拔萃/皇仁多輪面試名校】", effect: () => { player.intel += 4; } },
+                        { id: "D2", text: "D2 【目標地區 Band 1 中學】", effect: () => { player.eq += 4; } }
+                    ]}
+                });
+            }
+            // 12歲 單獨回合：小六升初中 多輪面試機制！
+            else if (player.age === 12) {
+                document.getElementById('stage-title-text').innerText = "【12歲 單獨回合：小六升中 (名校多輪面試與派位)】";
+                renderABCDModules({
+                    A: { title: "🅰️ 模組 A：英華/拔萃/皇仁多輪面試挑戰", options: [
+                        { id: "A1", text: "A1 【參加第一輪及第二輪名校個人與小組面試】", effect: () => {
+                            logEvent("🏫 進入第一輪面試：考核英數與邏輯...");
+                            if (player.intel >= 80) {
+                                logEvent("✅ 通過第一輪！進入第二輪家長與校長親自面試...");
+                                if (player.eq >= 75) {
+                                    logEvent("🎉 完美通關！獲英華/拔萃頂級名校錄取！"); player.status = "名校中學生"; player.intel += 10;
+                                } else { logEvent("❌ 第二輪面試失敗，轉入地區 Band 1 中學。"); player.status = "Band 1中學生"; }
+                            } else { logEvent("❌ 第一輪面試分數不足被淘汰，轉入 Band 2 中學。"); player.status = "Band 2中學生"; }
+                        }},
+                        { id: "A2", text: "A2 【靠呈分試派位進入地區 Band 1 中學】", effect: () => { player.status = "Band 1中學生"; player.intel += 5; } }
+                    ]},
+                    B: { title: "🅱️ 模組 B：中學興趣培訓", options: [
+                        { id: "B1", text: "B1 【加入學校辯論隊】", effect: () => { player.eq += 8; } },
+                        { id: "B2", text: "B2 【加入數理奧林匹克隊】", effect: () => { player.intel += 8; } }
+                    ]},
+                    C: { title: "🅲 模組 C：零用錢理財", options: [
+                        { id: "C1", text: "C1 【開始儲蓄兼做小型買賣】", effect: () => { player.money += 5000; } },
+                        { id: "C2", text: "C2 【融入中學同學圈子】", effect: () => { player.eq += 5; } }
+                    ]},
+                    D: { title: "🅳 模組 D：升中心態適應", options: [
+                        { id: "D1", text: "D1 【以狀元為目標】", effect: () => { player.intel += 5; } },
+                        { id: "D2", text: "D2 【全面發展】", effect: () => { player.eq += 3; player.phys += 3; } }
+                    ]}
+                });
+            }
+            // 15歲 單獨回合：中三升中四選科
+            else if (player.age === 15) {
+                document.getElementById('stage-title-text').innerText = "【15歲 單獨回合：中三升中四選科大決策】";
+                renderABCDModules({
+                    A: { title: "🅰️ 模組 A：選科方向", options: [
+                        { id: "A1", text: "A1 【全理科 (Phy, Chem, Bio, M2)】 (解鎖醫學/工程科技專長)", effect: () => { player.intel += 10; logEvent("選修全理科 M2，奠定高科技基礎！"); } },
+                        { id: "A2", text: "A2 【文商科 (Econ, BAFS, 地理)】 (解鎖金融/法律專長)", effect: () => { player.eq += 10; logEvent("選修文商科，奠定中環金融基礎！"); } }
+                    ]},
+                    B: { title: "🅱️ 模組 B：課外兼職與技能", options: [
+                        { id: "B1", text: "B1 【兼職私人補習】", effect: () => { player.money += 20000; } },
+                        { id: "B2", text: "B2 【自學 AI 算力與寫程式】", effect: () => { player.intel += 8; } }
+                    ]},
+                    C: { title: "🅲 模組 C：學界影響力", options: [
+                        { id: "C1", text: "C1 【競選學生會會長】", effect: () => { player.eq += 10; } },
+                        { id: "C2", text: "C2 【經營學界 KOL 帳號】", effect: () => { player.beauty += 8; } }
+                    ]},
+                    D: { title: "🅳 模組 D：DSE 備戰規劃", options: [
+                        { id: "D1", text: "D1 【目標 DSE 狀元】", effect: () => { player.intel += 5; } },
+                        { id: "D2", text: "D2 【目標海外名校】", effect: () => { player.eq += 5; } }
+                    ]}
+                });
+            }
+            // 17歲 單獨回合：DSE 考問答加分系統！
+            else if (player.age === 17) {
+                renderDSEScreen();
+            }
+            // 18歲+ 大學及成年後 (每年一個回合)
+            else {
+                document.getElementById('stage-title-text').innerText = `【${player.age}歲 成年生涯回合】`;
+                renderABCDModules({
+                    A: { title: "🅰️ 模組 A：事業與資本開拓", options: [
+                        { id: "A1", text: "A1 【進入中環 IBank / 頂級律師樓】", effect: () => { player.money += 1000000; player.status = "中環精英"; } },
+                        { id: "A2", text: "A2 【創辦 AI 科技公司申請科學園基金】", effect: () => { player.money += 3000000; player.status = "創科CEO"; } }
+                    ]},
+                    B: { title: "🅱️ 模組 B：投資與資產買賣", options: [
+                        { id: "B1", text: "B1 【炒美股/港股量化交易】", effect: () => { player.money = Math.floor(player.money * 1.5); } },
+                        { id: "B2", text: "B2 【買入私樓炒樓升值】", effect: () => { player.money = Math.floor(player.money * 1.3); } }
+                    ]},
+                    C: { title: "🅲 模組 C：社交、拍拖與結婚", options: [
+                        { id: "C1", text: "C1 【尋求豪門世家千金/少爺拍拖結婚】", effect: () => { if(player.eq>75) { player.money += 20000000; logEvent("成功與豪門結婚！獲得注資！"); } else { logEvent("豪門婚姻失敗。"); } } },
+                        { id: "C2", text: "C2 【專注事業發展】", effect: () => { player.intel += 3; } }
+                    ]},
+                    D: { title: "🅳 模組 D：帝國霸權與新香港工程", options: [
+                        { id: "D1", text: "D1 【收購吞併市面上同類型競品公司】", effect: () => { player.money *= 3; player.status = "商業霸主"; } },
+                        { id: "D2", text: "D2 【開發「新香港 (New HK)」超級特區】", effect: () => { player.money *= 5; player.status = "「新香港」Supreme Governor"; } }
+                    ]}
+                });
+            }
+        }
+
+        function renderABCDModules(modules) {
+            const container = document.getElementById('modules-list');
+            container.innerHTML = '';
+            
+            // 儲存當前階段數據
+            window.currentModules = modules;
+
             ['A', 'B', 'C', 'D'].forEach(modKey => {
-                const mod = stageData.modules[modKey];
-                let html = `<div class="bg-slate-900/80 p-3 rounded-xl border border-slate-800 space-y-2">
+                const mod = modules[modKey];
+                let html = `<div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800 space-y-2">
                     <h4 class="text-xs font-bold text-amber-400">${mod.title}</h4>
                     <div class="grid grid-cols-1 gap-2">`;
                 
@@ -354,41 +394,98 @@
         }
 
         function selectOption(moduleKey, optionId) {
-            const stageData = getStageData();
-            const mod = stageData.modules[moduleKey];
-
-            // 取消同模組其他按鈕樣式
+            const mod = window.currentModules[moduleKey];
             mod.options.forEach(opt => {
                 const btn = document.getElementById(`btn-${opt.id}`);
                 if (btn) btn.classList.remove('btn-selected');
             });
 
-            // 高亮選中
             const selectedBtn = document.getElementById(`btn-${optionId}`);
             if (selectedBtn) selectedBtn.classList.add('btn-selected');
 
-            // 紀錄選擇
             const chosenObj = mod.options.find(o => o.id === optionId);
             selectedChoices[moduleKey] = chosenObj;
         }
 
+        // DSE 互動答題系統
+        function renderDSEScreen() {
+            document.getElementById('stage-title-text').innerText = "【17歲 單獨回合：DSE 文憑試 (包含真實答題加分)】";
+            const container = document.getElementById('modules-list');
+            container.innerHTML = `
+                <div class="bg-slate-900 p-4 rounded-xl border border-amber-500/30 space-y-3 text-xs md:text-sm">
+                    <p class="font-bold text-amber-400">📝 DSE 知識考驗（答對每題額外加分，答錯跟返屬性！）：</p>
+                    
+                    <div class="space-y-1">
+                        <p>1. 香港現時發行紙幣嘅三間發鈔銀行，不包括以下哪一間？</p>
+                        <select id="dse-q1" class="w-full p-2 bg-slate-800 border border-slate-700 rounded text-white font-bold">
+                            <option value="wrong">A. 恒生銀行</option>
+                            <option value="correct">B. 恒生銀行 (答此項：正確)</option>
+                            <option value="wrong">C. 渣打銀行</option>
+                            <option value="wrong">D. 中國銀行(香港)</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-1">
+                        <p>2. 在經濟學中，「OPPEC」或「機會成本 (Opportunity Cost)」是指：</p>
+                        <select id="dse-q2" class="w-full p-2 bg-slate-800 border border-slate-700 rounded text-white font-bold">
+                            <option value="correct">A. 放棄的選項中價值最高者 (正確)</option>
+                            <option value="wrong">B. 所有放棄選項的總和</option>
+                            <option value="wrong">C. 生產產品的金錢成本</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+        }
+
         function processTurn() {
+            if (player.age === 17) {
+                // DSE 結算
+                let bonus = 0;
+                if(document.getElementById('dse-q1').value === 'correct') bonus += 2;
+                if(document.getElementById('dse-q2').value === 'correct') bonus += 2;
+
+                let baseScore = Math.floor(player.intel / 3);
+                player.dseScore = baseScore + bonus;
+
+                if (player.dseScore >= 30) {
+                    player.status = "DSE狀元 (港大醫學/金融神科)";
+                    logEvent(`🎉 DSE 考獲 ${player.dseScore} 分高分！(答題加分 +${bonus}) 榮獲狀元考入港大神科！`);
+                } else if (player.dseScore >= 20) {
+                    player.status = "三大大學生";
+                    logEvent(`🎓 DSE 考獲 ${player.dseScore} 分！成功考入三大 (HKU/CUHK/HKUST)！`);
+                } else {
+                    player.status = "大專生";
+                    logEvent(`📖 DSE 考獲 ${player.dseScore} 分，入讀大專課程。`);
+                }
+
+                player.age = 18;
+                renderTurn();
+                return;
+            }
+
             if (!selectedChoices.A || !selectedChoices.B || !selectedChoices.C || !selectedChoices.D) {
                 alert("請喺 A、B、C、D 四個模組中各選擇一項行動！");
                 return;
             }
 
-            // 執行四個模組效果
             ['A', 'B', 'C', 'D'].forEach(k => {
                 if (selectedChoices[k] && selectedChoices[k].effect) {
                     selectedChoices[k].effect();
                 }
             });
 
-            logEvent(`✅ 完成了本階段行動：[${selectedChoices.A.id}, ${selectedChoices.B.id}, ${selectedChoices.C.id}, ${selectedChoices.D.id}]`);
+            logEvent(`✅ 完成階段決策：[${selectedChoices.A.id}, ${selectedChoices.B.id}, ${selectedChoices.C.id}, ${selectedChoices.D.id}]`);
             
-            // 下一階段
-            renderAgeStage();
+            // 年齡進程控制
+            if(player.age === 0) player.age = 6;
+            else if(player.age === 6) player.age = 7;
+            else if(player.age === 7) player.age = 10;
+            else if(player.age === 10) player.age = 12;
+            else if(player.age === 12) player.age = 15;
+            else if(player.age === 15) player.age = 17;
+            else player.age += 1;
+
+            renderTurn();
         }
     </script>
 </body>
