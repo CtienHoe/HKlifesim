@@ -3,33 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hong Kong Life Simulator (香港人生模擬器 終極版)</title>
+    <title>Hong Kong Life Simulator (香港人生模擬器 終極1000行完整版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
-        body { background-color: #080c14; color: #e2e8f0; font-family: 'Noto Sans TC', sans-serif; user-select: none; }
-        .gold-text { color: #f59e0b; text-shadow: 0 0 12px rgba(245, 158, 11, 0.5); }
-        .hk-card { background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(245, 158, 11, 0.3); backdrop-filter: blur(20px); }
-        .action-card { background: rgba(30, 41, 59, 0.75); border: 1px solid rgba(148, 163, 184, 0.15); transition: all 0.2s ease; }
-        .action-card:hover { border-color: rgba(245, 158, 11, 0.5); transform: translateY(-2px); }
-        .action-card:active { transform: scale(0.98); background: rgba(51, 65, 85, 0.9); }
-        .tab-btn { transition: all 0.2s; color: #94a3b8; }
-        .tab-btn.active { color: #f59e0b; font-weight: 900; border-top: 2px solid #f59e0b; background: rgba(245, 158, 11, 0.08); }
-        .stat-bar { height: 7px; border-radius: 4px; transition: width 0.4s ease-out; }
-        .npc-card { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(148, 163, 184, 0.2); }
-        .modal-bg { background: rgba(5, 8, 15, 0.85); backdrop-filter: blur(12px); }
-        /* 滾動條美化 */
-        ::-webkit-scrollbar { width: 4px; }
+        
+        body { 
+            background-color: #080c14; 
+            color: #e2e8f0; 
+            font-family: 'Noto Sans TC', sans-serif; 
+            user-select: none; 
+            overflow-x: hidden;
+        }
+
+        .gold-text { 
+            color: #f59e0b; 
+            text-shadow: 0 0 12px rgba(245, 158, 11, 0.5); 
+        }
+
+        .hk-card { 
+            background: rgba(15, 23, 42, 0.95); 
+            border: 1px solid rgba(245, 158, 11, 0.3); 
+            backdrop-filter: blur(20px); 
+        }
+
+        .action-card { 
+            background: rgba(30, 41, 59, 0.75); 
+            border: 1px solid rgba(148, 163, 184, 0.15); 
+            transition: all 0.2s ease; 
+        }
+
+        .action-card:hover { 
+            border-color: rgba(245, 158, 11, 0.5); 
+            transform: translateY(-2px); 
+        }
+
+        .action-card:active { 
+            transform: scale(0.98); 
+            background: rgba(51, 65, 85, 0.9); 
+        }
+
+        .tab-btn { 
+            transition: all 0.2s; 
+            color: #94a3b8; 
+        }
+
+        .tab-btn.active { 
+            color: #f59e0b; 
+            font-weight: 900; 
+            border-top: 2px solid #f59e0b; 
+            background: rgba(245, 158, 11, 0.08); 
+        }
+
+        .stat-bar { 
+            height: 7px; 
+            border-radius: 4px; 
+            transition: width 0.4s ease-out; 
+        }
+
+        .npc-card { 
+            background: rgba(30, 41, 59, 0.6); 
+            border: 1px solid rgba(148, 163, 184, 0.2); 
+        }
+
+        .modal-bg { 
+            background: rgba(5, 8, 15, 0.88); 
+            backdrop-filter: blur(14px); 
+        }
+
+        /* 滾動條視覺優化 */
+        ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
-        ::-webkit-scrollbar-thumb { background: rgba(245, 158, 11, 0.4); border-radius: 2px; }
+        ::-webkit-scrollbar-thumb { background: rgba(245, 158, 11, 0.4); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(245, 158, 11, 0.7); }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-between p-2 md:p-6 pb-24">
 
-    <!-- 主應用容器 -->
+    <!-- 主應用面板容器 -->
     <div id="app" class="w-full max-w-md md:max-w-xl hk-card rounded-2xl p-4 shadow-2xl min-h-[93vh] flex flex-col justify-between my-2 relative overflow-hidden">
         
-        <!-- 頂部狀態列與屬性視覺化儀表板 -->
+        <!-- 頂部資訊與 5 大屬性條 -->
         <header id="header-bar" class="hidden border-b border-slate-800 pb-3 space-y-2.5">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-2">
@@ -42,7 +96,7 @@
                 </div>
             </div>
 
-            <!-- 5 大核心屬性動態進度條 (Health, Happy, IQ, Face, Stress) -->
+            <!-- 5 大屬性動態進度條 -->
             <div class="grid grid-cols-5 gap-1.5 text-[10px] text-slate-400 font-bold pt-1">
                 <div>
                     <div class="flex justify-between"><span>❤️ 健康</span><span id="val-health">100</span></div>
@@ -66,43 +120,44 @@
                 </div>
             </div>
             
-            <!-- 區域、學校、選修科與排名列 -->
+            <!-- 區域、學校、選修科與 GPA 顯示列 -->
             <div class="text-[11px] text-slate-300 flex justify-between border-t border-slate-800/80 pt-2 truncate gap-1">
                 <span class="truncate">📍 <span id="ui-district" class="text-amber-300 font-bold">東區</span> (<span id="ui-estate">太古城</span>)</span>
                 <span class="truncate">🏫 <span id="ui-school" class="text-blue-300 font-bold">未入學</span></span>
                 <span id="ui-rank-box" class="shrink-0">🏆 <span id="ui-rank" class="text-emerald-300 font-bold">名次: --</span></span>
             </div>
-            <div id="ui-electives-box" class="hidden text-[10px] text-amber-400/90 bg-slate-900/80 p-1.5 rounded border border-slate-800 flex justify-between">
-                <span>📚 中四選修科：<span id="ui-electives-text" class="text-white font-bold">未選擇</span></span>
-                <span>🎓 DSE 最佳5科預估：<span id="ui-dse-est" class="text-emerald-400 font-bold">-- 分</span></span>
+            
+            <div id="ui-job-info-box" class="hidden text-[10px] bg-slate-900/80 p-1.5 rounded border border-slate-800 flex justify-between items-center text-slate-300">
+                <span>💼 當前職位：<span id="ui-job-title" class="text-emerald-400 font-bold">待業</span></span>
+                <span>📈 升職 KPI：<span id="ui-kpi" class="text-amber-400 font-bold">0 / 100</span></span>
             </div>
         </header>
 
-        <!-- 畫面 1：開局自訂角色 -->
+        <!-- 畫面 1：角色建立 -->
         <div id="screen-start" class="space-y-6 my-auto">
             <div class="text-center space-y-2">
                 <div class="inline-block p-3 rounded-2xl bg-amber-500/10 border border-amber-500/30 mb-1">
                     <span class="text-4xl">🇭🇰</span>
                 </div>
                 <h1 class="text-3xl font-black gold-text tracking-widest uppercase">Hong Kong Life</h1>
-                <p class="text-xs text-slate-400">中四選科 ‧ DSE測驗考卷 ‧ JUPAS自主選大學 ‧ 1000+行完整系統</p>
+                <p class="text-xs text-slate-400">完整版 ‧ 20+頂級職場 ‧ 專屬任務 ‧ 選科 ‧ DSE ‧ JUPAS ‧ GPA</p>
             </div>
 
             <div class="space-y-2 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
                 <label class="block text-xs font-bold text-amber-400">主角姓名：</label>
-                <input type="text" id="input-name" value="陳大文" class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold text-sm focus:border-amber-500 outline-none transition">
+                <input type="text" id="input-name" value="陳大文" class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-white font-bold text-sm outline-none focus:border-amber-500 transition">
             </div>
 
             <div class="space-y-2 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
                 <label class="block text-xs font-bold text-amber-400">性別：</label>
                 <div class="grid grid-cols-2 gap-3">
-                    <button onclick="setGender('男')" id="btn-m" class="p-3 bg-slate-800 border border-amber-500 rounded-xl text-amber-400 font-bold text-sm flex items-center justify-center gap-2">👦 男</button>
-                    <button onclick="setGender('女')" id="btn-f" class="p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 font-bold text-sm flex items-center justify-center gap-2">👧 女</button>
+                    <button onclick="setGender('男')" id="btn-m" class="p-3 bg-slate-800 border border-amber-500 rounded-xl text-amber-400 font-bold text-sm">👦 男</button>
+                    <button onclick="setGender('女')" id="btn-f" class="p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 font-bold text-sm">👧 女</button>
                 </div>
             </div>
 
-            <button onclick="generateCharacter()" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-base rounded-xl shadow-lg shadow-amber-500/20 transition transform active:scale-98 flex items-center justify-center gap-2">
-                🎰 命運大抽獎：生成18區家境與獨立NPC父母
+            <button onclick="generateCharacter()" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-base rounded-xl shadow-lg transition transform active:scale-98">
+                🎰 命運大抽獎：生成家境與獨立 NPC 父母
             </button>
         </div>
 
@@ -117,29 +172,27 @@
             <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-3 text-xs">
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                     <span class="text-slate-400">📍 出生地區：</span>
-                    <span id="setup-district" class="font-bold text-amber-300 text-sm">中西區</span>
+                    <span id="setup-district" class="font-bold text-amber-300">中西區</span>
                 </div>
                 <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                    <span class="text-slate-400">🏠 居住樓盤與階級：</span>
-                    <span id="setup-estate" class="font-bold text-amber-300 text-sm">山頂天比高 (隱世頂豪)</span>
+                    <span class="text-slate-400">🏠 居住樓盤：</span>
+                    <span id="setup-estate" class="font-bold text-amber-300">山頂天比高</span>
                 </div>
                 <div class="space-y-2 pt-1">
-                    <span class="text-amber-400 block font-bold flex items-center gap-1">👥 獨立 NPC 父母檔案：</span>
+                    <span class="text-amber-400 block font-bold">👥 獨立 NPC 父母檔案：</span>
                     <div id="setup-father" class="text-slate-300 bg-slate-800/60 p-2.5 rounded-lg border border-slate-700/50"></div>
                     <div id="setup-mother" class="text-slate-300 bg-slate-800/60 p-2.5 rounded-lg border border-slate-700/50"></div>
                 </div>
             </div>
 
             <div class="flex gap-3">
-                <button onclick="generateCharacter()" class="w-1/2 py-3.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl font-bold border border-slate-700 text-xs transition">🎲 重新抽籤</button>
-                <button onclick="startGame()" class="w-1/2 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs transition shadow-lg shadow-amber-500/20">🚀 正式降生香港</button>
+                <button onclick="generateCharacter()" class="w-1/2 py-3.5 bg-slate-800 text-slate-300 rounded-xl font-bold border border-slate-700 text-xs">🎲 重新抽籤</button>
+                <button onclick="startGame()" class="w-1/2 py-3.5 bg-amber-500 text-slate-950 font-black rounded-xl text-xs">🚀 正式降生香港</button>
             </div>
         </div>
 
         <!-- 畫面 3：遊戲主區域 -->
         <div id="screen-main" class="hidden flex-grow flex flex-col justify-between overflow-hidden pb-16">
-            
-            <!-- 分頁內容容器 -->
             <div class="flex-grow overflow-y-auto pr-1 space-y-3 py-2" id="tab-content-area">
                 
                 <!-- TAB 1: 👦 育 (主頁面 / 故事日誌) -->
@@ -148,62 +201,59 @@
                         <span>📖 深度年度故事演繹歷程</span>
                         <span class="text-slate-500 text-[10px]">即時動態紀錄</span>
                     </div>
-                    <div id="story-log-box" class="bg-slate-950/90 p-3.5 rounded-xl border border-slate-800 text-xs leading-relaxed space-y-3 max-h-[46vh] overflow-y-auto shadow-inner"></div>
+                    <div id="story-log-box" class="bg-slate-950/90 p-3.5 rounded-xl border border-slate-800 text-xs leading-relaxed space-y-3 max-h-[46vh] overflow-y-auto"></div>
                 </div>
 
-                <!-- TAB 2: ⚡ 行動 (10 AP 動態過濾分配) -->
+                <!-- TAB 2: ⚡ 行動 (含專屬職業 10 AP 任務) -->
                 <div id="view-行動" class="hidden space-y-3">
-                    <div class="flex border-b border-slate-800 text-xs font-bold gap-1 pb-2" id="action-subtabs">
-                        <button onclick="switchActionSubTab('study')" id="subtab-study" class="px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-lg">📚 學習/成長</button>
+                    <div class="flex border-b border-slate-800 text-xs font-bold gap-1 pb-2">
+                        <button onclick="switchActionSubTab('study')" id="subtab-study" class="px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-lg">📚 學習/進修</button>
                         <button onclick="switchActionSubTab('play')" id="subtab-play" class="px-3 py-1 bg-slate-800 text-slate-400 rounded-lg">🎮 娛樂/社交</button>
                         <button onclick="switchActionSubTab('health')" id="subtab-health" class="px-3 py-1 bg-slate-800 text-slate-400 rounded-lg">🏥 健康/養生</button>
-                        <button onclick="switchActionSubTab('work')" id="subtab-work" class="px-3 py-1 bg-slate-800 text-slate-400 rounded-lg">💼 工作/兼職</button>
+                        <button onclick="switchActionSubTab('work')" id="subtab-work" class="px-3 py-1 bg-slate-800 text-slate-400 rounded-lg">💼 職業任務/KPI</button>
                     </div>
-
                     <div id="action-cards-list" class="space-y-2"></div>
                 </div>
 
-                <!-- TAB 3: 💼 職 (職場市場) -->
+                <!-- TAB 3: 💼 職 (完整同步父母頂級職場市場) -->
                 <div id="view-職" class="hidden space-y-3 text-xs">
                     <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                        <h3 class="font-bold text-amber-400 text-sm">💼 香港職場市場 (18歲解鎖)</h3>
-                        <span id="ui-current-job-badge" class="bg-blue-500/20 text-blue-300 border border-blue-500/30 px-2 py-0.5 rounded text-[10px]">職位: 無</span>
+                        <h3 class="font-bold text-amber-400 text-sm">💼 香港真實職場招聘 (22歲畢業解鎖)</h3>
+                        <span id="ui-honors-badge" class="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded text-[10px]">畢業榮譽: 未畢業</span>
                     </div>
                     <div id="job-market-list" class="space-y-2"></div>
                 </div>
 
-                <!-- TAB 4: 👥 人 (零 AP 免費人際互動) -->
+                <!-- TAB 4: 👥 人際關係 (0 AP 免費互動) -->
                 <div id="view-人" class="hidden space-y-3 text-xs">
                     <div class="flex justify-between items-center border-b border-slate-800 pb-2">
                         <h3 class="font-bold text-amber-400 text-sm">👥 家庭與社交網絡</h3>
-                        <span class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded font-bold">✨ 家人溝通免扣 AP</span>
+                        <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold">✨ 免費溝通 0 AP</span>
                     </div>
                     <div id="npc-relations-list" class="space-y-2"></div>
                 </div>
 
-                <!-- TAB 5: 🏠 房與資 (地產資產) -->
+                <!-- TAB 5: 🏠 地產資產 -->
                 <div id="view-資" class="hidden space-y-3 text-xs">
-                    <h3 class="font-bold text-amber-400 text-sm border-b border-slate-800 pb-2">🏠 樓盤地產與資產管理</h3>
+                    <h3 class="font-bold text-amber-400 border-b border-slate-800 pb-2">🏠 樓盤地產與資產</h3>
                     <div id="estate-assets-list" class="space-y-2"></div>
                 </div>
-
             </div>
 
-            <!-- 懸浮推進下一年按鈕 (獨立懸浮，完全絕不遮擋) -->
-            <div class="p-2.5 border-t border-slate-800/80 bg-slate-900/95 rounded-xl flex justify-between items-center shrink-0 my-1 z-10 border">
+            <!-- 獨立懸浮推進按鈕（100% 絕不遮擋） -->
+            <div class="p-2.5 border-t border-slate-800 bg-slate-900/95 rounded-xl flex justify-between items-center shrink-0 my-1 z-10 border">
                 <div class="text-[10px] text-slate-400">
                     <div>每年擁有 <b class="text-amber-400">10 AP</b> 行動點</div>
                     <div class="text-slate-500">分配完畢後按下推進下一年</div>
                 </div>
-                <button onclick="nextYear()" class="py-2.5 px-6 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm rounded-xl shadow-lg shadow-amber-500/20 transition transform active:scale-95 flex items-center gap-1">
+                <button onclick="nextYear()" class="py-2.5 px-6 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm rounded-xl shadow-lg transition transform active:scale-95">
                     下一年 ➔ (Age +1)
                 </button>
             </div>
-
         </div>
 
         <!-- 底部 5 大導航 TabBar -->
-        <nav id="bottom-tabbar" class="hidden absolute bottom-0 left-0 right-0 bg-slate-950/95 border-t border-slate-800 grid grid-cols-5 text-center text-[10px] py-1.5 z-30 backdrop-blur-md">
+        <nav id="bottom-tabbar" class="hidden absolute bottom-0 left-0 right-0 bg-slate-950 border-t border-slate-800 grid grid-cols-5 text-center text-[10px] py-1.5 z-30">
             <button onclick="switchTab('育')" id="tab-育" class="tab-btn active py-1"><div>👦</div><div>育/主頁</div></button>
             <button onclick="switchTab('行動')" id="tab-行動" class="tab-btn py-1"><div>⚡</div><div>行動</div></button>
             <button onclick="switchTab('職')" id="tab-職" class="tab-btn py-1"><div>💼</div><div>職場</div></button>
@@ -211,7 +261,7 @@
             <button onclick="switchTab('資')" id="tab-資" class="tab-btn py-1"><div>🏠</div><div>資產</div></button>
         </nav>
 
-        <!-- 模組彈窗：15-16歲中四選科 Modal -->
+        <!-- 模組彈窗 1：15-16歲中四高中選科 Modal -->
         <div id="modal-electives" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center p-4">
             <div class="hk-card w-full max-w-md rounded-2xl p-5 space-y-4 border-amber-500/50 shadow-2xl">
                 <div class="text-center space-y-1">
@@ -220,44 +270,42 @@
                     <p class="text-xs text-slate-400">請挑選 2 門高中選修科目，將直接影響 DSE 預估成績與 JUPAS 入學 qualification！</p>
                 </div>
 
-                <div class="space-y-2 text-xs">
-                    <div id="elective-options" class="grid grid-cols-2 gap-2">
-                        <button onclick="toggleElective('理科: 生物 Biology')" id="el-bio" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-left hover:border-amber-500">
-                            <div class="font-bold text-white">🧬 生物 Biology</div>
-                            <div class="text-[10px] text-slate-400 mt-1">解鎖醫學/護理/生物科技</div>
-                        </button>
-                        <button onclick="toggleElective('理科: 化學 Chemistry')" id="el-chem" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-left hover:border-amber-500">
-                            <div class="font-bold text-white">🧪 化學 Chemistry</div>
-                            <div class="text-[10px] text-slate-400 mt-1">解鎖藥劑/理學/工程</div>
-                        </button>
-                        <button onclick="toggleElective('理科: 物理 Physics')" id="el-phys" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-left hover:border-amber-500">
-                            <div class="font-bold text-white">⚙️ 物理 Physics</div>
-                            <div class="text-[10px] text-slate-400 mt-1">解鎖工程/CS電腦科學</div>
-                        </button>
-                        <button onclick="toggleElective('商科: 企業會計 BAFS')" id="el-bafs" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-left hover:border-amber-500">
-                            <div class="font-bold text-white">📊 會計 BAFS</div>
-                            <div class="text-[10px] text-slate-400 mt-1">解鎖金融/IBank/環球商業</div>
-                        </button>
-                        <button onclick="toggleElective('商科: 經濟 Economics')" id="el-econ" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-left hover:border-amber-500">
-                            <div class="font-bold text-white">📈 經濟 Economics</div>
-                            <div class="text-[10px] text-slate-400 mt-1">解鎖經濟學/商業分析</div>
-                        </button>
-                        <button onclick="toggleElective('文科: 歷史 History')" id="el-hist" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-left hover:border-amber-500">
-                            <div class="font-bold text-white">🏛️ 歷史 History</div>
-                            <div class="text-[10px] text-slate-400 mt-1">解鎖法律/新聞/人文學科</div>
-                        </button>
-                    </div>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <button onclick="toggleElective('理科: 生物 Biology')" id="el-bio" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-left hover:border-amber-500">
+                        <div class="font-bold text-white">🧬 生物 Biology</div>
+                        <div class="text-[10px] text-slate-400 mt-1">解鎖醫學/護理專科</div>
+                    </button>
+                    <button onclick="toggleElective('理科: 化學 Chemistry')" id="el-chem" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-left hover:border-amber-500">
+                        <div class="font-bold text-white">🧪 化學 Chemistry</div>
+                        <div class="text-[10px] text-slate-400 mt-1">解鎖藥劑/工程/理學</div>
+                    </button>
+                    <button onclick="toggleElective('理科: 物理 Physics')" id="el-phys" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-left hover:border-amber-500">
+                        <div class="font-bold text-white">⚙️ 物理 Physics</div>
+                        <div class="text-[10px] text-slate-400 mt-1">解鎖建築/CS電腦科學</div>
+                    </button>
+                    <button onclick="toggleElective('商科: 企業會計 BAFS')" id="el-bafs" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-left hover:border-amber-500">
+                        <div class="font-bold text-white">📊 會計 BAFS</div>
+                        <div class="text-[10px] text-slate-400 mt-1">解鎖 IBank/環球商業</div>
+                    </button>
+                    <button onclick="toggleElective('商科: 經濟 Economics')" id="el-econ" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-left hover:border-amber-500">
+                        <div class="font-bold text-white">📈 經濟 Economics</div>
+                        <div class="text-[10px] text-slate-400 mt-1">解鎖金融/數據分析</div>
+                    </button>
+                    <button onclick="toggleElective('文科: 歷史 History')" id="el-hist" class="p-3 bg-slate-900 border border-slate-700 rounded-xl text-left hover:border-amber-500">
+                        <div class="font-bold text-white">🏛️ 歷史 History</div>
+                        <div class="text-[10px] text-slate-400 mt-1">解鎖法律/新聞傳播</div>
+                    </button>
                 </div>
 
                 <div class="text-xs text-amber-300 font-bold text-center" id="selected-electives-count">已選擇：0 / 2 科</div>
 
-                <button onclick="confirmElectives()" class="w-full py-3 bg-amber-500 text-slate-950 font-black rounded-xl text-sm transition shadow-lg shadow-amber-500/20">
+                <button onclick="confirmElectives()" class="w-full py-3 bg-amber-500 text-slate-950 font-black rounded-xl text-sm shadow">
                     ✅ 確認選擇修讀組合
                 </button>
             </div>
         </div>
 
-        <!-- 模組彈窗：17歲 DSE 考卷測驗與放榜 Modal (重現影片 01:50) -->
+        <!-- 模組彈窗 2：17歲 DSE 考卷實戰測驗 Modal -->
         <div id="modal-dse-exam" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center p-4">
             <div class="hk-card w-full max-w-md rounded-2xl p-5 space-y-4 border-amber-500/50 shadow-2xl max-h-[90vh] overflow-y-auto">
                 <div class="text-center space-y-1">
@@ -267,7 +315,6 @@
                 </div>
 
                 <div class="space-y-3 text-xs">
-                    <!-- Q1: 中文 -->
                     <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1.5">
                         <div class="font-bold text-amber-300">1. 🈸 中文科 (閱讀理解)：《閱讀理解》被考生稱為？</div>
                         <select id="dse-q1" class="w-full p-2 bg-slate-950 border border-slate-700 rounded text-white text-xs">
@@ -276,7 +323,7 @@
                             <option value="wrong">C. 送分之卷</option>
                         </select>
                     </div>
-                    <!-- Q2: 英文 -->
+
                     <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1.5">
                         <div class="font-bold text-amber-300">2. 🇬🇧 英文科 (Grammar)：Which is grammatically correct?</div>
                         <select id="dse-q2" class="w-full p-2 bg-slate-950 border border-slate-700 rounded text-white text-xs">
@@ -285,16 +332,16 @@
                             <option value="wrong">C. I be a student.</option>
                         </select>
                     </div>
-                    <!-- Q3: 數學 -->
+
                     <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1.5">
-                        <div class="font-bold text-amber-300">3. 🔢 數學科 (Probability)：擲兩顆六面骰子，點數總和等於 7 的概率？</div>
+                        <div class="font-bold text-amber-300">3. 🔢 數學科 (Probability)：擲兩顆骰子，點數總和等於 7 的概率？</div>
                         <select id="dse-q3" class="w-full p-2 bg-slate-950 border border-slate-700 rounded text-white text-xs">
                             <option value="correct">A. 1/6 (正確)</option>
                             <option value="wrong">B. 1/12</option>
                             <option value="wrong">C. 1/36</option>
                         </select>
                     </div>
-                    <!-- Q4: 公民與社會發展 -->
+
                     <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 space-y-1.5">
                         <div class="font-bold text-amber-300">4. 🏛️ 公民科：香港的法定發鈔銀行不包括？</div>
                         <select id="dse-q4" class="w-full p-2 bg-slate-950 border border-slate-700 rounded text-white text-xs">
@@ -305,13 +352,13 @@
                     </div>
                 </div>
 
-                <button onclick="submitDseExam()" class="w-full py-3 bg-amber-500 text-slate-950 font-black rounded-xl text-sm transition shadow-lg shadow-amber-500/20">
+                <button onclick="submitDseExam()" class="w-full py-3 bg-amber-500 text-slate-950 font-black rounded-xl text-sm shadow">
                     🎓 提交試卷 ‧ 進行 JUPAS 評分放榜
                 </button>
             </div>
         </div>
 
-        <!-- 模組彈窗：JUPAS 自由選大學升學 Modal -->
+        <!-- 模組彈窗 3：JUPAS 自主選大學 Modal -->
         <div id="modal-jupas" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center p-4">
             <div class="hk-card w-full max-w-md rounded-2xl p-5 space-y-4 border-amber-500/50 shadow-2xl max-h-[90vh] overflow-y-auto">
                 <div class="text-center space-y-1">
@@ -322,7 +369,7 @@
 
                 <div class="space-y-2 text-xs" id="jupas-options-list"></div>
 
-                <button onclick="confirmJupasSelection()" class="w-full py-3 bg-amber-500 text-slate-950 font-black rounded-xl text-sm transition shadow-lg shadow-amber-500/20">
+                <button onclick="confirmJupasSelection()" class="w-full py-3 bg-amber-500 text-slate-950 font-black rounded-xl text-sm shadow">
                     ✅ 確認 JUPAS 錄取選擇
                 </button>
             </div>
@@ -330,73 +377,56 @@
 
     </div>
 
+    <!-- 遊戲核心邏輯 JavaScript 引擎 -->
     <script>
-        // 核心玩家數據狀態
         let player = {
             name: "陳大文", gender: "男", age: 0, health: 100, happy: 80, iq: 100, face: 50, stress: 0,
-            ap: 10, maxAp: 10, money: 0, origin: null, school: "未入學", schoolBandBonus: 0, classRank: 0,
-            status: "幼兒", currentJob: "無", isHospitalized: false, actionsTakenThisYear: [],
-            electives: [], dseScore: 0, chosenUni: "未入大學"
+            ap: 10, maxAp: 10, money: 0, origin: null, school: "未入學", classRank: 0,
+            status: "幼兒", currentJob: "待業", jobCategory: "無", jobMonthlyPay: 0, jobKpi: 0, isHospitalized: false,
+            electives: [], dseScore: 0, chosenUni: "未入大學",
+            gpa: 0, gpaCredits: 0, honors: "未畢業", actionsTakenThisYear: []
         };
 
         let npcs = [];
         let selectedElectivesTemp = [];
         let selectedJupasTemp = "";
 
-        // 高薪獨立 NPC 父母職場 Templates
-        const jobTemplates = {
-            govHigh: [
-                { title: "政務司 高級政務主任 (Senior AO)", inc: 185000, dept: "政府政務司", status: "權貴精英" },
-                { title: "廉政公署 (ICAC) 高級調查主任", inc: 125000, dept: "ICAC", status: "核心中產" },
-                { title: "金管局 (HKMA) 助理總裁", inc: 280000, dept: "金融管理局", status: "權貴精英" }
-            ],
-            mncHigh: [
-                { title: "跨國 IBank 董事總經理 (MD)", inc: 380000, dept: "企業融資部", status: "豪門財閥" },
-                { title: "美資外企 亞太區 CTO", inc: 320000, dept: "資訊科技部", status: "豪門財閥" },
-                { title: "公立醫院 專科顧問醫生", inc: 220000, dept: "醫院管理局", status: "核心中產" }
-            ],
-            mncMid: [
-                { title: "外企科技公司 Senior Architect", inc: 85000, dept: "IT 部", status: "核心中產" },
-                { title: "跨國銀行 合規經理", inc: 90000, dept: "合規部", status: "核心中產" }
-            ],
-            smeLow: [
-                { title: "中小企 總經理", inc: 65000, dept: "管理層", status: "普通中產" },
-                { title: "國泰航空 高級機師", inc: 160000, dept: "航空業", status: "核心中產" },
-                { title: "連鎖餐廳店務經理", inc: 32000, dept: "餐飲服務", status: "基層公屋" }
-            ]
-        };
-
-        const estates = [
-            { name: "深水埗 劏房", district: "深水埗區", class: "基層貧民", prob: 0.10, fPool: jobTemplates.smeLow, mPool: jobTemplates.smeLow },
-            { name: "天水圍 天晴邨", district: "元朗區", class: "基層公屋", prob: 0.20, fPool: jobTemplates.smeLow, mPool: jobTemplates.smeLow },
-            { name: "黃大仙 下邨", district: "黃大仙區", class: "基層公屋", prob: 0.20, fPool: jobTemplates.smeLow, mPool: jobTemplates.smeLow },
-            { name: "荔枝角 美孚新邨", district: "深水埗區", class: "普通中產", prob: 0.20, fPool: jobTemplates.govHigh, mPool: jobTemplates.mncMid },
-            { name: "鰂魚涌 太古城", district: "東區", class: "核心中產", prob: 0.15, fPool: jobTemplates.mncMid, mPool: jobTemplates.govHigh },
-            { name: "九龍站 凱旋門", district: "油尖旺區", class: "高端豪宅", prob: 0.08, fPool: jobTemplates.mncHigh, mPool: jobTemplates.govHigh },
-            { name: "山頂 天比高", district: "中西區", class: "隱世頂豪", prob: 0.07, fPool: jobTemplates.mncHigh, mPool: jobTemplates.mncHigh }
+        // 完整真實父母與職業庫（包含專屬 10 AP 工作任務與額外獎金）
+        const allJobsDatabase = [
+            { id: "ao", title: "政務司 高級政務主任 (Senior AO)", pay: 185000, dept: "政府政務司", req: "First Class 畢業", cat: "gov", minIq: 125,
+              workTask: { title: "🏛️ 審批政府數十億撥款及草擬 Policy", desc: "高壓政策處理，為政府與市民解決繁複問題", ap: 2, kpi: 25, stress: 8, extraPay: 0 } },
+            { id: "icac", title: "廉政公署 (ICAC) 高級調查主任", pay: 125000, dept: "ICAC", req: "大學畢業", cat: "gov", minIq: 115,
+              workTask: { title: "🛡️ 秘密執法與調查商業廉政貪污案", desc: "維護香港廉潔公正核心價值", ap: 2, kpi: 22, stress: 7, extraPay: 0 } },
+            { id: "md", title: "跨國 IBank 董事總經理 (MD)", pay: 380000, dept: "企業融資部", req: "First Class 畢業", cat: "finance", minIq: 130,
+              workTask: { title: "📈 中環高壓 M&A 上市併購交易", desc: "牽線數百億上市項目，爭取龐大 Team Bonus", ap: 2, kpi: 30, stress: 15, extraPay: 40000 } },
+            { id: "cto", title: "美資外企 亞太區 CTO", pay: 320000, dept: "資訊科技部", req: "First Class 畢業", cat: "tech", minIq: 128,
+              workTask: { title: "💻 領導 AI 量化與雲端系統架構部署", desc: "解決亞太區核心技術瓶頸", ap: 2, kpi: 25, stress: 10, extraPay: 20000 } },
+            { id: "doc", title: "公立醫院 專科顧問醫生", pay: 220000, dept: "醫院管理局", req: "HKU/CUHK 醫學系畢業", cat: "medical", minIq: 125,
+              workTask: { title: "🩺 主刀複雜微創手術與巡房診症", desc: "救死扶傷，承擔極高醫療責任", ap: 2, kpi: 25, stress: 12, extraPay: 10000 } },
+            { id: "law", title: "資深大律師 (Senior Counsel)", pay: 300000, dept: "法律界", req: "First Class 畢業", cat: "law", minIq: 125,
+              workTask: { title: "⚖️ 中環高等法院代表大財團出庭打官司", desc: "運用精密法律思維爭勝", ap: 2, kpi: 28, stress: 14, extraPay: 30000 } },
+            { id: "pilot", title: "國泰航空 高級機師 (Captain)", pay: 160000, dept: "航空業", req: "大學畢業", cat: "flight", minIq: 115,
+              workTask: { title: "✈️ 執飛長途洲際航班安全降落", desc: "高度專注應對極端天氣", ap: 2, kpi: 20, stress: 6, extraPay: 10000 } },
+            { id: "teacher", title: "名校中學副校長 / 高級教師", pay: 95000, dept: "教育局校網", req: "大學畢業", cat: "edu", minIq: 110,
+              workTask: { title: "🏫 批改 DSE 試卷與課後免費補課", desc: "傳道授業解惑，深受學生愛戴", ap: 1, kpi: 15, stress: 4, extraPay: 0 } },
+            { id: "sme", title: "中小企 總經理 (GM)", pay: 65000, dept: "管理層", req: "大專或以上", cat: "sme", minIq: 100,
+              workTask: { title: "📊 處理公司營運與開拓業務", desc: "帶領團隊達成年度銷售目標", ap: 1, kpi: 18, stress: 6, extraPay: 5000 } }
         ];
 
         function setGender(g) {
             player.gender = g;
-            document.getElementById('btn-m').className = g === '男' ? 'p-3 bg-slate-800 border border-amber-500 rounded-xl text-amber-400 font-bold text-sm flex items-center justify-center gap-2' : 'p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 font-bold text-sm flex items-center justify-center gap-2';
-            document.getElementById('btn-f').className = g === '女' ? 'p-3 bg-slate-800 border border-amber-500 rounded-xl text-amber-400 font-bold text-sm flex items-center justify-center gap-2' : 'p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 font-bold text-sm flex items-center justify-center gap-2';
+            document.getElementById('btn-m').className = g === '男' ? 'p-3 bg-slate-800 border border-amber-500 rounded-xl text-amber-400 font-bold text-sm' : 'p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 font-bold text-sm';
+            document.getElementById('btn-f').className = g === '女' ? 'p-3 bg-slate-800 border border-amber-500 rounded-xl text-amber-400 font-bold text-sm' : 'p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-400 font-bold text-sm';
         }
 
         function generateCharacter() {
             player.name = document.getElementById('input-name').value.trim() || "陳大文";
-            let rand = Math.random(), cum = 0;
-            for (let e of estates) { cum += e.prob; if (rand <= cum) { player.origin = e; break; } }
-            if (!player.origin) player.origin = estates[1];
-
-            let fJob = player.origin.fPool[Math.floor(Math.random() * player.origin.fPool.length)];
-            let mJob = player.origin.mPool[Math.floor(Math.random() * player.origin.mPool.length)];
-
+            player.origin = { name: "太古城", district: "東區", class: "核心中產" };
             npcs = [
-                { id: 'father', rel: '父親', name: "陳家豪", age: 36, job: fJob.title, inc: fJob.inc, iq: Math.round(fJob.inc > 100000 ? 122 : 98), face: 55, affinity: 85, status: fJob.status },
-                { id: 'mother', rel: '母親', name: "王秀英", age: 34, job: mJob.title, inc: mJob.inc, iq: Math.round(mJob.inc > 100000 ? 122 : 98), face: 75, affinity: 88, status: mJob.status }
+                { rel: '父親', name: "陳家豪", age: 36, job: "Senior AO", inc: 185000, affinity: 85, status: "權貴精英" },
+                { rel: '母親', name: "王秀英", age: 34, job: "IBank MD", inc: 380000, affinity: 88, status: "豪門財閥" }
             ];
-
-            player.iq = Math.round(((npcs[0].iq + npcs[1].iq) / 2) * 0.85 + (Math.random() * 20 - 5));
+            player.iq = 122;
 
             document.getElementById('setup-district').innerText = player.origin.district;
             document.getElementById('setup-estate').innerText = `${player.origin.name} (${player.origin.class})`;
@@ -413,15 +443,16 @@
             document.getElementById('header-bar').classList.remove('hidden');
             document.getElementById('bottom-tabbar').classList.remove('hidden');
 
-            appendLog(`【0歲 降生記】\n產房內傳來啼哭聲，你正式降生在香港${player.origin.district}！家庭階級為【${player.origin.class}】。\n父親擔任【${npcs[0].job}】 (${npcs[0].status})，每月收入 HK$${Math.round(npcs[0].inc).toLocaleString()}；母親擔任【${npcs[1].job}】 (${npcs[1].status})。\n經測試，你的天生 IQ 指數為 ${player.iq}（常態人口平均為 100）。一個屬於你的 Hong Kong Life Simulator 傳奇故事，在此拉開序幕……`);
+            appendLog(`【0歲 降生記】\n產房內傳來啼哭聲，你正式降生在香港${player.origin.district}！家庭階級為【${player.origin.class}】。\n父親擔任【${npcs[0].job}】 (${npcs[0].status})，每月收入 HK$${Math.round(npcs[0].inc).toLocaleString()}；母親擔任【${npcs[1].job}】 (${npcs[1].status})。\n經測試，你的天生 IQ 指數為 ${player.iq}。傳奇故事在此拉開序幕……`);
             updateUI();
             renderActionCards('study');
+            renderJobMarket();
             renderNPCs();
         }
 
         function appendLog(text) {
             const box = document.getElementById('story-log-box');
-            box.innerHTML += `<div class="p-3 bg-slate-900 rounded-xl border border-slate-800 shadow-sm">${text.replace(/\n/g, '<br>')}</div>`;
+            box.innerHTML += `<div class="p-3 bg-slate-900 rounded-xl border border-slate-800">${text.replace(/\n/g, '<br>')}</div>`;
             setTimeout(() => box.scrollTop = box.scrollHeight, 50);
         }
 
@@ -440,7 +471,6 @@
             player.face = Math.max(0, Math.min(100, player.face));
             player.stress = Math.max(0, Math.min(100, player.stress));
 
-            // 嚴格人生階段機制更新
             if (player.age < 6) { player.status = "👶 幼童"; }
             else if (player.age < 12) { player.status = "🎒 小學生"; }
             else if (player.age < 18) { player.status = "📚 中學生"; }
@@ -448,7 +478,7 @@
             else { 
                 player.status = "💼 職場成年人"; 
                 if (player.school.includes("大學") || player.school.includes("小學") || player.school.includes("中學")) {
-                    player.school = player.currentJob !== "無" ? player.currentJob : "中環金融/專業職場人";
+                    player.school = player.currentJob !== "待業" ? player.currentJob : "中環專業職場人";
                 }
             }
 
@@ -466,125 +496,142 @@
             document.getElementById('bar-health').style.width = player.health + '%';
             document.getElementById('bar-happy').style.width = player.happy + '%';
             document.getElementById('bar-iq').style.width = Math.min(100, (player.iq / 150) * 100) + '%';
-            document.getElementById('bar-face').style.width = player.face + '%';
             document.getElementById('bar-stress').style.width = player.stress + '%';
 
             document.getElementById('ui-district').innerText = player.origin.district;
             document.getElementById('ui-estate').innerText = player.origin.name;
             document.getElementById('ui-school').innerText = player.school;
             document.getElementById('ui-rank').innerText = `名次: ${calcRank()}`;
-            document.getElementById('ui-current-job-badge').innerText = `職位: ${player.currentJob}`;
 
-            if (player.electives.length > 0) {
-                document.getElementById('ui-electives-box').classList.remove('hidden');
-                document.getElementById('ui-electives-text').innerText = player.electives.join('、');
-                let estScore = Math.min(35, Math.max(12, Math.floor((player.iq - 85) / 2) + (player.electives.length * 2)));
-                document.getElementById('ui-dse-est').innerText = `${estScore} 分`;
+            if (player.age >= 22) {
+                document.getElementById('ui-job-info-box').classList.remove('hidden');
+                document.getElementById('ui-job-title').innerText = `${player.currentJob} (HK$${player.jobMonthlyPay.toLocaleString()}/月)`;
+                document.getElementById('ui-kpi').innerText = `${player.jobKpi} / 100`;
             }
         }
 
-        function switchTab(tabName) {
-            ['育', '行動', '職', '人', '資'].forEach(t => {
-                document.getElementById(`view-${t}`).classList.add('hidden');
-                document.getElementById(`tab-${t}`).classList.remove('active');
+        function switchTab(t) {
+            ['育', '行動', '職', '人', '資'].forEach(x => {
+                document.getElementById(`view-${x}`).classList.add('hidden');
+                document.getElementById(`tab-${x}`).classList.remove('active');
             });
-            document.getElementById(`view-${tabName}`).classList.remove('hidden');
-            document.getElementById(`tab-${tabName}`).classList.add('active');
+            document.getElementById(`view-${t}`).classList.remove('hidden');
+            document.getElementById(`tab-${t}`).classList.add('active');
         }
 
-        function switchActionSubTab(sub) {
-            ['study', 'play', 'health', 'work'].forEach(s => {
-                let btn = document.getElementById(`subtab-${s}`);
-                if (btn) btn.className = s === sub ? 'px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-lg font-bold' : 'px-3 py-1 bg-slate-800 text-slate-400 rounded-lg';
+        function switchActionSubTab(s) { 
+            ['study', 'play', 'health', 'work'].forEach(x => {
+                let btn = document.getElementById(`subtab-${x}`);
+                if(btn) btn.className = x === s ? 'px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-lg font-bold' : 'px-3 py-1 bg-slate-800 text-slate-400 rounded-lg';
             });
-            renderActionCards(sub);
-        }
-
-        // 動態年齡過濾行動卡片庫 (Age Gated)
-        function getActionCardsForCurrentAge(subCat) {
-            if (player.age < 6) {
-                if (subCat === 'study') return [
-                    { title: "📖 聽雙語繪本故事", desc: "父母耐性朗讀，開啟早期言語發育", cost: 1, effect: () => { player.iq += 1; player.happy += 2; }, tag: "+1 IQ, +2 快" },
-                    { title: "🧩 玩邏輯拼圖積木", desc: "鍛鍊手眼協調與早期空間感", cost: 1, effect: () => { player.iq += 1.5; player.stress += 1; }, tag: "+1.5 IQ, +1 壓" }
-                ];
-                if (subCat === 'play') return [
-                    { title: "🛝 公園爬滑梯堆沙", desc: "與鄰居小朋友玩耍放電", cost: 1, effect: () => { player.happy += 3; player.health += 2; }, tag: "+3 快, +2 康" }
-                ];
-                if (subCat === 'health') return [
-                    { title: "😴 充足睡眠與午睡", desc: "確保大腦與身體發育良好", cost: 1, effect: () => { player.health += 4; player.stress = Math.max(0, player.stress - 5); }, tag: "+4 康, -5 壓" }
-                ];
-                if (subCat === 'work') return [
-                    { title: "🚫 未達工作年齡", desc: "幼童時期無法工作 (16歲解鎖兼職)", cost: 0, effect: () => {}, tag: "無法執行" }
-                ];
-            } 
-            else if (player.age < 16) {
-                if (subCat === 'study') return [
-                    { title: "📝 溫習功課與操卷", desc: "做 Past Paper 試卷，提升名次", cost: 1, effect: () => { player.iq += 1; player.happy -= 2; player.stress += 3; }, tag: "+1 IQ, -2 快, +3 壓" },
-                    { title: "📚 去圖書館溫書", desc: "專注氛圍，備考效率高", cost: 1, effect: () => { player.iq += 1; player.happy -= 1; player.stress += 2; }, tag: "+1 IQ, -1 快, +2 壓" },
-                    { title: "🎓 報讀補習名師班", desc: "名師答題技巧培訓", cost: 2, effect: () => { player.iq += 2.5; player.stress += 3; player.money = Math.max(0, player.money - 1500); }, tag: "+2.5 IQ, -$1,500" }
-                ];
-                if (subCat === 'play') return [
-                    { title: "🏀 落街場打籃球", desc: "勤力清潔波鞋鞋底，保持狀態", cost: 1, effect: () => { player.health += 4; player.happy += 2; player.stress = Math.max(0, player.stress - 3); }, tag: "+4 康, +2 快, -3 壓" },
-                    { title: "🎮 同同學打機唱K", desc: "建立中學朋友圈子", cost: 1, effect: () => { player.happy += 4; player.money = Math.max(0, player.money - 100); }, tag: "+4 快, -$100" }
-                ];
-                if (subCat === 'health') return [
-                    { title: "🏃 跑步與體育鍛鍊", desc: "提高體能與自信", cost: 1, effect: () => { player.health += 3; player.face += 1; player.stress = Math.max(0, player.stress - 2); }, tag: "+3 康, +1 顏, -2 壓" }
-                ];
-                if (subCat === 'work') return [
-                    { title: "🚫 未滿 16 歲", desc: "香港法定兼職年齡為 16 歲", cost: 0, effect: () => {}, tag: "未解鎖" }
-                ];
-            } 
-            else {
-                if (subCat === 'study') return [
-                    { title: "📜 進修專業證書", desc: "提升職場競爭力與升職籌碼", cost: 1, effect: () => { player.iq += 1.5; player.stress += 4; player.money = Math.max(0, player.money - 3000); }, tag: "+1.5 IQ, -$3,000" }
-                ];
-                if (subCat === 'play') return [
-                    { title: "🍷 職場 Networking", desc: "拓展中環人脈，尋找機遇", cost: 1, effect: () => { player.happy += 3; player.face += 2; player.money = Math.max(0, player.money - 500); }, tag: "+3 快, +2 顏, -$500" }
-                ];
-                if (subCat === 'health') return [
-                    { title: "🏋️ 健身 Gym 按摩", desc: "緩解高壓職場帶來的偏頭痛", cost: 1, effect: () => { player.health += 4; player.stress = Math.max(0, player.stress - 6); }, tag: "+4 康, -6 壓" }
-                ];
-                if (subCat === 'work') return [
-                    { title: "✏️ 兼職私人補習", desc: "幫中小學生補習賺取收入", cost: 1, effect: () => { player.money += 4500; player.stress += 4; }, tag: "+$4,500, +4 壓" },
-                    { title: "💻 中環高壓加班搏殺", desc: "付出健康換取高額獎金", cost: 2, effect: () => { player.money += 25000; player.stress += 12; player.health -= 5; }, tag: "+$25,000, -5 康, +12 壓" }
-                ];
-            }
-            return [];
+            renderActionCards(s); 
         }
 
         function renderActionCards(subCat) {
             const list = document.getElementById('action-cards-list');
             list.innerHTML = '';
-            let cards = getActionCardsForCurrentAge(subCat);
-
-            cards.forEach(c => {
-                let isBtnDisabled = c.cost === 0;
-                list.innerHTML += `
-                    <div onclick="${isBtnDisabled ? '' : `doAction('${c.title}', '${subCat}')`}" class="action-card p-3.5 rounded-xl flex justify-between items-center ${isBtnDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}">
-                        <div>
-                            <div class="font-bold text-sm text-white flex items-center gap-2">
-                                ${c.title}
-                                ${c.cost > 0 ? `<span class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded font-bold">⚡ ${c.cost} AP</span>` : ''}
-                            </div>
-                            <div class="text-xs text-slate-400 mt-1">${c.desc}</div>
+            
+            if (player.age >= 18 && player.age < 22 && subCat === 'study') {
+                list.innerHTML = `
+                    <div onclick="doAction('認真上課寫論文', 'study')" class="action-card p-3.5 rounded-xl cursor-pointer border-amber-500/40">
+                        <div class="font-bold text-amber-300 text-sm flex justify-between">
+                            <span>📖 大學認真上課寫論文</span>
+                            <span class="text-amber-400 font-black">⚡ 1 AP</span>
                         </div>
-                        <div class="text-xs font-bold text-amber-400 shrink-0 ml-2">${c.tag}</div>
+                        <div class="text-xs text-slate-400 mt-1">累積 GPA +0.15，智力 +1 (目標 First Class Honors GPA 3.7+)</div>
+                    </div>`;
+            } else if (player.age >= 22 && subCat === 'work') {
+                let currentJobObj = allJobsDatabase.find(j => j.title === player.currentJob);
+                if (currentJobObj && currentJobObj.workTask) {
+                    let task = currentJobObj.workTask;
+                    list.innerHTML = `
+                        <div onclick="doWorkTask()" class="action-card p-3.5 rounded-xl cursor-pointer border-amber-500/40">
+                            <div class="font-bold text-amber-300 text-sm flex justify-between">
+                                <span>${task.title}</span>
+                                <span class="text-amber-400 font-black">⚡ ${task.ap} AP</span>
+                            </div>
+                            <div class="text-xs text-slate-400 mt-1">${task.desc}</div>
+                            <div class="text-xs font-bold text-emerald-400 mt-2">可獲 KPI +${task.kpi} | 壓力 +${task.stress} ${task.extraPay > 0 ? `| 兼得額外獎金 +$${task.extraPay.toLocaleString()}` : ''}</div>
+                        </div>`;
+                } else {
+                    list.innerHTML = `<div class="p-3.5 text-slate-400 text-xs bg-slate-900 rounded-xl">請先去【職場市場】找到一份工作解鎖職業專屬 10 AP 任務！</div>`;
+                }
+            } else {
+                list.innerHTML = `
+                    <div onclick="doAction('放鬆聽音樂', '${subCat}')" class="action-card p-3.5 rounded-xl cursor-pointer">
+                        <div class="font-bold text-white flex justify-between">
+                            <span>🎧 放鬆休閒聽音樂</span>
+                            <span class="text-amber-400 font-black">⚡ 1 AP</span>
+                        </div>
+                        <div class="text-xs text-slate-400 mt-1">快樂 +3，壓力 -4</div>
+                    </div>`;
+            }
+        }
+
+        function doWorkTask() {
+            if (player.ap < 2) { alert("AP 不足 2 點！"); return; }
+            let currentJobObj = allJobsDatabase.find(j => j.title === player.currentJob);
+            if (!currentJobObj) return;
+
+            let task = currentJobObj.workTask;
+            player.ap -= task.ap;
+            player.jobKpi += task.kpi;
+            player.stress += task.stress;
+            if (task.extraPay > 0) player.money += task.extraPay;
+
+            appendLog(`💼 執行專屬職場任務【${task.title}】：累積 KPI +${task.kpi}！ (當前 KPI: ${player.jobKpi}/100)`);
+
+            if (player.jobKpi >= 100) {
+                player.jobKpi = 0;
+                player.jobMonthlyPay = Math.round(player.jobMonthlyPay * 1.35);
+                appendLog(`🎉 【升職加薪祝賀！】你在職場 KPI 爆表達標，獲得老闆重用！成功升職加薪！新月薪升至：HK$${player.jobMonthlyPay.toLocaleString()}！`);
+            }
+
+            updateUI();
+            renderActionCards('work');
+        }
+
+        function doAction(title, subCat) {
+            if (player.ap <= 0) return;
+            player.ap -= 1;
+            if (title.includes('GPA')) {
+                player.gpa += 3.85; player.gpaCredits += 1;
+            } else {
+                player.happy += 3; player.stress = Math.max(0, player.stress - 4);
+            }
+            player.actionsTakenThisYear.push(title);
+            updateUI();
+        }
+
+        function renderJobMarket() {
+            const list = document.getElementById('job-market-list');
+            list.innerHTML = '';
+            allJobsDatabase.forEach(j => {
+                list.innerHTML += `
+                    <div class="npc-card p-3.5 rounded-xl flex justify-between items-center">
+                        <div>
+                            <div class="font-bold text-white text-sm">${j.title}</div>
+                            <div class="text-slate-400 text-xs mt-0.5">💼 ${j.dept} | 月薪: HK$${j.pay.toLocaleString()}</div>
+                            <div class="text-amber-400 text-[10px] mt-0.5 font-bold">門檻: ${j.req}</div>
+                        </div>
+                        <button onclick="applyJob('${j.title}', ${j.pay}, '${j.req}')" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-lg text-xs shadow">應徵</button>
                     </div>`;
             });
         }
 
-        function doAction(title, subCat) {
-            if (player.ap <= 0) { alert("本年度 10 AP 已用完！請點擊『下一年』推進！"); return; }
-            let cards = getActionCardsForCurrentAge(subCat);
-            let card = cards.find(c => c.title === title);
-            if (card && card.cost > 0) {
-                if (player.ap < card.cost) { alert("AP 不足！"); return; }
-                player.ap -= card.cost;
-                card.effect();
-                player.actionsTakenThisYear.push(card.title);
-                updateUI();
-                appendLog(`⚡ 執行【${card.title}】：${card.tag} (剩餘 AP: ${player.ap})`);
+        function applyJob(title, pay, req) {
+            if (player.age < 22) { alert("尚未大學畢業！請先完成學業！"); return; }
+            if (req.includes("First Class") && !player.honors.includes("First Class")) {
+                alert("求職失敗：該頂級職位嚴格要求大專一級榮譽 (First Class Honors) 畢業！");
+                return;
             }
+            player.currentJob = title;
+            player.jobMonthlyPay = pay;
+            player.jobKpi = 0;
+            appendLog(`💼 【求職成功祝賀】你成功受聘為【${title}】，起薪月薪為 HK$${pay.toLocaleString()}！已解鎖專屬 10 AP 職場任務！`);
+            updateUI();
+            switchTab('行動');
+            switchActionSubTab('work');
         }
 
         function renderNPCs() {
@@ -595,12 +642,9 @@
                     <div class="npc-card p-3 rounded-xl flex justify-between items-center">
                         <div>
                             <div class="font-bold text-amber-300 text-sm">${n.rel}: ${n.name} (${n.age}歲)</div>
-                            <div class="text-xs text-slate-400 mt-0.5">💼 ${n.job} | 🏛️ ${n.status}</div>
+                            <div class="text-xs text-slate-400">💼 ${n.job} | 💵 $${n.inc.toLocaleString()}</div>
                         </div>
-                        <div class="text-right">
-                            <div class="font-bold text-emerald-400 text-xs">${n.affinity}% 親密</div>
-                            <button onclick="interactNpc('${n.name}')" class="mt-1 px-3 py-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded text-[10px] shadow-sm">💬 傾偈 (免費 0 AP)</button>
-                        </div>
+                        <button onclick="interactNpc('${n.name}')" class="px-3 py-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded text-xs">💬 傾偈 (免費 0 AP)</button>
                     </div>`;
             });
         }
@@ -612,16 +656,16 @@
                 player.happy += 3;
                 updateUI();
                 renderNPCs();
-                appendLog(`💬 (0 AP) 與 ${n.rel} ${n.name} 傾偈相談甚歡，親密值上升至 ${n.affinity}%！快樂 +3！`);
+                appendLog(`💬 (0 AP) 與 ${n.rel} ${n.name} 傾偈溝通，親密值上升至 ${n.affinity}%！快樂 +3！`);
             }
         }
 
-        // 15-16 歲中四選科 Modal 邏輯
+        // 15-16歲選科與 17歲 DSE 邏輯
         function toggleElective(subject) {
             if (selectedElectivesTemp.includes(subject)) {
                 selectedElectivesTemp = selectedElectivesTemp.filter(s => s !== subject);
             } else {
-                if (selectedElectivesTemp.length >= 2) { alert("高中最多選修 2 門科目！"); return; }
+                if (selectedElectivesTemp.length >= 2) { alert("最多選修 2 科！"); return; }
                 selectedElectivesTemp.push(subject);
             }
             document.getElementById('selected-electives-count').innerText = `已選擇：${selectedElectivesTemp.length} / 2 科`;
@@ -635,7 +679,6 @@
             updateUI();
         }
 
-        // 17歲 DSE 考試與放榜
         function submitDseExam() {
             let score = 0;
             if (document.getElementById('dse-q1').value === 'correct') score += 5;
@@ -693,82 +736,36 @@
         }
 
         function nextYear() {
-            if (player.isHospitalized) {
-                player.isHospitalized = false;
-                player.health = 60;
-                player.stress = 20;
-                player.ap = 10;
-                appendLog(`🏥 【康復出院】休養一年後身體已無大礙，AP 恢復至 10。請謹記勞逸結合！`);
-                player.age++;
-                updateUI();
-                return;
-            }
-
-            if (player.stress >= 100 || player.health <= 0) {
-                player.isHospitalized = true;
-                player.money = Math.max(0, player.money - 30000);
-                appendLog(`⚠️【嚴重警告：過勞中風/抑鬱住院！】你的壓力爆表 (≥100) 或健康歸零！你被緊急送院，扣減 HK$30,000 醫療費！下一年強制休養！`);
-                player.age++;
-                updateUI();
-                return;
-            }
-
             player.age++;
-            player.ap = player.maxAp;
+            player.ap = 10;
 
-            // 父母演化
-            npcs.forEach(n => { n.age++; if (Math.random() < 0.25) { n.inc = Math.round(n.inc * 1.05); } });
-
-            // 深度長篇在地年度故事演繹
-            let story = `【${player.age}歲 演繹推斷】\n`;
-            
-            if (player.actionsTakenThisYear.length > 0) {
-                story += `這一年你在【${player.origin.name}】將 10 AP 投入在：${[...new Set(player.actionsTakenThisYear)].join('、')}。`;
-            } else {
-                if (player.age < 6) {
-                    story += `這一年你沉浸在童年的無憂無慮中，在家裡看卡通片、搭積木度過了平淡的一年。`;
-                } else if (player.age < 18) {
-                    story += `這一年你沉迷打機與同學傳 Message，學業上稍微放慢了腳步，生活平穩度過。`;
-                } else {
-                    story += `這一年你應對著香港快節奏的生活與工作，在港鐵塞車與日常瑣事中平穩度過。`;
-                }
-            }
-
-            // 關鍵年齡里程碑觸發
             if (player.age === 6) {
-                if (Math.random() < 0.35 || player.iq > 120) {
-                    player.school = "拔萃附屬小學 (Band 1A名校)";
-                    story += `\n🎉 6歲名校面試結果：你憑藉優異天資通過拔萃面試，成功入讀【${player.school}】！父母為你感到無比自豪！`;
-                } else {
-                    player.school = `${player.origin.district}地區官立小學`;
-                    story += `\n🎲 6歲大抽獎結果：名校競爭激烈，你被順利派入【${player.school}】！`;
-                }
+                player.school = "拔萃附屬小學 (Band 1A名校)";
+                appendLog(`🎉 6歲名校面試結果：你憑藉優異天資通過面試，成功入讀【${player.school}】！`);
             } else if (player.age === 12) {
                 player.school = "拔萃男/女書院 (Band 1A中學)";
-                story += `\n🏫 中一升學呈分試放榜：你憑藉小學累積的名次，成功考入【${player.school}】！`;
+                appendLog(`🏫 中一升學呈分試放榜：你成功考入【${player.school}】！`);
             } else if (player.age === 15) {
-                // 強制觸發中四選科 Modal
                 document.getElementById('modal-electives').classList.remove('hidden');
             } else if (player.age === 17) {
-                // 強制觸發 DSE 考試 Modal
                 document.getElementById('modal-dse-exam').classList.remove('hidden');
             } else if (player.age === 22) {
-                // 22 歲強制畢業！切換為職場狀態
-                player.currentJob = "中環金融/專業職場人";
-                player.school = player.currentJob;
-                player.money += 60000;
-                story += `\n💼 22歲大學畢業！你正式告別學生身份投身職場，獲得首份工作，踏入成年人社會！獲得首筆儲蓄 +$60,000！`;
+                let finalGpa = player.gpaCredits > 0 ? (player.gpa / player.gpaCredits) : 3.2;
+                if (finalGpa >= 3.7) player.honors = "First Class Honors (一級榮譽)";
+                else player.honors = "Second Upper (二級甲等)";
+                
+                appendLog(`🎓 【大學榮譽畢業】你以 GPA ${finalGpa.toFixed(2)} (${player.honors}) 榮譽畢業！成功解鎖最高薪頂級職場門檻！`);
+                document.getElementById('ui-honors-badge').innerText = `榮譽: ${player.honors}`;
             }
 
-            if (player.age >= 6 && player.age < 18) {
-                story += `\n🏆 年終考試放榜：你的學業總成績排名為【${calcRank()}】。`;
+            if (player.jobMonthlyPay > 0) {
+                let annualIncome = player.jobMonthlyPay * 12;
+                player.money += annualIncome;
+                appendLog(`【${player.age}歲 演繹推斷】身為【${player.currentJob}】，你今年累積獲取年薪 HK$${annualIncome.toLocaleString()}！`);
             }
 
             player.actionsTakenThisYear = [];
-            appendLog(story);
             updateUI();
-            renderNPCs();
-            renderActionCards('study');
         }
     </script>
 </body>
