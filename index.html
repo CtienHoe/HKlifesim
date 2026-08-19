@@ -24,7 +24,7 @@
         
         <header class="text-center mb-6 border-b border-amber-500/20 pb-4">
             <h1 class="text-2xl md:text-4xl font-black gold-text tracking-widest uppercase">🇭🇰 Hong Kong Life Simulator</h1>
-            <p class="text-slate-400 text-xs md:text-sm mt-2">嚴格年齡事件庫 ‧ 體力生存機制 ‧ 真實 IQ 限制 ‧ 長篇動態故事生成</p>
+            <p class="text-slate-400 text-xs md:text-sm mt-2">18區出生地 ‧ 現實 IQ 智商 ‧ 父母社會地位 ‧ 體力過勞住院懲罰</p>
         </header>
 
         <!-- 畫面 1：開局自訂角色 -->
@@ -36,9 +36,9 @@
             </div>
 
             <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 text-xs md:text-sm text-slate-400 leading-relaxed space-y-3">
-                <p>📊 <b class="text-amber-400">嚴格屬性封頂：</b> IQ 鎖定 90-145 (真實常態分佈)；情商/外貌/體力上限 100，絕不爆表！</p>
-                <p>💰 <b class="text-amber-400">真實經濟模型：</b> 18歲前存款上限十萬；成年後打工/創業收入按現實比例計算。</p>
-                <p>⏳ <b class="text-amber-400">年齡動態劇本：</b> 每個年齡層（初中、高中、大學、職場、成熟期）選項完全不同！</p>
+                <p>📍 <b class="text-amber-400">出生地區與階級：</b> 包含 18 區真實樓盤、出生行政區與父母社會地位。</p>
+                <p>🧠 <b class="text-amber-400">真實 IQ 指數：</b> IQ 100 爲常態平均，130+ 為資優天才，無 100 封頂限制！</p>
+                <p>💰 <b class="text-amber-400">真實經濟模型：</b> 18歲前存款上限十萬；成年後打工/創業收入按現實香港薪酬計算。</p>
                 <p>🏥 <b class="text-amber-400">過勞住院懲罰：</b> 狂讀書/加班會扣體力，體力低於 30 將強制住院、扣錢並永久降屬性！</p>
             </div>
 
@@ -50,7 +50,7 @@
         <!-- 畫面 2：個人與父母展示 -->
         <div id="screen-setup" class="hidden space-y-6">
             <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800">
-                <h2 class="text-sm font-bold text-amber-400 mb-3 border-b border-slate-800 pb-2">📊 天生基因 (IQ 符合現實標準)</h2>
+                <h2 class="text-sm font-bold text-amber-400 mb-3 border-b border-slate-800 pb-2">📊 天生基因 (IQ 符合現實標準，無 100 上限)</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs md:text-sm">
                     <div class="bg-slate-800/60 p-2.5 rounded-lg">🧠 智商 (IQ)：<span id="attr-intel" class="font-bold text-white">0</span></div>
                     <div class="bg-slate-800/60 p-2.5 rounded-lg">💖 情商 (EQ)：<span id="attr-eq" class="font-bold text-white">0</span></div>
@@ -91,9 +91,9 @@
                 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs md:text-sm">
                     <div>📅 年齡：<span id="game-age" class="text-white font-bold">0</span> 歲</div>
-                    <div>🏠 樓盤：<span id="game-estate" class="text-amber-300 font-bold truncate block">美孚新邨</span></div>
+                    <div>📍 地區：<span id="game-district" class="text-amber-300 font-bold truncate block">深水埗區</span></div>
+                    <div>🏠 樓盤/地位：<span id="game-estate" class="text-amber-300 font-bold truncate block">美孚新邨 (普通中產)</span></div>
                     <div>🏫 學校：<span id="game-school" class="text-blue-300 font-bold truncate block">未入學</span></div>
-                    <div>🏆 名次/Banding：<span id="game-rank" class="text-amber-400 font-bold">無</span></div>
                 </div>
 
                 <div class="grid grid-cols-2 md:grid-cols-5 gap-2 text-xs md:text-sm border-t border-slate-800 pt-2">
@@ -147,17 +147,16 @@
 
         let npcs = [];
         let selectedChoices = { A: null, B: null, C: null, D: null };
-        let stageCache = ""; // 防重複刷新
 
         const estates = [
-            { name: "深水埗 劏房", class: "基層貧民", prob: 0.05, fJob: "地盤工人", mJob: "餐館洗碗工", baseInc: 14000 },
-            { name: "天水圍 天晴邨", class: "基層公屋", prob: 0.25, fJob: "夜班物流司機", mJob: "超市收銀員", baseInc: 22000 },
-            { name: "黃大仙 下邨", class: "基層公屋", prob: 0.25, fJob: "大廈維修技工", mJob: "家庭主婦", baseInc: 25000 },
-            { name: "荔枝角 美孚新邨", class: "普通中產", prob: 0.20, fJob: "中企部門經理", mJob: "中學教師", baseInc: 65000 },
-            { name: "鰂魚涌 太古城", class: "核心中產", prob: 0.12, fJob: "外企資深工程師", mJob: "銀行合規經理", baseInc: 110000 },
-            { name: "九龍站 凱旋門", class: "高端豪宅", prob: 0.08, fJob: "投行執行董事", mJob: "專科醫生", baseInc: 280000 },
-            { name: "中環半山 帝景園", class: "豪門財閥", prob: 0.04, fJob: "上市地產副主席", mJob: "家族基金理事", baseInc: 800000 },
-            { name: "山頂 天比高", class: "隱世頂豪", prob: 0.01, fJob: "跨國財閥創辦人", mJob: "名門名媛", baseInc: 2500000 }
+            { name: "深水埗 劏房", district: "深水埗區", class: "基層貧民", prob: 0.05, fJob: "地盤工人", mJob: "餐館洗碗工", baseInc: 14000 },
+            { name: "天水圍 天晴邨", district: "元朗區", class: "基層公屋", prob: 0.25, fJob: "夜班物流司機", mJob: "超市收銀員", baseInc: 22000 },
+            { name: "黃大仙 下邨", district: "黃大仙區", class: "基層公屋", prob: 0.25, fJob: "大廈維修技工", mJob: "家庭主婦", baseInc: 25000 },
+            { name: "荔枝角 美孚新邨", district: "深水埗區", class: "普通中產", prob: 0.20, fJob: "中企部門經理", mJob: "中學教師", baseInc: 65000 },
+            { name: "鰂魚涌 太古城", district: "東區", class: "核心中產", prob: 0.12, fJob: "外企資深工程師", mJob: "銀行合規經理", baseInc: 110000 },
+            { name: "九龍站 凱旋門", district: "油尖旺區", class: "高端豪宅", prob: 0.08, fJob: "投行執行董事", mJob: "專科醫生", baseInc: 280000 },
+            { name: "中環半山 帝景園", district: "中西區", class: "豪門財閥", prob: 0.04, fJob: "上市地產副主席", mJob: "家族基金理事", baseInc: 800000 },
+            { name: "山頂 天比高", district: "中西區", class: "隱世頂豪", prob: 0.01, fJob: "跨國財閥創辦人", mJob: "名門名媛", baseInc: 2500000 }
         ];
 
         function randomGaussian(mean, stdev) {
@@ -167,9 +166,9 @@
         }
 
         function capStats() {
-            // IQ 嚴格封頂 150，常態 90-110
-            player.intel = Math.max(70, Math.min(150, Math.round(player.intel)));
-            // EQ/Beauty/Phys 嚴格封頂 100
+            // IQ 為現實指數，無 100 封頂
+            player.intel = Math.max(70, Math.round(player.intel));
+            // EQ/Beauty/Phys 嚴格 0-100 封頂
             player.eq = Math.max(10, Math.min(100, Math.round(player.eq)));
             player.beauty = Math.max(10, Math.min(100, Math.round(player.beauty)));
             player.phys = Math.max(0, Math.min(100, Math.round(player.phys)));
@@ -189,27 +188,25 @@
             player.origin = getRandomEstate();
             player.money = 0; player.age = 0; player.phys = 100; player.status = '幼兒';
 
-            // 父母屬性與職業強掛鉤
-            let baseNpcIq = player.origin.baseInc > 70000 ? 115 : (player.origin.baseInc > 30000 ? 100 : 90);
+            let baseNpcIq = player.origin.baseInc > 70000 ? 115 : (player.origin.baseInc > 30000 ? 102 : 95);
             
             npcs = [
-                { id: 'father', rel: '父親', name: "陳家豪", age: 35, job: player.origin.fJob, inc: player.origin.baseInc, intel: Math.round(randomGaussian(baseNpcIq, 10)), eq: Math.round(randomGaussian(baseNpcIq-5, 10)) },
-                { id: 'mother', rel: '母親', name: "王秀英", age: 33, job: player.origin.mJob, inc: player.origin.baseInc * 0.7, intel: Math.round(randomGaussian(baseNpcIq, 10)), eq: Math.round(randomGaussian(baseNpcIq-5, 10)) }
+                { id: 'father', rel: '父親', name: "陳家豪", age: 35, job: player.origin.fJob, inc: player.origin.baseInc, intel: Math.round(randomGaussian(baseNpcIq, 10)), eq: Math.round(randomGaussian(50, 12)), status: player.origin.class },
+                { id: 'mother', rel: '母親', name: "王秀英", age: 33, job: player.origin.mJob, inc: player.origin.baseInc * 0.7, intel: Math.round(randomGaussian(baseNpcIq, 10)), eq: Math.round(randomGaussian(50, 12)), status: player.origin.class }
             ];
 
-            // 遺傳算法
             let inheritedIq = ((npcs[0].intel + npcs[1].intel) / 2) * 0.85;
-            let mutation = (Math.random() < 0.02) ? 30 : (Math.random() * 20 - 8); // 2% 爆發天才
+            let mutation = (Math.random() < 0.02) ? 35 : (Math.random() * 20 - 5);
             player.intel = inheritedIq + mutation;
             player.eq = ((npcs[0].eq + npcs[1].eq) / 2) * 0.85 + (Math.random() * 20 - 5);
-            player.beauty = randomGaussian(60, 15);
+            player.beauty = randomGaussian(50, 15);
             capStats();
 
             document.getElementById('attr-intel').innerText = player.intel;
             document.getElementById('attr-eq').innerText = player.eq;
             document.getElementById('attr-beauty').innerText = player.beauty;
 
-            document.getElementById('origin-title').innerText = player.origin.name;
+            document.getElementById('origin-title').innerText = `${player.origin.name} (${player.origin.district})`;
             document.getElementById('origin-desc').innerText = `階級：${player.origin.class}。這裏是你成長的起點。`;
 
             renderNPCSetupCard('father-npc-card', npcs[0]);
@@ -222,7 +219,8 @@
         function renderNPCSetupCard(id, npc) {
             document.getElementById(id).innerHTML = `
                 <div class="font-bold text-amber-400">${npc.rel}：${npc.name} (${npc.age}歲)</div>
-                <div class="truncate">💼 ${npc.job} | 💵 HK$${Math.round(npc.inc).toLocaleString()}</div>
+                <div class="truncate">💼 ${npc.job} | 🏛️ ${npc.status}</div>
+                <div>💵 月薪：HK$${Math.round(npc.inc).toLocaleString()}</div>
                 <div class="text-slate-400">🧠 IQ:${npc.intel} | 💖 EQ:${npc.eq}</div>
             `;
         }
@@ -232,7 +230,7 @@
             document.getElementById('screen-game').classList.remove('hidden');
             document.getElementById('game-player-name').innerText = player.name;
             
-            appendStory(`【0歲 降生記】\n產房內傳來洪亮的啼哭聲，你正式降生在香港！父母抱著你，眼中滿是期盼。當時父親 ${npcs[0].name} 每月收入為 HK$${Math.round(npcs[0].inc).toLocaleString()}，一家人居住在【${player.origin.name}】。\n經初步觀察，你的天生 IQ 約為 ${player.intel}，情商潛力為 ${player.eq}。一個屬於你的香港人生故事，在此拉開序幕……`);
+            appendStory(`【0歲 降生記】\n產房內傳來洪亮啼哭聲，你正式降生在香港${player.origin.district}！父母抱著你，眼中滿是期盼。當時父親 ${npcs[0].name} 每月收入為 HK$${Math.round(npcs[0].inc).toLocaleString()}，家庭社會地位為【${player.origin.class}】，一家人居住在【${player.origin.name}】。\n經測試，你的天生 IQ 約為 ${player.intel}（常態平均為 100），情商為 ${player.eq}。一個屬於你的 Hong Kong Life Simulator 傳奇故事，在此拉開序幕……`);
             renderTurn();
         }
 
@@ -244,11 +242,10 @@
 
         function calcRank() {
             if (player.age < 7 || player.age > 17) return "無";
-            // 名次競爭公式：對手平均IQ設為110 (名校則為125)
             let rivalIq = (player.schoolBand.includes("Band 1A")) ? 125 : 105;
             let diff = player.intel - rivalIq;
-            let baseRank = 60 - (diff * 2.5); // 智商高於對手10點，名次前進25名
-            baseRank += (Math.random() * 10 - 5);
+            let baseRank = 60 - (diff * 2.2);
+            baseRank += (Math.random() * 8 - 4);
             player.classRank = Math.max(1, Math.min(120, Math.round(baseRank)));
             return `全級第 ${player.classRank} / 120 名`;
         }
@@ -256,7 +253,8 @@
         function updateUI() {
             capStats();
             document.getElementById('game-age').innerText = player.age;
-            document.getElementById('game-estate').innerText = player.origin.name;
+            document.getElementById('game-district').innerText = player.origin.district;
+            document.getElementById('game-estate').innerText = `${player.origin.name} (${player.origin.class})`;
             document.getElementById('game-school').innerText = player.school === '未入學' ? '未入學' : `${player.school} (${player.schoolBand})`;
             document.getElementById('game-rank').innerText = calcRank();
             document.getElementById('game-money').innerText = 'HK$' + player.money.toLocaleString();
@@ -280,7 +278,7 @@
                             <span>${n.rel}: ${n.name} (${n.age}歲)</span>
                             <span class="text-slate-400">HK$${Math.round(n.inc).toLocaleString()}</span>
                         </div>
-                        <div class="text-slate-300">💼 ${n.job}</div>
+                        <div class="text-slate-300">💼 ${n.job} | 🏛️ ${n.status}</div>
                     </div>`;
             });
         }
@@ -328,7 +326,6 @@
             selectedChoices[modKey] = window.curMods[modKey].options.find(o => o.id === optId);
         }
 
-        // 動態事件庫
         function renderTurn() {
             updateUI();
             selectedChoices = { A: null, B: null, C: null, D: null };
@@ -338,27 +335,27 @@
                 title.innerText = "【0-6歲：幼兒期與性格塑造】 (IQ/屬性定型期)";
                 renderABCD({
                     A: { title: "🅰️ 早期教育", options: [
-                        { id: "A1", text: "A1 狂讀雙語繪本 (IQ +10, 體力 -10)", effect: () => { player.intel+=10; player.phys-=10; } },
-                        { id: "A2", text: "A2 玩邏輯積木 (IQ +8, 體力 -5)", effect: () => { player.intel+=8; player.phys-=5; } },
-                        { id: "A3", text: "A3 聽古典樂畫畫 (IQ +5, 外貌 +5)", effect: () => { player.intel+=5; player.beauty+=5; } },
-                        { id: "A4", text: "A4 順其自然看卡通 (IQ +2, 體力 +10)", effect: () => { player.intel+=2; player.phys+=10; } }
+                        { id: "A1", text: "A1 狂讀雙語繪本 (IQ +3, 體力 -10)", effect: () => { player.intel+=3; player.phys-=10; } },
+                        { id: "A2", text: "A2 玩邏輯積木 (IQ +2, 體力 -5)", effect: () => { player.intel+=2; player.phys-=5; } },
+                        { id: "A3", text: "A3 聽古典樂畫畫 (IQ +1, 外貌 +5)", effect: () => { player.intel+=1; player.beauty+=5; } },
+                        { id: "A4", text: "A4 順其自然看卡通 (體力 +10)", effect: () => { player.phys+=10; } }
                     ]},
                     B: { title: "🅱️ 體能發育", options: [
                         { id: "B1", text: "B1 幼兒游泳班 (體力 +15)", effect: () => { player.phys+=15; } },
                         { id: "B2", text: "B2 公園瘋狂放電跑跳 (體力 +10)", effect: () => { player.phys+=10; } },
                         { id: "B3", text: "B3 兒童體操平衡 (體力 +12)", effect: () => { player.phys+=12; } },
-                        { id: "B4", text: "B4 在家室內活動 (體力 +5, IQ +2)", effect: () => { player.phys+=5; player.intel+=2; } }
+                        { id: "B4", text: "B4 在家室內活動 (體力 +5)", effect: () => { player.phys+=5; } }
                     ]},
                     C: { title: "🅲 性格鎖定", options: [
                         { id: "C1", text: "C1 主導小朋友玩 (鎖定: 開朗領袖, EQ +15)", effect: () => { player.eq+=15; player.personality="開朗領袖"; } },
-                        { id: "C2", text: "C2 獨自做手工 (鎖定: 冷靜沉穩, IQ +8)", effect: () => { player.intel+=8; player.personality="冷靜沉穩"; } },
+                        { id: "C2", text: "C2 獨自做手工 (鎖定: 冷靜沉穩, IQ +2)", effect: () => { player.intel+=2; player.personality="冷靜沉穩"; } },
                         { id: "C3", text: "C3 甜言蜜語逗人開心 (鎖定: 社交達人, EQ +18)", effect: () => { player.eq+=18; player.personality="社交達人"; } },
-                        { id: "C4", text: "C4 專注看圖書不理人 (鎖定: 獨立孤僻, IQ +10)", effect: () => { player.intel+=10; player.personality="獨立孤僻"; } }
+                        { id: "C4", text: "C4 專注看圖書不理人 (鎖定: 獨立孤僻, IQ +3)", effect: () => { player.intel+=3; player.personality="獨立孤僻"; } }
                     ]},
                     D: { title: "🅳 幼稚園策略", options: [
                         { id: "D1", text: "D1 狂報九龍塘名幼面試班 (EQ +5, 體力 -10)", effect: () => { player.eq+=5; player.phys-=10; } },
                         { id: "D2", text: "D2 隨便讀樓下屋邨/屋苑幼稚園 (體力 +10)", effect: () => { player.phys+=10; } },
-                        { id: "D3", text: "D3 在家由父母教導 (IQ +4, EQ +4)", effect: () => { player.intel+=4; player.eq+=4; } },
+                        { id: "D3", text: "D3 在家由父母教導 (IQ +1, EQ +4)", effect: () => { player.intel+=1; player.eq+=4; } },
                         { id: "D4", text: "D4 上 Playgroup 玩耍 (EQ +5, 體力 +5)", effect: () => { player.eq+=5; player.phys+=5; } }
                     ]}
                 });
@@ -368,36 +365,36 @@
                 renderABCD({
                     A: { title: "🅰️ 升學策略", options: [
                         { id: "A1", text: "A1 衝刺拔萃男/女小學面試 (極難)", effect: () => {
-                            let p = 0.02 + (player.intel/150)*0.15; 
+                            let p = 0.02 + ((player.intel-100)/100)*0.2; 
                             if(Math.random()<p){ player.school="拔萃附屬小學"; return "🎉 奇蹟！成功獲神級名校拔萃錄取！"; }
                             else { player.school="地區官立小學"; return "❌ 拔萃面試落選，派入官立小學。"; }
                         }},
                         { id: "A2", text: "A2 衝刺聖保羅男女附小面試 (極難)", effect: () => {
-                            if(Math.random()<0.08){ player.school="聖保羅男女附小"; return "🎉 成功考入聖保羅男女附小！"; }
+                            if(Math.random()<0.05){ player.school="聖保羅男女附小"; return "🎉 成功考入聖保羅男女附小！"; }
                             else { player.school="津貼小學"; return "❌ 落選，派入普通津小。"; }
                         }},
                         { id: "A3", text: "A3 統一派位大抽獎 (地區名校)", effect: () => {
-                            player.school = Math.random()<0.3 ? "沙田/中西區名小" : "屋邨小學";
+                            player.school = Math.random()<0.35 ? `${player.origin.district}名小` : "屋邨小學";
                             return `🎲 抽獎結果：入讀 ${player.school}。`;
                         }},
                         { id: "A4", text: "A4 直升家門口小學 (穩妥)", effect: () => { player.school="家門口小學"; return "入讀家門口小學。"; } }
                     ]},
                     B: { title: "🅱️ 課外活動", options: [
                         { id: "B1", text: "B1 苦練小提琴考級 (外貌 +4, 體力 -5)", effect: () => { player.beauty+=4; player.phys-=5; } },
-                        { id: "B2", text: "B2 奧數培訓 (IQ +5, 體力 -5)", effect: () => { player.intel+=5; player.phys-=5; } },
+                        { id: "B2", text: "B2 奧數培訓 (IQ +2, 體力 -5)", effect: () => { player.intel+=2; player.phys-=5; } },
                         { id: "B3", text: "B3 參加足球/田徑 (體力 +10)", effect: () => { player.phys+=10; } },
                         { id: "B4", text: "B4 畫畫與黏土 (EQ +4)", effect: () => { player.eq+=4; } }
                     ]},
                     C: { title: "🅲 零用錢", options: [
                         { id: "C1", text: "C1 儲起利是錢 (存款 +HK$3,000)", effect: () => { player.money+=3000; } },
                         { id: "C2", text: "C2 買零食結交朋友 (EQ +5)", effect: () => { player.eq+=5; } },
-                        { id: "C3", text: "C3 買科普圖書 (IQ +3)", effect: () => { player.intel+=3; } },
+                        { id: "C3", text: "C3 買科普圖書 (IQ +1)", effect: () => { player.intel+=1; } },
                         { id: "C4", text: "C4 買新波鞋 (體力 +5)", effect: () => { player.phys+=5; } }
                     ]},
                     D: { title: "🅳 家庭陪伴", options: [
-                        { id: "D1", text: "D1 虎媽高壓督促 (IQ +4, 體力 -10)", effect: () => { player.intel+=4; player.phys-=10; } },
+                        { id: "D1", text: "D1 虎媽高壓督促 (IQ +2, 體力 -10)", effect: () => { player.intel+=2; player.phys-=10; } },
                         { id: "D2", text: "D2 快樂放養 (體力 +10, EQ +5)", effect: () => { player.phys+=10; player.eq+=5; } },
-                        { id: "D3", text: "D3 培養獨立自理 (IQ +2, 體力 +5)", effect: () => { player.intel+=2; player.phys+=5; } },
+                        { id: "D3", text: "D3 培養獨立自理 (體力 +5)", effect: () => { player.phys+=5; } },
                         { id: "D4", text: "D4 週末全家行山 (體力 +8, EQ +4)", effect: () => { player.phys+=8; player.eq+=4; } }
                     ]}
                 });
@@ -406,27 +403,27 @@
                 title.innerText = `【${player.age}歲：小學年度】`;
                 renderABCD({
                     A: { title: "🅰️ 呈分試準備", options: [
-                        { id: "A1", text: "A1 日夜狂補習刷卷 (名次上升, 體力 -20)", effect: () => { player.intel+=2; player.phys-=20; } },
-                        { id: "A2", text: "A2 專注英數主科 (IQ +1, 體力 -10)", effect: () => { player.intel+=1; player.phys-=10; } },
+                        { id: "A1", text: "A1 日夜狂補習刷卷 (名次上升, 體力 -20)", effect: () => { player.intel+=1; player.phys-=20; } },
+                        { id: "A2", text: "A2 專注英數主科 (體力 -10)", effect: () => { player.phys-=10; } },
                         { id: "A3", text: "A3 保持平常心溫習 (體力 +5)", effect: () => { player.phys+=5; } },
-                        { id: "A4", text: "A4 上堂發夢唔讀書 (名次大跌, 體力 +15)", effect: () => { player.intel-=2; player.phys+=15; } }
+                        { id: "A4", text: "A4 上堂發夢唔讀書 (名次倒退, 體力 +15)", effect: () => { player.intel-=1; player.phys+=15; } }
                     ]},
                     B: { title: "🅱️ 校隊與專長", options: [
                         { id: "B1", text: "B1 游泳/田徑校隊 (體力 +12)", effect: () => { player.phys+=12; } },
-                        { id: "B2", text: "B2 學習 Python 編程 (IQ +2)", effect: () => { player.intel+=2; } },
+                        { id: "B2", text: "B2 學習 Python 編程 (IQ +1)", effect: () => { player.intel+=1; } },
                         { id: "B3", text: "B3 朗誦與話劇 (EQ +3, 外貌 +2)", effect: () => { player.eq+=3; player.beauty+=2; } },
                         { id: "B4", text: "B4 乜都唔玩早啲返屋企 (體力 +10)", effect: () => { player.phys+=10; } }
                     ]},
                     C: { title: "🅲 校園社交", options: [
                         { id: "C1", text: "C1 競選風紀/班長 (EQ +4, 體力 -5)", effect: () => { player.eq+=4; player.phys-=5; } },
-                        { id: "C2", text: "C2 摺圖書館睇書 (IQ +2)", effect: () => { player.intel+=2; } },
+                        { id: "C2", text: "C2 摺圖書館睇書 (IQ +1)", effect: () => { player.intel+=1; } },
                         { id: "C3", text: "C3 落街場打籃球 (勤力清潔球鞋) (體力+10)", effect: () => { player.phys+=10; } },
                         { id: "C4", text: "C4 沉迷打機逃避現實 (EQ -2, 體力 -5)", effect: () => { player.eq-=2; player.phys-=5; } }
                     ]},
                     D: { title: "🅳 升中籌備", options: [
-                        { id: "D1", text: "D1 操練英文面試對答 (IQ +1, EQ +2)", effect: () => { player.intel+=1; player.eq+=2; } },
+                        { id: "D1", text: "D1 操練英文面試對答 (EQ +2)", effect: () => { player.eq+=2; } },
                         { id: "D2", text: "D2 製作精美 Portfolio (外貌 +2, 體力 -5)", effect: () => { player.beauty+=2; player.phys-=5; } },
-                        { id: "D3", text: "D3 睇新聞關心時事 (IQ +2)", effect: () => { player.intel+=2; } },
+                        { id: "D3", text: "D3 睇新聞關心時事 (IQ +1)", effect: () => { player.intel+=1; } },
                         { id: "D4", text: "D4 乜都唔理靠運氣 (體力 +10)", effect: () => { player.phys+=10; } }
                     ]}
                 });
@@ -436,7 +433,7 @@
                 renderABCD({
                     A: { title: "🅰️ 升中選校", options: [
                         { id: "A1", text: "A1 挑戰男/女拔萃多輪面試", effect: () => {
-                            if(player.intel>120 && player.classRank<15){ player.school="拔萃 (Band 1A)"; player.schoolBandBonus=3; return "🎉 奇蹟！成功逆襲考入拔萃！"; }
+                            if(player.intel>125 && player.classRank<12){ player.school="拔萃 (Band 1A)"; player.schoolBandBonus=3; return "🎉 奇蹟！成功逆襲考入拔萃！"; }
                             else { player.school="地區Band 2中學"; player.schoolBandBonus=0; return "❌ 拔萃面試失敗，派入 Band 2。"; }
                         }},
                         { id: "A2", text: "A2 挑戰皇仁/瑪利諾面試", effect: () => {
@@ -444,13 +441,13 @@
                             else { player.school="地區中學"; return "❌ 面試失敗。"; }
                         }},
                         { id: "A3", text: "A3 呈分試統一派位 (求穩)", effect: () => {
-                            if(player.classRank<30){ player.school="地區 Band 1C"; player.schoolBandBonus=1; return "🎲 派入 Band 1C 中學。"; }
+                            if(player.classRank<30){ player.school=`${player.origin.district} Band 1C`; player.schoolBandBonus=1; return "🎲 派入 Band 1C 中學。"; }
                             else { player.school="Band 2 中學"; return "🎲 派入 Band 2。"; }
                         }},
                         { id: "A4", text: "A4 隨緣直升", effect: () => { player.school="Band 3 中學"; return "直升 Band 3。"; } }
                     ]},
                     B: { title: "🅱️ 暑期活動", options: [
-                        { id: "B1", text: "B1 參加奧數營 (IQ +3, 體力 -10)", effect: () => { player.intel+=3; player.phys-=10; } },
+                        { id: "B1", text: "B1 參加奧數營 (IQ +1, 體力 -10)", effect: () => { player.intel+=1; player.phys-=10; } },
                         { id: "B2", text: "B2 學界辯論隊 (EQ +5)", effect: () => { player.eq+=5; } },
                         { id: "B3", text: "B3 瘋狂打機放鬆 (體力 +15)", effect: () => { player.phys+=15; } },
                         { id: "B4", text: "B4 幫人補習賺錢 (存款 +$3,000)", effect: () => { player.money+=3000; } }
@@ -462,7 +459,7 @@
                         { id: "C4", text: "C4 宅在家 (體力 +10)", effect: () => { player.phys+=10; } }
                     ]},
                     D: { title: "🅳 立志", options: [
-                        { id: "D1", text: "D1 立志做 DSE 狀元 (IQ +2)", effect: () => { player.intel+=2; } },
+                        { id: "D1", text: "D1 立志做 DSE 狀元 (IQ +1)", effect: () => { player.intel+=1; } },
                         { id: "D2", text: "D2 立志創業發達 (EQ +2)", effect: () => { player.eq+=2; } },
                         { id: "D3", text: "D3 立志做運動員 (體力 +5)", effect: () => { player.phys+=5; } },
                         { id: "D4", text: "D4 渾渾噩噩 (體力 +5)", effect: () => { player.phys+=5; } }
@@ -473,28 +470,28 @@
                 title.innerText = `【${player.age}歲：中學生涯 (絕無越級選項)】`;
                 renderABCD({
                     A: { title: "🅰️ 學業與選科", options: [
-                        { id: "A1", text: "A1 狂操 Past Paper (IQ +2, 體力 -20)", effect: () => { player.intel+=2; player.phys-=20; } },
-                        { id: "A2", text: "A2 補習天皇班 (IQ +1, 存款 -$2,000)", effect: () => { player.intel+=1; player.money=Math.max(0, player.money-2000); } },
-                        { id: "A3", text: "A3 選修理科/M2 (IQ +2)", effect: () => { player.intel+=2; } },
+                        { id: "A1", text: "A1 狂操 Past Paper (IQ +1, 體力 -20)", effect: () => { player.intel+=1; player.phys-=20; } },
+                        { id: "A2", text: "A2 補習天皇班 (存款 -$2,000)", effect: () => { player.money=Math.max(0, player.money-2000); } },
+                        { id: "A3", text: "A3 選修理科/M2 (IQ +1)", effect: () => { player.intel+=1; } },
                         { id: "A4", text: "A4 選修文商/Econ (EQ +2)", effect: () => { player.eq+=2; } }
                     ]},
                     B: { title: "🅱️ 課外與興趣", options: [
                         { id: "B1", text: "B1 兼職補習賺錢 (存款 +$5,000, 體力 -10)", effect: () => { player.money+=5000; player.phys-=10; } },
                         { id: "B2", text: "B2 學生會幹事 (EQ +4, 體力 -10)", effect: () => { player.eq+=4; player.phys-=10; } },
                         { id: "B3", text: "B3 研究健身營養與蛋白補充 (體力 +15, 外貌 +5)", effect: () => { player.phys+=15; player.beauty+=5; } },
-                        { id: "B4", text: "B4 自學編程 (IQ +2)", effect: () => { player.intel+=2; } }
+                        { id: "B4", text: "B4 自學編程 (IQ +1)", effect: () => { player.intel+=1; } }
                     ]},
                     C: { title: "🅲 社交與網絡", options: [
                         { id: "C1", text: "C1 研究 IG 私隱設定與經營社交 (EQ+5, 外貌+3)", effect: () => { player.eq+=5; player.beauty+=3; } },
                         { id: "C2", text: "C2 沉迷手機遊戲 (IQ -1, 體力 -5)", effect: () => { player.intel-=1; player.phys-=5; } },
-                        { id: "C3", text: "C3 拍青春期初戀 (EQ +5, IQ -2)", effect: () => { player.eq+=5; player.intel-=2; } },
-                        { id: "C4", text: "C4 摺埋做毒男/毒女 (IQ +1, EQ -3)", effect: () => { player.intel+=1; player.eq-=3; } }
+                        { id: "C3", text: "C3 拍青春期初戀 (EQ +5, IQ -1)", effect: () => { player.eq+=5; player.intel-=1; } },
+                        { id: "C4", text: "C4 摺埋做毒男/毒女 (EQ -3)", effect: () => { player.eq-=3; } }
                     ]},
                     D: { title: "🅳 休息調節", options: [
                         { id: "D1", text: "D1 規律作息早睡早起 (體力 +20)", effect: () => { player.phys+=20; } },
                         { id: "D2", text: "D2 週末行山遠足 (體力 +15, EQ +2)", effect: () => { player.phys+=15; player.eq+=2; } },
                         { id: "D3", text: "D3 狂食頹飯宵夜 (體力 +5, 外貌 -5)", effect: () => { player.phys+=5; player.beauty-=5; } },
-                        { id: "D4", text: "D4 放假補眠死睡 (體力 +25, IQ -1)", effect: () => { player.phys+=25; player.intel-=1; } }
+                        { id: "D4", text: "D4 放假補眠死睡 (體力 +25)", effect: () => { player.phys+=25; } }
                     ]}
                 });
             }
@@ -526,25 +523,25 @@
                 title.innerText = `【${player.age}歲：大學與早期探索】`;
                 renderABCD({
                     A: { title: "🅰️ 學業與實習", options: [
-                        { id: "A1", text: "A1 狂 chur 爭 First Hon (IQ +2, 體力 -20)", effect: () => { player.intel+=2; player.phys-=20; } },
+                        { id: "A1", text: "A1 狂 chur 爭 First Hon (IQ +1, 體力 -20)", effect: () => { player.intel+=1; player.phys-=20; } },
                         { id: "A2", text: "A2 做中環 Big 4 / IBank 實習 (存款 +$30k, 體力 -15)", effect: () => { player.money+=30000; player.phys-=15; } },
                         { id: "A3", text: "A3 輕輕鬆鬆求 Pass (體力 +15)", effect: () => { player.phys+=15; } },
                         { id: "A4", text: "A4 報名海外 Exchange (EQ +5, 存款 -$20k)", effect: () => { player.eq+=5; player.money=Math.max(0, player.money-20000); } }
                     ]},
                     B: { title: "🅱️ 兼職與技能", options: [
                         { id: "B1", text: "B1 狂做私補賺生活費 (存款 +$50k, 體力 -15)", effect: () => { player.money+=50000; player.phys-=15; } },
-                        { id: "B2", text: "B2 考 CFA/CPA 專業證照 (IQ +3, 體力 -10)", effect: () => { player.intel+=3; player.phys-=10; } },
+                        { id: "B2", text: "B2 考 CFA/CPA 專業證照 (IQ +1, 體力 -10)", effect: () => { player.intel+=1; player.phys-=10; } },
                         { id: "B3", text: "B3 參加大學創業比賽 (EQ +3, 存款 +$10k)", effect: () => { player.eq+=3; player.money+=10000; } },
-                        { id: "B4", text: "B4 自學炒股理財 (存款 +$5k, IQ +1)", effect: () => { player.money+=5000; player.intel+=1; } }
+                        { id: "B4", text: "B4 自學炒股理財 (存款 +$5k)", effect: () => { player.money+=5000; } }
                     ]},
                     C: { title: "🅲 大學社交", options: [
                         { id: "C1", text: "C1 上庄做老鬼 (EQ +8, 體力 -15)", effect: () => { player.eq+=8; player.phys-=15; } },
-                        { id: "C2", text: "C2 住 Hall 夜夜笙歌 (EQ +5, IQ -2, 體力 -10)", effect: () => { player.eq+=5; player.intel-=2; player.phys-=10; } },
+                        { id: "C2", text: "C2 住 Hall 夜夜笙歌 (EQ +5, 體力 -10)", effect: () => { player.eq+=5; player.phys-=10; } },
                         { id: "C3", text: "C3 出 Pool 拍拖 (EQ +5, 存款 -$10k)", effect: () => { player.eq+=5; player.money=Math.max(0, player.money-10000); } },
                         { id: "C4", text: "C4 毒自留喺屋企 (體力 +20)", effect: () => { player.phys+=20; } }
                     ]},
                     D: { title: "🅳 人生規劃", options: [
-                        { id: "D1", text: "D1 計劃考政府 AO/EO (IQ +2)", effect: () => { player.intel+=2; } },
+                        { id: "D1", text: "D1 計劃考政府 AO/EO (IQ +1)", effect: () => { player.intel+=1; } },
                         { id: "D2", text: "D2 計劃移民留學 (EQ +2)", effect: () => { player.eq+=2; } },
                         { id: "D3", text: "D3 尋找人生意義 (體力 +10)", effect: () => { player.phys+=10; } },
                         { id: "D4", text: "D4 躺平算數 (體力 +15)", effect: () => { player.phys+=15; } }
@@ -588,11 +585,11 @@
                 if(document.getElementById('dse-q1').value === 'correct') bonus += 2;
                 if(document.getElementById('dse-q2').value === 'correct') bonus += 2;
 
-                let base = Math.floor(player.intel / 3.5);
-                player.dseScore = Math.min(49, base + player.schoolBandBonus + bonus); // 嚴格封頂 49 分
+                let base = Math.floor((player.intel - 90) / 2);
+                player.dseScore = Math.min(49, Math.max(10, base + player.schoolBandBonus + bonus));
 
-                let dseMsg = player.dseScore >= 35 ? `你以總分 ${player.dseScore} 分神級成績榮登 DSE 狀元！考入港大醫學系/神科！` :
-                             player.dseScore >= 22 ? `考獲 ${player.dseScore} 分，順利進入三大 (HKU/CUHK/HKUST)！` :
+                let dseMsg = player.dseScore >= 42 ? `你以總分 ${player.dseScore} 分神級成績榮登 DSE 狀元！考入港大醫學系/神科！` :
+                             player.dseScore >= 25 ? `考獲 ${player.dseScore} 分，順利進入三大 (HKU/CUHK/HKUST)！` :
                              `考獲 ${player.dseScore} 分，入讀大專/Asso 準備逆襲。`;
 
                 appendStory(`【17歲：DSE 放榜時刻】\n心跳加速的早晨，你查閱成績：${dseMsg}\n父母激動萬分！這代表你中學生涯的終結，成年世界的大門正式向你打開！`);
@@ -606,10 +603,9 @@
                 return;
             }
 
-            // 住院跳過收益機制
             if (player.isHospitalized) {
                 player.isHospitalized = false;
-                player.phys = 60; // 出院恢復部分
+                player.phys = 60;
                 appendStory(`🏥 【康復出院】你休養了一年，體力恢復至 60，但錯過了這年的發展機會。請保重身體！`);
                 player.age++;
                 renderTurn();
@@ -622,21 +618,20 @@
                 if (typeof res === 'string') specialMsgs.push(res);
             });
 
-            // 體力過勞生存檢測
             let healthMsg = "";
             if (player.phys < 30) {
-                player.intel = Math.max(70, player.intel - 5);
+                player.intel = Math.max(70, player.intel - 3);
                 player.eq = Math.max(10, player.eq - 5);
-                player.money = Math.max(0, player.money - 30000); // 醫療費
+                player.money = Math.max(0, player.money - 30000);
                 player.isHospitalized = true;
-                healthMsg = "⚠️【嚴重警告：過勞入院！】由於你過度操勞，體力暴跌低於 30！你被強制送院，支付了高昂醫療費，且全屬性受到永久創傷扣減！下一年將強制休養！";
+                healthMsg = "⚠️【嚴重警告：過勞入院！】由於你過度操勞，體力暴跌低於 30！你被強制送院，支付高昂醫療費，且屬性受到創傷扣減！下一年將強制休養！";
             } else if (player.phys > 100) {
-                player.phys = 100; // 封頂
+                player.phys = 100;
             }
 
             let npcEv = evolveNPCs(1);
             let story = `【${player.age}歲 演繹推斷】\n`;
-            story += `這一年，你在【${player.origin.name}】的生活波瀾起伏。你選擇了【${selectedChoices.A.text.split('(')[0]}】與【${selectedChoices.B.text.split('(')[0]}】作為學業/事業發展，並在社交生活中貫徹了【${selectedChoices.C.text.split('(')[0]}】及【${selectedChoices.D.text.split('(')[0]}】。\n`;
+            story += `這一年，你在【${player.origin.name} (${player.origin.district})】的生活波瀾起伏。你選擇了【${selectedChoices.A.text.split('(')[0]}】與【${selectedChoices.B.text.split('(')[0]}】作為學業/事業發展，並在社交生活中貫徹了【${selectedChoices.C.text.split('(')[0]}】及【${selectedChoices.D.text.split('(')[0]}】。\n`;
             
             if (specialMsgs.length > 0) story += `▶ 關鍵結果：${specialMsgs.join(" ")}\n`;
             if (healthMsg) story += `\n${healthMsg}\n`;
