@@ -70,7 +70,7 @@
         <div id="screen-start" class="space-y-5 my-auto">
             <div class="text-center">
                 <h1 class="text-3xl font-black gold-text tracking-widest uppercase">🇭🇰 Hong Kong Life</h1>
-                <p class="text-xs text-slate-400 mt-1">20+ 種高薪父母職場 ‧ 50+ 種在地事件 ‧ 10 AP 深度演繹</p>
+                <p class="text-xs text-slate-400 mt-1">22歲自動畢業切換職場 ‧ 嚴格年齡解鎖 ‧ 零 Hea 罐頭文案</p>
             </div>
 
             <div class="space-y-1.5">
@@ -121,23 +121,23 @@
         </div>
 
         <!-- 畫面 3：遊戲主區域 -->
-        <div id="screen-main" class="hidden flex-grow flex flex-col justify-between overflow-hidden pb-14">
+        <div id="screen-main" class="hidden flex-grow flex flex-col justify-between overflow-hidden pb-16">
             
             <!-- 分頁內容容器 -->
             <div class="flex-grow overflow-y-auto pr-1 space-y-3 py-2" id="tab-content-area">
                 
                 <!-- TAB 1: 👦 育 (主頁面 / 故事日誌) -->
                 <div id="view-育" class="space-y-3">
-                    <div id="story-log-box" class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 text-xs leading-relaxed space-y-3 max-h-[48vh] overflow-y-auto"></div>
+                    <div id="story-log-box" class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 text-xs leading-relaxed space-y-3 max-h-[46vh] overflow-y-auto"></div>
                 </div>
 
                 <!-- TAB 2: ⚡ 行動 (10 AP 分配) -->
                 <div id="view-行動" class="hidden space-y-3">
                     <div class="flex border-b border-slate-800 text-xs font-bold gap-1 pb-2" id="action-subtabs">
-                        <button onclick="switchActionSubTab('study')" id="subtab-study" class="px-2.5 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded">📚 學習</button>
-                        <button onclick="switchActionSubTab('play')" id="subtab-play" class="px-2.5 py-1 bg-slate-800 text-slate-400 rounded">🎮 娛樂</button>
-                        <button onclick="switchActionSubTab('health')" id="subtab-health" class="px-2.5 py-1 bg-slate-800 text-slate-400 rounded">🏥 健康</button>
-                        <button onclick="switchActionSubTab('work')" id="subtab-work" class="px-2.5 py-1 bg-slate-800 text-slate-400 rounded">💼 工作</button>
+                        <button onclick="switchActionSubTab('study')" id="subtab-study" class="px-2.5 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded">📚 學習/成長</button>
+                        <button onclick="switchActionSubTab('play')" id="subtab-play" class="px-2.5 py-1 bg-slate-800 text-slate-400 rounded">🎮 娛樂/社交</button>
+                        <button onclick="switchActionSubTab('health')" id="subtab-health" class="px-2.5 py-1 bg-slate-800 text-slate-400 rounded">🏥 健康/養生</button>
+                        <button onclick="switchActionSubTab('work')" id="subtab-work" class="px-2.5 py-1 bg-slate-800 text-slate-400 rounded">💼 工作/兼職</button>
                     </div>
 
                     <div id="action-cards-list" class="space-y-2"></div>
@@ -166,8 +166,8 @@
 
             </div>
 
-            <!-- 懸浮推進下一年按鈕 (完全避免被 TabBar 擋住) -->
-            <div class="p-2 border-t border-slate-800/80 bg-slate-900/95 rounded-xl flex justify-between items-center shrink-0 my-1">
+            <!-- 懸浮推進下一年按鈕 -->
+            <div class="p-2 border-t border-slate-800/80 bg-slate-900/95 rounded-xl flex justify-between items-center shrink-0 my-1 z-10">
                 <span class="text-[10px] text-slate-400">10 AP 可多次分配行動</span>
                 <button onclick="nextYear()" class="py-2.5 px-6 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm rounded-xl shadow-lg shadow-amber-500/20 transition">
                     下一年 ➔ (Age +1)
@@ -196,31 +196,25 @@
 
         let npcs = [];
 
-        // 巨量香港真實職場 Templates (高薪 + 高地位)
         const jobTemplates = {
             govHigh: [
                 { title: "政務司 高級政務主任 (Senior AO)", inc: 185000, dept: "政府政務司", status: "權貴精英" },
                 { title: "廉政公署 (ICAC) 高級調查主任", inc: 125000, dept: "ICAC", status: "核心中產" },
-                { title: "金管局 (HKMA) 助理總裁", inc: 280000, dept: "金融管理局", status: "權貴精英" },
-                { title: "警務處 高級警司", inc: 140000, dept: "警務處", status: "核心中產" }
+                { title: "金管局 (HKMA) 助理總裁", inc: 280000, dept: "金融管理局", status: "權貴精英" }
             ],
             mncHigh: [
                 { title: "跨國 IBank 董事總經理 (MD)", inc: 380000, dept: "企業融資部", status: "豪門財閥" },
-                { title: "美資外企 亞太區首席技術官 (CTO)", inc: 320000, dept: "資訊科技部", status: "豪門財閥" },
-                { title: "公立醫院 專科顧問醫生", inc: 220000, dept: "醫院管理局", status: "核心中產" },
-                { title: "資深大律師 (Senior Counsel)", inc: 300000, dept: "法律界", status: "豪門財閥" },
-                { title: "上市地產巨頭 投資總監", inc: 250000, dept: "地產發展", status: "豪門財閥" }
+                { title: "美資外企 亞太區 CTO", inc: 320000, dept: "資訊科技部", status: "豪門財閥" },
+                { title: "公立醫院 專科顧問醫生", inc: 220000, dept: "醫院管理局", status: "核心中產" }
             ],
             mncMid: [
                 { title: "外企科技公司 Senior Architect", inc: 85000, dept: "IT 部", status: "核心中產" },
-                { title: "跨國銀行 合規經理 (Compliance)", inc: 90000, dept: "合規部", status: "核心中產" },
-                { title: "中學副校長", inc: 95000, dept: "教育局校網", status: "核心中產" }
+                { title: "跨國銀行 合規經理", inc: 90000, dept: "合規部", status: "核心中產" }
             ],
             smeLow: [
-                { title: "中小企 總經理 (GM)", inc: 65000, dept: "管理層", status: "普通中產" },
-                { title: "地盤工程項目項目主管", inc: 55000, dept: "建造業", status: "普通中產" },
-                { title: "高級航空機師 (Captain)", inc: 160000, dept: "國泰航空", status: "核心中產" },
-                { title: "連鎖餐廳店員經理", inc: 32000, dept: "餐飲服務", status: "基層公屋" }
+                { title: "中小企 總經理", inc: 65000, dept: "管理層", status: "普通中產" },
+                { title: "國泰航空 高級機師", inc: 160000, dept: "航空業", status: "核心中產" },
+                { title: "連鎖餐廳店務經理", inc: 32000, dept: "餐飲服務", status: "基層公屋" }
             ]
         };
 
@@ -297,8 +291,20 @@
             player.face = Math.max(0, Math.min(100, player.face));
             player.stress = Math.max(0, Math.min(100, player.stress));
 
+            // 嚴格人生階段機制更新
+            if (player.age < 6) { player.status = "幼童"; }
+            else if (player.age < 12) { player.status = "小學生"; }
+            else if (player.age < 18) { player.status = "中學生"; }
+            else if (player.age < 22) { player.status = "大學生"; }
+            else { 
+                player.status = "職場成年人"; 
+                if (player.school.includes("大學") || player.school.includes("小學") || player.school.includes("中學")) {
+                    player.school = player.currentJob !== "無" ? player.currentJob : "中環金融/專業職場人";
+                }
+            }
+
             document.getElementById('ui-age').innerText = `Age ${player.age}`;
-            document.getElementById('ui-status').innerText = player.age < 6 ? "幼童" : (player.age < 18 ? "學生" : "成年人");
+            document.getElementById('ui-status').innerText = player.status;
             document.getElementById('ui-ap-badge').innerText = `⚡ ${player.ap}/${player.maxAp} AP`;
             document.getElementById('ui-money').innerText = `HK$${player.money.toLocaleString()}`;
 
@@ -337,40 +343,74 @@
             renderActionCards(sub);
         }
 
-        // 行動 AP 卡片庫
-        const actionCardsData = {
-            study: [
-                { title: "溫習功課", desc: "狂操 Past Paper 試卷，提升成績名次", cost: 1, effect: () => { player.iq += 1; player.happy -= 2; player.stress += 3; }, tag: "+1 IQ, -2 快, +3 壓" },
-                { title: "去圖書館溫書", desc: "圖書館環境專注，備考效率高", cost: 1, effect: () => { player.iq += 1; player.happy -= 1; player.stress += 2; }, tag: "+1 IQ, -1 快, +2 壓" },
-                { title: "閱讀科普圖書", desc: "純粹享受閱讀樂趣，拓寬視野", cost: 1, effect: () => { player.iq += 1; player.happy += 2; }, tag: "+1 IQ, +2 快" },
-                { title: "報讀線上精英課程", desc: "補習名師高階培訓", cost: 2, effect: () => { player.iq += 3; player.stress += 4; player.money = Math.max(0, player.money - 2000); }, tag: "+3 IQ, -$2,000" }
-            ],
-            play: [
-                { title: "同朋友去玩", desc: "放鬆心情，建立社交朋友圈", cost: 1, effect: () => { player.happy += 3; player.health -= 2; player.money = Math.max(0, player.money - 40); }, tag: "+3 快, -2 康, -$40" },
-                { title: "落街場打籃球", desc: "勤力清潔波鞋鞋底，保持狀態", cost: 1, effect: () => { player.health += 4; player.happy += 2; player.stress = Math.max(0, player.stress - 3); }, tag: "+4 康, +2 快, -3 壓" },
-                { title: "一家人去飲茶", desc: "增進家庭感情與溫馨回憶", cost: 1, effect: () => { player.happy += 4; player.health -= 2; player.money = Math.max(0, player.money - 200); }, tag: "+4 快, -2 康, -$200" }
-            ],
-            health: [
-                { title: "休息一陣", desc: "坐在一旁聽音樂，減壓抒懷", cost: 1, effect: () => { player.stress = Math.max(0, player.stress - 4); player.health += 2; }, tag: "-4 壓, +2 康" },
-                { title: "出去跑步健身", desc: "出汗鍛鍊，提高體能與外貌", cost: 1, effect: () => { player.health += 3; player.face += 1; player.stress = Math.max(0, player.stress - 2); }, tag: "+3 康, +1 顏, -2 壓" }
-            ],
-            work: [
-                { title: "兼職私人補習", desc: "幫中小學生補習賺取零用錢", cost: 1, effect: () => { player.money += 4000; player.stress += 5; }, tag: "+$4,000, +5 壓" }
-            ]
-        };
+        // 動態年齡過濾行動卡片庫 (Age Gated)
+        function getActionCardsForCurrentAge(subCat) {
+            if (player.age < 6) {
+                // 0-5 歲幼童卡片
+                if (subCat === 'study') return [
+                    { title: "聽雙語繪本故事", desc: "父母耐性朗讀，開啟早期言語發育", cost: 1, effect: () => { player.iq += 1; player.happy += 2; }, tag: "+1 IQ, +2 快" },
+                    { title: "玩邏輯拼圖積木", desc: "鍛鍊手眼協調與早期空間感", cost: 1, effect: () => { player.iq += 1.5; player.stress += 1; }, tag: "+1.5 IQ, +1 壓" }
+                ];
+                if (subCat === 'play') return [
+                    { title: "公園爬滑梯堆沙", desc: "與鄰居小朋友玩耍放電", cost: 1, effect: () => { player.happy += 3; player.health += 2; }, tag: "+3 快, +2 康" }
+                ];
+                if (subCat === 'health') return [
+                    { title: "充足睡眠與午睡", desc: "確保大腦與身體發育良好", cost: 1, effect: () => { player.health += 4; player.stress = Math.max(0, player.stress - 5); }, tag: "+4 康, -5 壓" }
+                ];
+                if (subCat === 'work') return [
+                    { title: "🚫 未達工作年齡", desc: "幼童時期無法工作 (16歲解鎖兼職)", cost: 0, effect: () => {}, tag: "無法執行" }
+                ];
+            } 
+            else if (player.age < 16) {
+                // 6-15 歲中小學生卡片
+                if (subCat === 'study') return [
+                    { title: "溫習功課與操卷", desc: "做 Past Paper 試卷，提升名次", cost: 1, effect: () => { player.iq += 1; player.happy -= 2; player.stress += 3; }, tag: "+1 IQ, -2 快, +3 壓" },
+                    { title: "去圖書館溫書", desc: "專注氛圍，備考效率高", cost: 1, effect: () => { player.iq += 1; player.happy -= 1; player.stress += 2; }, tag: "+1 IQ, -1 快, +2 壓" },
+                    { title: "報讀補習名師班", desc: "名師答題技巧培訓", cost: 2, effect: () => { player.iq += 2.5; player.stress += 3; player.money = Math.max(0, player.money - 1500); }, tag: "+2.5 IQ, -$1,500" }
+                ];
+                if (subCat === 'play') return [
+                    { title: "落街場打籃球", desc: "勤力清潔波鞋鞋底，保持狀態", cost: 1, effect: () => { player.health += 4; player.happy += 2; player.stress = Math.max(0, player.stress - 3); }, tag: "+4 康, +2 快, -3 壓" },
+                    { title: "同同學打機/唱K", desc: "建立中學朋友圈子", cost: 1, effect: () => { player.happy += 4; player.money = Math.max(0, player.money - 100); }, tag: "+4 快, -$100" }
+                ];
+                if (subCat === 'health') return [
+                    { title: "跑步與體育鍛鍊", desc: "提高體能與自信", cost: 1, effect: () => { player.health += 3; player.face += 1; player.stress = Math.max(0, player.stress - 2); }, tag: "+3 康, +1 顏, -2 壓" }
+                ];
+                if (subCat === 'work') return [
+                    { title: "🚫 未滿 16 歲", desc: "香港法定兼職年齡為 16 歲", cost: 0, effect: () => {}, tag: "未解鎖" }
+                ];
+            } 
+            else {
+                // 16 歲以上成人/職場卡片
+                if (subCat === 'study') return [
+                    { title: "進修專業證書", desc: "提升職場競爭力與升職籌碼", cost: 1, effect: () => { player.iq += 1.5; player.stress += 4; player.money = Math.max(0, player.money - 3000); }, tag: "+1.5 IQ, -$3,000" }
+                ];
+                if (subCat === 'play') return [
+                    { title: "職場 Networking / 飲酒", desc: "拓展中環人脈，尋找機遇", cost: 1, effect: () => { player.happy += 3; player.face += 2; player.money = Math.max(0, player.money - 500); }, tag: "+3 快, +2 顏, -$500" }
+                ];
+                if (subCat === 'health') return [
+                    { title: "健身 Gym / 養生按摩", desc: "緩解高壓職場帶來的偏頭痛", cost: 1, effect: () => { player.health += 4; player.stress = Math.max(0, player.stress - 6); }, tag: "+4 康, -6 壓" }
+                ];
+                if (subCat === 'work') return [
+                    { title: "兼職私人補習", desc: "幫中小學生補習賺取收入", cost: 1, effect: () => { player.money += 4500; player.stress += 4; }, tag: "+$4,500, +4 壓" },
+                    { title: "中環高壓加班搏殺", desc: "付出健康換取高額獎金", cost: 2, effect: () => { player.money += 25000; player.stress += 12; player.health -= 5; }, tag: "+$25,000, -5 康, +12 壓" }
+                ];
+            }
+            return [];
+        }
 
         function renderActionCards(subCat) {
             const list = document.getElementById('action-cards-list');
             list.innerHTML = '';
-            let cards = actionCardsData[subCat] || [];
+            let cards = getActionCardsForCurrentAge(subCat);
 
             cards.forEach(c => {
+                let isBtnDisabled = c.cost === 0;
                 list.innerHTML += `
-                    <div onclick="doAction('${c.title}')" class="action-card p-3 rounded-xl flex justify-between items-center cursor-pointer">
+                    <div onclick="${isBtnDisabled ? '' : `doAction('${c.title}', '${subCat}')`}" class="action-card p-3 rounded-xl flex justify-between items-center ${isBtnDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}">
                         <div>
                             <div class="font-bold text-sm text-white flex items-center gap-2">
                                 ${c.title}
-                                <span class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded">⚡ ${c.cost} AP</span>
+                                ${c.cost > 0 ? `<span class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded">⚡ ${c.cost} AP</span>` : ''}
                             </div>
                             <div class="text-xs text-slate-400 mt-0.5">${c.desc}</div>
                         </div>
@@ -379,11 +419,11 @@
             });
         }
 
-        function doAction(title) {
+        function doAction(title, subCat) {
             if (player.ap <= 0) { alert("本年度 10 AP 已用完！請點擊『下一年』推進！"); return; }
-            let all = [...actionCardsData.study, ...actionCardsData.play, ...actionCardsData.health, ...actionCardsData.work];
-            let card = all.find(c => c.title === title);
-            if (card) {
+            let cards = getActionCardsForCurrentAge(subCat);
+            let card = cards.find(c => c.title === title);
+            if (card && card.cost > 0) {
                 if (player.ap < card.cost) { alert("AP 不足！"); return; }
                 player.ap -= card.cost;
                 card.effect();
@@ -393,7 +433,6 @@
             }
         }
 
-        // 人際關係列表（零 AP 免費溝通）
         function renderNPCs() {
             const list = document.getElementById('npc-relations-list');
             list.innerHTML = '';
@@ -419,7 +458,7 @@
                 player.happy += 3;
                 updateUI();
                 renderNPCs();
-                appendLog(`💬 (0 AP) 與 ${n.rel} ${n.name} 傾偈心靈溝通，親密值上升至 ${n.affinity}%！快樂 +3！`);
+                appendLog(`💬 (0 AP) 與 ${n.rel} ${n.name} 傾偈相談甚歡，親密值上升至 ${n.affinity}%！快樂 +3！`);
             }
         }
 
@@ -447,21 +486,28 @@
             player.age++;
             player.ap = player.maxAp;
 
-            // 父母職場演化
-            npcs.forEach(n => { n.age++; if (Math.random() < 0.25) { n.inc = Math.round(n.inc * 1.06); } });
+            // 父母演化
+            npcs.forEach(n => { n.age++; if (Math.random() < 0.25) { n.inc = Math.round(n.inc * 1.05); } });
 
-            // 深度年度故事演繹邏輯
-            let story = `【${player.age}歲 演繹推斷】\n這一年你在【${player.origin.name} (${player.origin.district})】度過。`;
+            // 生成在地長篇年度故事 (零 Hea 罐頭文案)
+            let story = `【${player.age}歲 演繹推斷】\n`;
             
             if (player.actionsTakenThisYear.length > 0) {
-                story += ` 你將 10 AP 行動力投入在：${[...new Set(player.actionsTakenThisYear)].join('、')}。`;
+                story += `這一年你在【${player.origin.name}】將 10 AP 投入在：${[...new Set(player.actionsTakenThisYear)].join('、')}。`;
             } else {
-                story += ` 你選擇了放空擺爛，沒有消耗任何 AP。`;
+                // 零 Hea 罐頭的動態年齡放空描述
+                if (player.age < 6) {
+                    story += `這一年你沉浸在童年的無憂無慮中，在家裡看卡通片、搭積木度過了平淡的一年。`;
+                } else if (player.age < 18) {
+                    story += `這一年你沉迷打機與同學傳 Message，學業上稍微放慢了腳步，生活平穩度過。`;
+                } else {
+                    story += `這一年你應對著香港快節奏的生活與工作，在港鐵塞車與日常瑣事中平穩度過。`;
+                }
             }
 
-            // 升學與事件關卡
+            // 關鍵人生階段里程碑觸發
             if (player.age === 6) {
-                if (Math.random() < 0.3 || player.iq > 120) {
+                if (Math.random() < 0.35 || player.iq > 120) {
                     player.school = "拔萃附屬小學 (Band 1A名校)";
                     story += `\n🎉 6歲名校面試結果：你憑藉優異天資通過拔萃面試，成功入讀【${player.school}】！父母為你感到無比自豪！`;
                 } else {
@@ -473,21 +519,24 @@
                 story += `\n🏫 中一升學呈分試放榜：你憑藉小學累積的名次，成功考入【${player.school}】！`;
             } else if (player.age === 18) {
                 player.school = "香港大學 (HKU) 醫學/金融系";
-                player.status = "大學生";
-                story += `\n🎓 DSE 放榜時刻：你成功考獲高分，榮登狀元行列，順利錄取【${player.school}】！正式告別中學生涯！`;
-            } else if (player.age > 18 && player.school.includes("小學")) {
-                player.school = "香港大學 (HKU) 金融系";
-                player.status = "專業精英";
+                story += `\n🎓 DSE 放榜時刻：你成功考獲佳績，榮登狀元行列，順利錄取【${player.school}】！正式告別中學生涯！`;
+            } else if (player.age === 22) {
+                // 22 歲強制畢業！切換為職場狀態
+                player.currentJob = "中環金融/專業職場人";
+                player.school = player.currentJob;
+                player.money += 50000;
+                story += `\n💼 22歲大學畢業！你正式告別學生身份投身職場，獲得首份工作，踏入成年人社會！首筆積蓄 +$50,000！`;
             }
 
             if (player.age >= 6 && player.age < 18) {
                 story += `\n🏆 年終考試放榜：你的學業總成績排名為【${calcRank()}】。`;
             }
 
-            player.actionsTakenThisYear = []; // 清空年度紀錄
+            player.actionsTakenThisYear = [];
             appendLog(story);
             updateUI();
             renderNPCs();
+            renderActionCards('study'); // 重新刷新當前年齡卡片
         }
     </script>
 </body>
