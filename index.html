@@ -20,10 +20,9 @@
 </head>
 <body class="min-h-screen flex flex-col items-center justify-between p-2 md:p-6 pb-20">
 
-    <!-- 主容器 -->
     <div id="app" class="w-full max-w-md md:max-w-xl hk-card rounded-2xl p-4 shadow-2xl min-h-[90vh] flex flex-col justify-between my-2 relative overflow-hidden">
         
-        <!-- 頂部標題與核心數據（比照影片介面） -->
+        <!-- 頂部標題與核心數據 -->
         <header id="header-bar" class="hidden border-b border-slate-800 pb-3 space-y-2">
             <div class="flex justify-between items-center">
                 <div class="flex items-center gap-2">
@@ -31,7 +30,7 @@
                     <span id="ui-status" class="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">幼童</span>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span id="ui-ap-badge" class="text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2.5 py-1 rounded-full">⚡ 5/5 AP</span>
+                    <span id="ui-ap-badge" class="text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2.5 py-1 rounded-full">⚡ 10/10 AP</span>
                     <span id="ui-money" class="text-sm font-black text-emerald-400">HK$0</span>
                 </div>
             </div>
@@ -61,7 +60,7 @@
             </div>
             
             <div class="text-[11px] text-slate-400 flex justify-between border-t border-slate-800/60 pt-1.5 truncate">
-                <span>📍 <span id="ui-district" class="text-amber-300">中西區</span> (網: <span id="ui-estate">山頂天比高</span>)</span>
+                <span>📍 <span id="ui-district" class="text-amber-300">東區</span> (網: <span id="ui-estate">太古城</span>)</span>
                 <span>🏫 <span id="ui-school" class="text-blue-300">未入學</span></span>
             </div>
         </header>
@@ -70,7 +69,7 @@
         <div id="screen-start" class="space-y-5 my-auto">
             <div class="text-center">
                 <h1 class="text-3xl font-black gold-text tracking-widest uppercase">🇭🇰 Hong Kong Life</h1>
-                <p class="text-xs text-slate-400 mt-1">18區真實校網 ‧ 5 AP 點擊行動 ‧ 壓力與過勞住院 ‧ 人際關係系統</p>
+                <p class="text-xs text-slate-400 mt-1">10 AP 自由分配 ‧ 零 AP 免費家人社交 ‧ 500字長篇推斷故事</p>
             </div>
 
             <div class="space-y-1.5">
@@ -87,11 +86,11 @@
             </div>
 
             <button onclick="generateCharacter()" class="w-full py-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-base rounded-xl shadow-lg shadow-amber-500/20 transition">
-                🎲 抽籤生成 18區家境與基因
+                🎲 命運大抽獎：生成18區家境與基因
             </button>
         </div>
 
-        <!-- 畫面 2：家境展示 (比照影片命運大抽獎) -->
+        <!-- 畫面 2：家境展示 -->
         <div id="screen-setup" class="hidden space-y-5 my-auto">
             <div class="text-center space-y-1">
                 <div class="text-3xl">🎰</div>
@@ -101,11 +100,11 @@
             <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-800 space-y-3 text-xs">
                 <div class="flex justify-between border-b border-slate-800 pb-2">
                     <span class="text-slate-400">出生地區：</span>
-                    <span id="setup-district" class="font-bold text-amber-300">中西區</span>
+                    <span id="setup-district" class="font-bold text-amber-300">鰂魚涌 (東區)</span>
                 </div>
                 <div class="flex justify-between border-b border-slate-800 pb-2">
                     <span class="text-slate-400">居住樓盤與階級：</span>
-                    <span id="setup-estate" class="font-bold text-amber-300">山頂天比高 (隱世頂豪)</span>
+                    <span id="setup-estate" class="font-bold text-amber-300">太古城 (核心中產)</span>
                 </div>
                 <div class="space-y-1 pt-1">
                     <span class="text-slate-400 block font-bold">獨立 NPC 父母動態：</span>
@@ -116,7 +115,7 @@
 
             <div class="flex gap-3">
                 <button onclick="generateCharacter()" class="w-1/2 py-3.5 bg-slate-800 text-slate-300 rounded-xl font-bold border border-slate-700 text-xs">🎲 重新抽籤</button>
-                <button onclick="startGame()" class="w-1/2 py-3.5 bg-amber-500 text-slate-950 font-black rounded-xl text-xs">🚀 開始你的人生</button>
+                <button onclick="startGame()" class="w-1/2 py-3.5 bg-amber-500 text-slate-950 font-black rounded-xl text-xs">🚀 正式降生香港</button>
             </div>
         </div>
 
@@ -131,7 +130,7 @@
                     <div id="story-log-box" class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800 text-xs leading-relaxed space-y-3 max-h-[50vh] overflow-y-auto"></div>
                 </div>
 
-                <!-- TAB 2: ⚡ 行動 (AP 分配，比照影片 00:19-00:25) -->
+                <!-- TAB 2: ⚡ 行動 (10 AP 分配) -->
                 <div id="view-行動" class="hidden space-y-3">
                     <div class="flex border-b border-slate-800 text-xs font-bold gap-2 pb-2" id="action-subtabs">
                         <button onclick="switchActionSubTab('study')" id="subtab-study" class="px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded">📚 學習</button>
@@ -145,17 +144,20 @@
 
                 <!-- TAB 3: 💼 職 (職場市場) -->
                 <div id="view-職" class="hidden space-y-3 text-xs">
-                    <h3 class="font-bold text-amber-400">💼 香港職場市場 (18歲後解鎖)</h3>
+                    <h3 class="font-bold text-amber-400">💼 香港職場市場 (按真實薪酬指引)</h3>
                     <div id="job-market-list" class="space-y-2"></div>
                 </div>
 
-                <!-- TAB 4: 👥 人 (人際關係，比照影片 00:26-00:34) -->
+                <!-- TAB 4: 👥 人 (零 AP 人際關係) -->
                 <div id="view-人" class="hidden space-y-3 text-xs">
-                    <h3 class="font-bold text-amber-400">👥 人際關係網絡</h3>
+                    <div class="flex justify-between items-center">
+                        <h3 class="font-bold text-amber-400">👥 家庭與社交網絡</h3>
+                        <span class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 px-2 py-0.5 rounded">✨ 與家人傾偈免扣 AP！</span>
+                    </div>
                     <div id="npc-relations-list" class="space-y-2"></div>
                 </div>
 
-                <!-- TAB 5: 🏠 房與資 (地產與資產) -->
+                <!-- TAB 5: 🏠 房與資 (地產資產) -->
                 <div id="view-資" class="hidden space-y-3 text-xs">
                     <h3 class="font-bold text-amber-400">🏠 樓盤地產與資產管理</h3>
                     <div id="estate-assets-list" class="space-y-2"></div>
@@ -163,9 +165,9 @@
 
             </div>
 
-            <!-- 右下角推進下一年按鈕 (比照影片 Age +1 按鈕) -->
+            <!-- 右下角推進下一年按鈕 -->
             <div class="pt-2 border-t border-slate-800 flex justify-between items-center">
-                <span class="text-[11px] text-slate-500">提示: 每點擊一次行動消耗 1-2 AP</span>
+                <span class="text-[11px] text-slate-500">提示: 10 AP 可自由配點多項行動</span>
                 <button onclick="nextYear()" class="py-3 px-6 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-sm rounded-xl shadow-lg shadow-amber-500/20 transition">
                     下一年 ➔ (Age +1)
                 </button>
@@ -173,7 +175,7 @@
 
         </div>
 
-        <!-- 底部五大導航分頁 TabBar (比照影片 00:15) -->
+        <!-- 底部五大導航分頁 TabBar -->
         <nav id="bottom-tabbar" class="hidden absolute bottom-0 left-0 right-0 bg-slate-950 border-t border-slate-800 grid grid-cols-5 text-center text-[10px] py-1.5 z-20">
             <button onclick="switchTab('育')" id="tab-育" class="tab-btn active py-1"><div>👦</div><div>育/主頁</div></button>
             <button onclick="switchTab('行動')" id="tab-行動" class="tab-btn py-1"><div>⚡</div><div>行動</div></button>
@@ -187,34 +189,34 @@
     <script>
         let player = {
             name: "陳大文", gender: "男", age: 0, health: 100, happy: 80, iq: 100, face: 50, stress: 0,
-            ap: 5, maxAp: 5, money: 0, origin: null, school: "未入學", schoolBandBonus: 0, classRank: 0,
+            ap: 10, maxAp: 10, money: 0, origin: null, school: "未入學", schoolBandBonus: 0, classRank: 0,
             status: "幼兒", currentJob: "無", isHospitalized: false
         };
 
         let npcs = [];
 
-        // 真實職位與公司規模 Templates
+        // 真實職場 Templates
         const jobTemplates = {
             govHigh: [
-                { title: "政務司 高級政務主任 (Senior AO)", inc: 135000, dept: "政務司" },
-                { title: "廉政公署 (ICAC) 高級調查主任", inc: 110000, dept: "ICAC" }
+                { title: "政務司 高級政務主任 (Senior AO)", inc: 135000, dept: "政務司", status: "權貴精英" },
+                { title: "廉政公署 (ICAC) 高級調查主任", inc: 110000, dept: "ICAC", status: "核心中產" }
             ],
             mncHigh: [
-                { title: "跨國 IBank 亞太區首席技術官 (CTO)", inc: 320000, dept: "IT 部" },
-                { title: "美資外企 人力資源總監 (HR Director)", inc: 160000, dept: "HR 部" }
+                { title: "跨國 IBank 亞太區首席技術官 (CTO)", inc: 320000, dept: "IT 部", status: "豪門財閥" },
+                { title: "美資外企 人力資源總監 (HR Director)", inc: 160000, dept: "HR 部", status: "核心中產" }
             ],
             smeLow: [
-                { title: "中小企 HR 助理 (HR Officer)", inc: 22000, dept: "HR 部" },
-                { title: "茶餐廳待應 / 廚師", inc: 20000, dept: "餐飲" },
-                { title: "地盤建造工人", inc: 32000, dept: "工程部" }
+                { title: "中小企 HR 助理 (HR Officer)", inc: 22000, dept: "HR 部", status: "基層公屋" },
+                { title: "茶餐廳待應 / 廚師", inc: 20000, dept: "餐飲", status: "基層公屋" },
+                { title: "地盤建造工人", inc: 32000, dept: "工程部", status: "基層貧民" }
             ]
         };
 
         const estates = [
-            { name: "深水埗 劏房", district: "深水埗區", class: "基層貧民", prob: 0.20, fPool: jobTemplates.smeLow, mPool: jobTemplates.smeLow },
+            { name: "深水埗 劏房", district: "深水埗區", class: "基層貧民", prob: 0.15, fPool: jobTemplates.smeLow, mPool: jobTemplates.smeLow },
             { name: "黃大仙 下邨", district: "黃大仙區", class: "基層公屋", prob: 0.30, fPool: jobTemplates.smeLow, mPool: jobTemplates.smeLow },
             { name: "荔枝角 美孚新邨", district: "深水埗區", class: "普通中產", prob: 0.25, fPool: jobTemplates.govHigh, mPool: jobTemplates.smeLow },
-            { name: "鰂魚涌 太古城", district: "東區", class: "核心中產", prob: 0.15, fPool: jobTemplates.mncHigh, mPool: jobTemplates.govHigh },
+            { name: "鰂魚涌 太古城", district: "東區", class: "核心中產", prob: 0.20, fPool: jobTemplates.mncHigh, mPool: jobTemplates.govHigh },
             { name: "山頂 天比高", district: "中西區", class: "隱世頂豪", prob: 0.10, fPool: jobTemplates.mncHigh, mPool: jobTemplates.mncHigh }
         ];
 
@@ -234,16 +236,16 @@
             let mJob = player.origin.mPool[Math.floor(Math.random() * player.origin.mPool.length)];
 
             npcs = [
-                { id: 'father', rel: '父親', name: "陳黃全", age: 36, job: fJob.title, inc: fJob.inc, iq: Math.round(fJob.inc > 100000 ? 120 : 95), face: 40, affinity: 80 },
-                { id: 'mother', rel: '母親', name: "張秀英", age: 34, job: mJob.title, inc: mJob.inc, iq: Math.round(mJob.inc > 100000 ? 120 : 95), face: 75, affinity: 85 }
+                { id: 'father', rel: '父親', name: "陳家豪", age: 36, job: fJob.title, inc: fJob.inc, iq: Math.round(fJob.inc > 100000 ? 120 : 95), face: 40, affinity: 80, status: fJob.status },
+                { id: 'mother', rel: '母親', name: "王秀英", age: 34, job: mJob.title, inc: mJob.inc, iq: Math.round(mJob.inc > 100000 ? 120 : 95), face: 75, affinity: 85, status: mJob.status }
             ];
 
             player.iq = Math.round(((npcs[0].iq + npcs[1].iq) / 2) * 0.85 + (Math.random() * 20 - 5));
 
             document.getElementById('setup-district').innerText = player.origin.district;
             document.getElementById('setup-estate').innerText = `${player.origin.name} (${player.origin.class})`;
-            document.getElementById('setup-father').innerText = `父親 ${npcs[0].name} (${npcs[0].age}歲)：💼 ${npcs[0].job} | 💵 月薪 $${npcs[0].inc.toLocaleString()}`;
-            document.getElementById('setup-mother').innerText = `母親 ${npcs[1].name} (${npcs[1].age}歲)：💼 ${npcs[1].job} | 💵 月薪 $${npcs[1].inc.toLocaleString()}`;
+            document.getElementById('setup-father').innerText = `父親 ${npcs[0].name} (${npcs[0].age}歲)：💼 ${npcs[0].job} | 🏛️ ${npcs[0].status} | 💵 月薪 $${npcs[0].inc.toLocaleString()}`;
+            document.getElementById('setup-mother').innerText = `母親 ${npcs[1].name} (${npcs[1].age}歲)：💼 ${npcs[1].job} | 🏛️ ${npcs[1].status} | 💵 月薪 $${npcs[1].inc.toLocaleString()}`;
 
             document.getElementById('screen-start').classList.add('hidden');
             document.getElementById('screen-setup').classList.remove('hidden');
@@ -255,7 +257,7 @@
             document.getElementById('header-bar').classList.remove('hidden');
             document.getElementById('bottom-tabbar').classList.remove('hidden');
 
-            appendLog(`【0歲 降生記】\n產房內傳來啼哭聲，你正式降生在香港${player.origin.district}！家庭階級為【${player.origin.class}】。父親擔任【${npcs[0].job}】，母親擔任【${npcs[1].job}】。天生 IQ 指數為 ${player.iq}。一個屬於你的香港人生故事在此展開！`);
+            appendLog(`【0歲 降生記】\n產房內傳來啼哭聲，你正式降生在香港${player.origin.district}！家庭階級為【${player.origin.class}】。\n父親擔任【${npcs[0].job}】 (${npcs[0].status})，每月收入 HK$${Math.round(npcs[0].inc).toLocaleString()}；母親擔任【${npcs[1].job}】 (${npcs[1].status})。\n經測試，你的天生 IQ 指數為 ${player.iq}（常態人口平均為 100）。一個屬於你的 Hong Kong Life Simulator 傳奇故事，在此拉開序幕……`);
             updateUI();
             renderActionCards('study');
             renderNPCs();
@@ -263,7 +265,7 @@
 
         function appendLog(text) {
             const box = document.getElementById('story-log-box');
-            box.innerHTML += `<div class="p-2.5 bg-slate-900 rounded border border-slate-800">${text.replace(/\n/g, '<br>')}</div>`;
+            box.innerHTML += `<div class="p-3 bg-slate-900 rounded border border-slate-800">${text.replace(/\n/g, '<br>')}</div>`;
             setTimeout(() => box.scrollTop = box.scrollHeight, 50);
         }
 
@@ -312,23 +314,25 @@
             renderActionCards(sub);
         }
 
-        // 核心【行動 AP 卡片庫】（比照影片 00:19 - 00:25）
+        // 行動 AP 卡片庫（10 AP 可多次分配）
         const actionCardsData = {
             study: [
-                { title: "溫習功課", desc: "做練習卷，鞏固各科基礎", cost: 1, effect: () => { player.iq += 1; player.happy -= 2; player.stress += 3; }, tag: "+1 IQ, -2 快, +3 壓" },
-                { title: "去圖書館溫書", desc: "圖書館氛圍安靜專注，備考效率高", cost: 1, effect: () => { player.iq += 1; player.happy -= 1; player.stress += 2; }, tag: "+1 IQ, -1 快, +2 壓" },
-                { title: "閱讀科普書本", desc: "頗為有趣，純粹享受閱讀樂趣", cost: 1, effect: () => { player.iq += 1; player.happy += 2; }, tag: "+1 IQ, +2 快" }
+                { title: "溫習功課", desc: "做 Past Paper 練習卷，鞏固基礎", cost: 1, effect: () => { player.iq += 1; player.happy -= 2; player.stress += 3; }, tag: "+1 IQ, -2 快, +3 壓" },
+                { title: "去圖書館溫書", desc: "圖書館氛圍安靜專注，效率高", cost: 1, effect: () => { player.iq += 1; player.happy -= 1; player.stress += 2; }, tag: "+1 IQ, -1 快, +2 壓" },
+                { title: "閱讀科普圖書", desc: "純粹享受閱讀樂趣，拓寬視野", cost: 1, effect: () => { player.iq += 1; player.happy += 2; }, tag: "+1 IQ, +2 快" },
+                { title: "報讀線上精英課程", desc: "高階知識培訓", cost: 2, effect: () => { player.iq += 3; player.stress += 5; player.money = Math.max(0, player.money - 2000); }, tag: "+3 IQ, -$2,000" }
             ],
             play: [
-                { title: "同朋友出去玩", desc: "鬆一鬆，心情輕鬆起來", cost: 1, effect: () => { player.happy += 3; player.health -= 2; player.money = Math.max(0, player.money - 40); }, tag: "+3 快, -2 康, -$40" },
-                { title: "去飲茶", desc: "一家人食餐飯，家人感情變好", cost: 1, effect: () => { player.happy += 4; player.health -= 2; player.money = Math.max(0, player.money - 200); }, tag: "+4 快, -2 康, -$200" }
+                { title: "同朋友去玩", desc: "放鬆心情，建立友誼", cost: 1, effect: () => { player.happy += 3; player.health -= 2; player.money = Math.max(0, player.money - 40); }, tag: "+3 快, -2 康, -$40" },
+                { title: "落街場打籃球", desc: "勤力清潔波鞋鞋底，保持狀態", cost: 1, effect: () => { player.health += 4; player.happy += 2; player.stress = Math.max(0, player.stress - 3); }, tag: "+4 康, +2 快, -3 壓" },
+                { title: "一家人去飲茶", desc: "增進家庭感情", cost: 1, effect: () => { player.happy += 4; player.health -= 2; player.money = Math.max(0, player.money - 200); }, tag: "+4 快, -2 康, -$200" }
             ],
             health: [
-                { title: "休息一陣", desc: "坐在一旁休息，減壓抒懷", cost: 1, effect: () => { player.stress = Math.max(0, player.stress - 4); player.health += 2; }, tag: "-4 壓, +2 康" },
-                { title: "出去跑步散步", desc: "出汗鍛鍊身體", cost: 1, effect: () => { player.health += 3; player.stress = Math.max(0, player.stress - 2); }, tag: "+3 康, -2 壓" }
+                { title: "休息一陣", desc: "坐在一旁聽音樂，減壓抒懷", cost: 1, effect: () => { player.stress = Math.max(0, player.stress - 4); player.health += 2; }, tag: "-4 壓, +2 康" },
+                { title: "出去跑步健身", desc: "出汗鍛鍊，提高體能", cost: 1, effect: () => { player.health += 3; player.face += 1; player.stress = Math.max(0, player.stress - 2); }, tag: "+3 康, +1 顏, -2 壓" }
             ],
             work: [
-                { title: "做私人補習兼職", desc: "幫小學生補習賺取零用錢", cost: 1, effect: () => { player.money += 3000; player.stress += 5; }, tag: "+$3,000, +5 壓" }
+                { title: "兼職私人補習", desc: "幫中小學生補習賺取零用錢", cost: 1, effect: () => { player.money += 4000; player.stress += 5; }, tag: "+$4,000, +5 壓" }
             ]
         };
 
@@ -353,18 +357,19 @@
         }
 
         function doAction(title) {
-            if (player.ap <= 0) { alert("本年度行動力 (AP) 已用完！請點擊『下一年』推進！"); return; }
+            if (player.ap <= 0) { alert("本年度 10 AP 已用完！請點擊『下一年』推進！"); return; }
             let all = [...actionCardsData.study, ...actionCardsData.play, ...actionCardsData.health, ...actionCardsData.work];
             let card = all.find(c => c.title === title);
             if (card) {
+                if (player.ap < card.cost) { alert("AP 不足！"); return; }
                 player.ap -= card.cost;
                 card.effect();
                 updateUI();
-                appendLog(`⚡ 執行行動【${card.title}】：${card.tag}`);
+                appendLog(`⚡ 執行行動【${card.title}】：${card.tag} (剩餘 AP: ${player.ap})`);
             }
         }
 
-        // 人際關係列表（比照影片 00:26 - 00:34）
+        // 人際關係列表（零 AP 免費溝通）
         function renderNPCs() {
             const list = document.getElementById('npc-relations-list');
             list.innerHTML = '';
@@ -373,26 +378,24 @@
                     <div class="npc-card p-3 rounded-xl flex justify-between items-center">
                         <div>
                             <div class="font-bold text-amber-300">${n.rel}: ${n.name} (${n.age}歲)</div>
-                            <div class="text-slate-400">💼 ${n.job}</div>
+                            <div class="text-slate-400">💼 ${n.job} | 🏛️ ${n.status}</div>
                         </div>
                         <div class="text-right">
                             <div class="font-bold text-emerald-400">${n.affinity}% 親密</div>
-                            <button onclick="interactNpc('${n.name}')" class="mt-1 px-2.5 py-1 bg-amber-500 text-slate-950 font-bold rounded text-[10px]">傾偈 ⚡1AP</button>
+                            <button onclick="interactNpc('${n.name}')" class="mt-1 px-2.5 py-1 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded text-[10px]">傾偈 (免費 0 AP)</button>
                         </div>
                     </div>`;
             });
         }
 
         function interactNpc(name) {
-            if (player.ap <= 0) { alert("AP 已用完！"); return; }
             let n = npcs.find(x => x.name === name);
             if (n) {
-                player.ap -= 1;
                 n.affinity = Math.min(100, n.affinity + 5);
                 player.happy += 3;
                 updateUI();
                 renderNPCs();
-                appendLog(`💬 與 ${n.rel} ${n.name} 傾偈相談甚歡，親密值上升至 ${n.affinity}%！`);
+                appendLog(`💬 (0 AP) 與 ${n.rel} ${n.name} 傾偈相談甚歡，親密值上升至 ${n.affinity}%！快樂 +3！`);
             }
         }
 
@@ -401,30 +404,29 @@
                 player.isHospitalized = false;
                 player.health = 60;
                 player.stress = 20;
-                player.ap = 5;
-                appendStory(`🏥 【康復出院】休養一年後身體康復，AP 恢復至 5。請保重身體！`);
+                player.ap = 10;
+                appendLog(`🏥 【康復出院】休養一年後身體已無大礙，AP 恢復至 10。請謹記勞逸結合！`);
                 player.age++;
                 updateUI();
                 return;
             }
 
-            // 過勞住院檢測
             if (player.stress >= 100 || player.health <= 0) {
                 player.isHospitalized = true;
                 player.money = Math.max(0, player.money - 30000);
-                appendLog(`⚠️【過勞住院！】你的壓力爆表 (≥100) 或健康歸零！你被緊急送院，扣減 $30,000 醫療費！下一年強制休養！`);
+                appendLog(`⚠️【嚴重警告：過勞中風/抑鬱住院！】你的壓力爆表 (≥100) 或健康歸零！你被緊急送院，扣減 HK$30,000 醫療費！下一年強制休養！`);
                 player.age++;
                 updateUI();
                 return;
             }
 
             player.age++;
-            player.ap = player.maxAp; // 恢復 AP
+            player.ap = player.maxAp;
 
             // NPC 演化
             npcs.forEach(n => { n.age++; if (Math.random() < 0.2) n.inc = Math.round(n.inc * 1.05); });
 
-            let msg = `【${player.age}歲 年度推斷】你在【${player.origin.name} (${player.origin.district})】平穩度過了這一年。`;
+            let msg = `【${player.age}歲 演繹推斷】你在【${player.origin.name} (${player.origin.district})】平穩度過了這一年。`;
             if (player.age === 6) { player.school = `${player.origin.district}地區小學`; msg += ` 🏫 你到了入學年齡，正式入讀【${player.school}】！`; }
             
             appendLog(msg);
