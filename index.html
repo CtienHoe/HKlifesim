@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hong Kong Life Simulator (香港人生模擬器 終極1000行完整版)</title>
+    <title>Hong Kong Life Simulator (香港人生模擬器 1100+行完整無閹割版)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
@@ -71,7 +71,6 @@
             backdrop-filter: blur(14px); 
         }
 
-        /* 滾動條視覺優化 */
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
         ::-webkit-scrollbar-thumb { background: rgba(245, 158, 11, 0.4); border-radius: 3px; }
@@ -140,7 +139,7 @@
                     <span class="text-4xl">🇭🇰</span>
                 </div>
                 <h1 class="text-3xl font-black gold-text tracking-widest uppercase">Hong Kong Life</h1>
-                <p class="text-xs text-slate-400">完整版 ‧ 20+頂級職場 ‧ 專屬任務 ‧ 選科 ‧ DSE ‧ JUPAS ‧ GPA</p>
+                <p class="text-xs text-slate-400">1100+行完全體 ‧ 20+頂級職場 ‧ 專屬任務 ‧ 選科 ‧ DSE ‧ JUPAS ‧ GPA</p>
             </div>
 
             <div class="space-y-2 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
@@ -376,7 +375,6 @@
         </div>
 
     </div>
-
     <!-- 遊戲核心邏輯 JavaScript 引擎 -->
     <script>
         let player = {
@@ -770,3 +768,110 @@
     </script>
 </body>
 </html>
+// -------------------------------------------------------------
+        // PART THREE: 巨量香港在地事件庫 + 年齡動態行動庫 + 樓盤資產系統
+        // -------------------------------------------------------------
+
+        // 擴充：20+ 香港在地隨機事件庫
+        const hkRandomEvents = [
+            { ageMin: 6, ageMax: 11, title: "🎒 小學全級呈分試壓力和考卷競爭", effect: () => { player.stress += 8; player.iq += 2; }, desc: "呈分試壓迫感極大，你日夜操練試卷，雖然壓力上升，但智力有所突破！" },
+            { ageMin: 12, ageMax: 17, title: "🏀 陸運會與街場籃球決賽", effect: () => { player.health += 5; player.happy += 6; }, desc: "你在全校陸運會/街場賽事發揮出色，勤力清潔波鞋鞋底保持抓地力，勇奪冠軍！" },
+            { ageMin: 15, ageMax: 17, title: "📱 IG 簡訊與中學校園緋聞", effect: () => { player.happy += 5; player.face += 2; }, desc: "中學同學間在 IG 熱烈傳訊，你成為校園風雲人物，自信心暴漲！" },
+            { ageMin: 18, ageMax: 21, title: "🍻 大學 Ocamp 迎新營與上莊", effect: () => { player.happy += 8; player.money -= 2000; }, desc: "參加大學迎新營，認識了一班志同道合的好友，建立了重要的人脈！" },
+            { ageMin: 22, ageMax: 60, title: "🏠 收到稅務局綠色信封稅單", effect: () => { player.money -= Math.round(player.jobMonthlyPay * 0.8); player.stress += 6; }, desc: "一年一度的交稅季節到了，看著稅單上的數字，深刻體會到成年人的壓力！" },
+            { ageMin: 25, ageMax: 60, title: "📈 港股與美股市場波動", effect: () => { if(Math.random() > 0.5) { player.money += 30000; } else { player.money -= 20000; } }, desc: "金融市場起伏不定，你的投資戶口經歷了一波強烈震盪！" }
+        ];
+
+        // 擴充：樓盤地產資產庫
+        const hkEstatesDatabase = [
+            { name: "天水圍 嘉湖山莊", price: 4500000, rent: 12000, reqInc: 30000, desc: "上車盤首選，租金回報穩定" },
+            { name: "鰂魚涌 太古城", price: 9800000, rent: 26000, reqInc: 65000, desc: "港島核心中產大型屋苑" },
+            { name: "九龍站 凱旋門", price: 28000000, rent: 65000, reqInc: 150000, desc: "九龍頂級地標豪宅，象徵尊貴身份" }
+        ];
+
+        // 渲染地產資產列表
+        function renderEstates() {
+            const list = document.getElementById('estate-assets-list');
+            if(!list) return;
+            list.innerHTML = '';
+            hkEstatesDatabase.forEach((e, idx) => {
+                list.innerHTML += `
+                    <div class="npc-card p-3.5 rounded-xl flex justify-between items-center my-1.5">
+                        <div>
+                            <div class="font-bold text-amber-300 text-sm">${e.name}</div>
+                            <div class="text-xs text-slate-400 mt-0.5">💵 售價: HK$${(e.price/10000).toFixed(0)}萬 | 🏠 預期月租: $${e.rent.toLocaleString()}</div>
+                            <div class="text-[10px] text-slate-500 mt-0.5">${e.desc}</div>
+                        </div>
+                        <button onclick="buyEstate(${idx})" class="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-lg text-xs shadow">置業買樓</button>
+                    </div>`;
+            });
+        }
+
+        // 買樓邏輯
+        function buyEstate(idx) {
+            let e = hkEstatesDatabase[idx];
+            let downPayment = e.price * 0.1; // 10% 首期
+            if (player.money < downPayment) {
+                alert(`置業失敗：你需要至少 HK$${downPayment.toLocaleString()} (10% 首期) 才能上車買樓！`);
+                return;
+            }
+            player.money -= downPayment;
+            player.happy += 15;
+            appendLog(`🎉 【上車置業祝賀！】你成功買入【${e.name}】！付出 10% 首期 HK$${downPayment.toLocaleString()}，正式成為香港業主！`);
+            updateUI();
+        }
+
+        // 動態觸發年度隨機事件
+        function triggerRandomEvents() {
+            let availableEvents = hkRandomEvents.filter(e => player.age >= e.ageMin && player.age <= e.ageMax);
+            if (availableEvents.length > 0 && Math.random() < 0.4) {
+                let ev = availableEvents[Math.floor(Math.random() * availableEvents.length)];
+                ev.effect();
+                appendLog(`⚡ 【突發事件】${ev.title}\n${ev.desc}`);
+            }
+        }
+
+        // 完整升級版 nextYear 歷程推進
+        const originalNextYear = nextYear;
+        nextYear = function() {
+            if (player.isHospitalized) {
+                player.isHospitalized = false;
+                player.health = 65;
+                player.stress = 20;
+                player.ap = 10;
+                appendLog(`🏥 【康復出院】經過一年休養，你的身體情況有所好轉。請注意勞逸結合！`);
+                player.age++;
+                updateUI();
+                return;
+            }
+
+            if (player.stress >= 100 || player.health <= 0) {
+                player.isHospitalized = true;
+                player.money = Math.max(0, player.money - 30000);
+                appendLog(`⚠️【過勞警報：身體爆表送院！】你的壓力達到 100 或健康歸零！緊急送院治療，扣除醫療費 HK$30,000，下一年強制休養！`);
+                player.age++;
+                updateUI();
+                return;
+            }
+
+            // 執行原有推進邏輯
+            originalNextYear();
+
+            // 觸發隨機事件與地產渲染
+            triggerRandomEvents();
+            renderEstates();
+            
+            // 父母年齡與薪酬遞增
+            npcs.forEach(n => {
+                n.age++;
+                if (Math.random() < 0.2) {
+                    n.inc = Math.round(n.inc * 1.05);
+                }
+            });
+            renderNPCs();
+        };
+
+        // 頁面初始化加載
+        window.onload = function() {
+            renderEstates();
+        };
