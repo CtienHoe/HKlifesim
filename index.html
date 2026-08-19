@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>豪門帝國重開模擬器 (Empire Life Simulator)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0f172a; color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+        .gold-text { color: #f59e0b; }
+        .card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(245, 158, 11, 0.2); backdrop-filter: blur(10px); }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div id="app" class="w-full max-w-2xl card rounded-2xl p-6 shadow-2xl">
+        <!-- 標題區 -->
+        <header class="text-center mb-6 border-b border-amber-500/20 pb-4">
+            <h1 class="text-3xl font-extrabold gold-text tracking-wider">👑 豪門帝國重開模擬器</h1>
+            <p class="text-slate-400 text-sm mt-1">開局隨機血脈 ‧ 打造萬億商業帝國</p>
+        </header>
+
+        <!-- 畫面 1: 角色創建 / 隨機抽卡 -->
+        <div id="screen-setup" class="space-y-6">
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                <h2 class="text-lg font-bold text-amber-400 mb-3">🎲 本世天生屬性 (隨機抽取)</h2>
+                <div class="grid grid-cols-2 gap-3 text-sm">
+                    <div>🧠 智力：<span id="attr-intel" class="font-bold text-white">?</span></div>
+                    <div>💖 情商：<span id="attr-eq" class="font-bold text-white">?</span></div>
+                    <div>✨ 外貌：<span id="attr-beauty" class="font-bold text-white">?</span></div>
+                    <div>💪 體力：<span id="attr-phys" class="font-bold text-white">?</span></div>
+                </div>
+            </div>
+
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                <h2 class="text-lg font-bold text-amber-400 mb-2">🏰 出身家境與天賦</h2>
+                <p id="origin-desc" class="text-slate-300 text-sm mb-2">按下下方按鈕隨機生成你的出身...</p>
+                <div id="talent-tags" class="flex flex-wrap gap-2"></div>
+            </div>
+
+            <div class="flex gap-4">
+                <button onclick="rerollCharacter()" class="w-1/2 py-3 bg-slate-700 hover:bg-slate-600 rounded-xl font-bold transition">🎲 重新抽卡</button>
+                <button id="btn-start" onclick="startGame()" disabled class="w-1/2 py-3 bg-amber-500 opacity-50 cursor-not-allowed hover:bg-amber-400 text-slate-900 font-bold rounded-xl transition">🚀 投胎出生</button>
+            </div>
+        </div>
+
+        <!-- 畫面 2: 遊戲主界面 -->
+        <div id="screen-game" class="hidden space-y-6">
+            <!-- 狀態欄 -->
+            <div class="grid grid-cols-3 gap-2 bg-slate-800/80 p-3 rounded-xl border border-amber-500/30 text-xs">
+                <div>📅 年齡：<span id="game-age" class="text-amber-400 font-bold">0</span> 歲</div>
+                <div>💰 資產：<span id="game-money" class="text-green-400 font-bold">$0</span></div>
+                <div>👑 地位：<span id="game-status" class="text-blue-400 font-bold">無名小卒</span></div>
+            </div>
+
+            <!-- 事件紀錄視窗 -->
+            <div id="event-log" class="bg-slate-900/80 p-4 rounded-xl h-48 overflow-y-auto space-y-2 border border-slate-800 text-sm leading-relaxed">
+            </div>
+
+            <!-- 操作選項區 -->
+            <div id="choices-container" class="space-y-3">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 遊戲狀態數據
+        let player = {
+            age: 0,
+            intel: 0,
+            eq: 0,
+            beauty: 0,
+            phys: 0,
+            money: 0,
+            origin: '',
+            talents: [],
+            status: '無名小卒'
+        };
+
+        const origins = [
+            { name: "平民家庭", baseMoney: 1000, status: "普通市民" },
+            { name: "中產專業人士家庭", baseMoney: 50000, status: "中產新星" },
+            { name: "上市醫療集團千金/少爺", baseMoney: 5000000, status: "豪門新貴" },
+            { name: "歐洲古老貴族世家", baseMoney: 50000000, status: "頂級名媛/少爺" },
+            { name: "隱世萬億財閥第一繼承人", baseMoney: 500000000, status: "帝國少主" }
+        ];
+
+        const allTalents = [
+            { name: "過目不忘", desc: "智力成長 +20%" },
+            { name: "商業直覺", desc: "投資收益 +30%" },
+            { name: "貴族氣場", desc: "社交與政治成功率提升" },
+            { name: "邏輯腦", desc: "科技與R&D研發成本減半" },
+            { name: "大心臟", desc: "高風險投資絕不崩盤" },
+            { name: "絕世顏值", desc: "更容易獲得頂級豪門聯姻" }
+        ];
+
+        // 隨機抽卡邏輯
+        function rerollCharacter() {
+            player.intel = Math.floor(Math.random() * 50) + 50;
+            player.eq = Math.floor(Math.random() * 50) + 50;
+            player.beauty = Math.floor(Math.random() * 50) + 50;
+            player.phys = Math.floor(Math.random() * 50) + 50;
+
+            const selectedOrigin = origins[Math.floor(Math.random() * origins.length)];
+            player.origin = selectedOrigin.name;
+            player.money = selectedOrigin.baseMoney;
+            player.status = selectedOrigin.status;
+
+            // 隨機抽 2 個天賦
+            const shuffled = [...allTalents].sort(() => 0.5 - Math.random());
+            player.talents = shuffled.slice(0, 2);
+
+            // 更新 UI
+            document.getElementById('attr-intel').innerText = player.intel;
+            document.getElementById('attr-eq').innerText = player.eq;
+            document.getElementById('attr-beauty').innerText = player.beauty;
+            document.getElementById('attr-phys').innerText = player.phys;
+
+            document.getElementById('origin-desc').innerText = `【${player.origin}】 初始啟動資金：$${player.money.toLocaleString()}`;
+            
+            const tagsDiv = document.getElementById('talent-tags');
+            tagsDiv.innerHTML = '';
+            player.talents.forEach(t => {
+                tagsDiv.innerHTML += `<span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2 py-1 rounded-md text-xs">✨ ${t.name} (${t.desc})</span>`;
+            });
+
+            const startBtn = document.getElementById('btn-start');
+            startBtn.disabled = false;
+            startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+
+        // 開始遊戲
+        function startGame() {
+            document.getElementById('screen-setup').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+            
+            logEvent(`👶 你出生在一個【${player.origin}】，帶着天賦 [${player.talents.map(t=>t.name).join(', ')}] 開始了你的人生故事。`);
+            nextTurn();
+        }
+
+        function logEvent(text) {
+            const log = document.getElementById('event-log');
+            log.innerHTML += `<p class="border-b border-slate-800 pb-1">${text}</p>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function updateStatusUI() {
+            document.getElementById('game-age').innerText = player.age;
+            document.getElementById('game-money').innerText = '$' + player.money.toLocaleString();
+            document.getElementById('game-status').innerText = player.status;
+        }
+
+        // 模擬回合事件機制
+        function nextTurn() {
+            player.age += 1;
+            updateStatusUI();
+
+            const choicesDiv = document.getElementById('choices-container');
+            choicesDiv.innerHTML = '';
+
+            // 根據年齡觸發不同階段事件
+            if (player.age === 18) {
+                logEvent(`🎓 你今年 18 歲，成年了！請選擇你的人生大學與事業發展方向：`);
+                renderChoices([
+                    { text: "🏫 考入常春藤名校，攻讀 PPE/金融神科", action: () => { player.intel += 10; player.money *= 1.2; logEvent("你以優異成績畢業，積攢了初步金融人脈。"); nextTurn(); } },
+                    { text: "🚀 用家族種子基金直接創業（AI / 科技）", action: () => { player.money *= 2.5; logEvent("創業大獲成功！獲得第一桶金！"); nextTurn(); } },
+                    { text: "🏎️ 沉迷奢華超跑與賽車社交", action: () => { player.eq += 10; player.money *= 0.8; logEvent("你在頂級名流圈建立咗極強的人脈網絡。"); nextTurn(); } }
+                ]);
+            } else if (player.age === 25) {
+                logEvent(`💼 25 歲，你站在事業的交叉路口：`);
+                renderChoices([
+                    { text: "🏢 併購市面上同類型科技公司，實現 100% 獨大", action: () => { player.money *= 5; player.status = "商業巨鱷"; logEvent("商業閃電戰大獲全勝！成為行業獨霸！"); nextTurn(); } },
+                    { text: "🏀 收購一家 NBA 球隊並投資基因延壽醫療", action: () => { player.money *= 2; player.status = "體育與科技大亨"; logEvent("球隊奪得總冠軍！延壽科技震驚全球！"); nextTurn(); } }
+                ]);
+            } else if (player.age === 30) {
+                logEvent(`🏛️ 30 歲「三十而立」，你決定展開世紀工程：`);
+                renderChoices([
+                    { text: "🇭🇰 在美國買地建造「新香港 (New HK)」特區", action: () => { player.money *= 10; player.status = "「新香港」Supreme Governor"; logEvent("世紀建設計劃啟動！你成為新香港最高領袖！"); nextTurn(); } },
+                    { text: "🚀 建造「太空天梯」與私人小行星採礦城", action: () => { player.money *= 15; player.status = "星際領主"; logEvent("太空天梯落成！人類邁向星際時代！"); nextTurn(); } }
+                ]);
+            } else if (player.age > 30) {
+                logEvent(`👑 年滿 ${player.age} 歲，你的萬億帝國已穩如泰山！`);
+                renderChoices([
+                    { text: "👶 培養第二代嫡長子，鎖定雙 SSS 級基因傳承", action: () => { player.money *= 1.5; logEvent("少主順利成長，帝國傳承完美無瑕！"); nextTurn(); } },
+                    { text: "🪙 發行金本位「Apex Coin」，掌控全球貨幣主權", action: () => { player.money *= 3; player.status = "全球終極教父"; logEvent("全球金融體系徹底被你鎖定！登頂歷史第一首富！"); nextTurn(); } }
+                ]);
+            } else {
+                // 普通年份
+                logEvent(`🗓️ 年滿 ${player.age} 歲，帝國資產穩定增長。`);
+                renderChoices([
+                    { text: "📈 繼續擴大投資與商業版圖", action: () => { player.money = Math.floor(player.money * 1.3); nextTurn(); } }
+                ]);
+            }
+        }
+
+        function renderChoices(options) {
+            const choicesDiv = document.getElementById('choices-container');
+            choicesDiv.innerHTML = '';
+            options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-3 bg-slate-800 hover:bg-amber-600/30 border border-slate-700 hover:border-amber-500/50 rounded-xl font-medium transition text-sm flex items-center justify-between";
+                btn.innerText = opt.text;
+                btn.onclick = opt.action;
+                choicesDiv.appendChild(btn);
+            });
+        }
+    </script>
+</body>
+</html>
